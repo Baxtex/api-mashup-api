@@ -52,13 +52,13 @@ public class TestAPI {
 	 * @return
 	 */
 	@GET
-	@Path("/bar{specific}")
+	@Path("/bar/{specific}")
 	@Produces(MediaType.TEXT_HTML)
 	public String print3(@PathParam("specific") int specific) {
 		if (specific == 1){
-			return "This should be printed for specific";
+			return "This should be printed if you looked for 1";
 		}else{
-			return "This should be printed if nothing found";
+			return "This should be printed if I found nothing, look for 1 instead!";
 		}
 	}
 	

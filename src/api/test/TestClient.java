@@ -2,7 +2,6 @@ package api.test;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -14,9 +13,6 @@ import javax.ws.rs.core.MediaType;
 public class TestClient {
 	   private Client client;
 	   private String REST_SERVICE_URL = "http://localhost:8080/api-mashup-api/api";
-	   private static final String SUCCESS_RESULT="<result>success</result>";
-	   private static final String PASS = "pass";
-	   private static final String FAIL = "fail";
 
 	   private void init(){
 	      this.client = ClientBuilder.newClient();
