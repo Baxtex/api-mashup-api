@@ -5,6 +5,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -13,9 +14,17 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 
 
+/**
+ * This class acts as a simple API.
+ * The URI for accessing these resorces is:
+ * localhost:8080/api-mashup-api/api/v1/foo/
+ * 
+ * @author Anton Gustafsson
+ *
+ */
 
 @Path("/v1/foo")
-public class Test {
+public class TestAPI {
 
 	/**
 	 * Prints to the screen if we are in /v1/foo
@@ -36,6 +45,21 @@ public class Test {
 	@Produces(MediaType.TEXT_HTML)
 	public String print2() {
 		return "This should be printed if in foo/bar";
+	}
+	
+	/**
+	 * Prints to the screen if we are in /v1/foo/bar/1 else not.
+	 * @return
+	 */
+	@GET
+	@Path("/bar{specific}")
+	@Produces(MediaType.TEXT_HTML)
+	public String print3(@PathParam("specific") int specific) {
+		if (specific == 1){
+			return "This should be printed for specific";
+		}else{
+			return "This should be printed if nothing found";
+		}
 	}
 	
 	/**
@@ -66,4 +90,7 @@ public class Test {
 		}
 		return Response.ok(returnString).build();	
 	}
+	
+	
+	
 }
