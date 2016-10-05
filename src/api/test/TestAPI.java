@@ -12,6 +12,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.glassfish.jersey.client.oauth2.ClientIdentifier;
 import org.glassfish.jersey.client.oauth2.OAuth2ClientSupport;
 import org.glassfish.jersey.client.oauth2.OAuth2CodeGrantFlow;
+import org.glassfish.jersey.client.oauth2.TokenResult;
+import org.glassfish.jersey.client.authentication.*;;
+
 
 
 /**
@@ -93,7 +96,7 @@ public class TestAPI {
 	
 	/**
 	 * Retrives bearer token and gets tweets if we are in /v1/foo/twitter
-	 * 
+	 * TODO: DOES NOT WORK! THROWS ERROR!
 	 * @return
 	 */
 	@GET
@@ -105,11 +108,16 @@ public class TestAPI {
 				"WvwnarPgqKJ2sMDKxH0tXLvR2N1gMpzNN484JHaYCeeW0lyJ8i");
 
 		// (clientId, authUri, accessTokenUri) på authcodegrantdflow
+		System.out.println("Before flow");
 		OAuth2CodeGrantFlow flow = OAuth2ClientSupport.authorizationCodeGrantFlowBuilder(ci,
-				"https://api.twitter.com/oauth2/token", "https://api.twitter.com/oauth2/token").scope("contact")
+				"https://api.twitter.com/oauth2/token", "https://api.twitter.com/oauth2/token")
+				//.scope("contact")
 				.build();
+		System.out.println("After flow");
 
 		String finalAuthorizationUri = flow.start();
+		//TokenResult result = flow.finish(code, state);
+		
 
 		return "This is the bearer: " + finalAuthorizationUri.toString();
 	}
