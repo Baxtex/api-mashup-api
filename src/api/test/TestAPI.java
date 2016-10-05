@@ -1,17 +1,17 @@
 package api.test;
 
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.glassfish.jersey.client.oauth2.ClientIdentifier;
+import org.glassfish.jersey.client.oauth2.OAuth2ClientSupport;
+import org.glassfish.jersey.client.oauth2.OAuth2CodeGrantFlow;
 
 
 /**
@@ -89,6 +89,29 @@ public class TestAPI {
 			return Response.status(500).entity("Server was not able to process your request").build();
 		}
 		return Response.ok(returnString).build();	
+	}
+	
+	/**
+	 * Retrives bearer token and gets tweets if we are in /v1/foo/twitter
+	 * 
+	 * @return
+	 */
+	@GET
+	@Path("/twitter")
+	@Produces(MediaType.TEXT_HTML)
+	public String print5() {
+		// clientID, clientSecrect
+		ClientIdentifier ci = new ClientIdentifier("H3tHZ9FUpB2vmH9c61ZcfVyjg",
+				"WvwnarPgqKJ2sMDKxH0tXLvR2N1gMpzNN484JHaYCeeW0lyJ8i");
+
+		// (clientId, authUri, accessTokenUri) på authcodegrantdflow
+		OAuth2CodeGrantFlow flow = OAuth2ClientSupport.authorizationCodeGrantFlowBuilder(ci,
+				"https://api.twitter.com/oauth2/token", "https://api.twitter.com/oauth2/token").scope("contact")
+				.build();
+
+		String finalAuthorizationUri = flow.start();
+
+		return "This is the bearer: " + finalAuthorizationUri.toString();
 	}
 	
 	
