@@ -115,55 +115,22 @@ public class TestAPI {
 	}
 
 	/**
-	 * Retrives bearer token and gets tweets if we are in /v1/foo/twitter TODO:
-	 * DOES NOT WORK! THROWS ERROR!
+	 *  Gets user specific tweets if we are in /v1/foo/twitter 
 	 * 
 	 * @return
 	 * @throws TwitterException
 	 */
 	@GET
 	@Path("/twitter")
-	@Produces(MediaType.TEXT_HTML)
+	@Produces(MediaType.TEXT_HTML + ";charset=utf-8" )
 	public String print5() throws TwitterException {
-		// // clientID, clientSecrect
-		// ClientIdentifier ci = new
-		// ClientIdentifier("H3tHZ9FUpB2vmH9c61ZcfVyjg",
-		// "WvwnarPgqKJ2sMDKxH0tXLvR2N1gMpzNN484JHaYCeeW0lyJ8i");
-		//
-		// // (clientId, authUri, accessTokenUri) på authcodegrantdflow
-		// System.out.println("Before flow");
-		// OAuth2CodeGrantFlow flow =
-		// OAuth2ClientSupport.authorizationCodeGrantFlowBuilder(ci,
-		// "https://api.twitter.com/oauth2/token",
-		// "https://api.twitter.com/oauth2/token")
-		// //.scope("contact")
-		// .build();
-		// System.out.println("After flow");
-		//
-		// String finalAuthorizationUri = flow.start();
-		// //TokenResult result = flow.finish(code, state);
-		//
-		//
-		// return "This is the finalAuthorizationUri: " +
-		// finalAuthorizationUri.toString();
-
-//		ConfigurationBuilder cb = new ConfigurationBuilder();
-//		cb.setDebugEnabled(true).setOAuthConsumerKey("H3tHZ9FUpB2vmH9c61ZcfVyjg")
-//				.setOAuthConsumerSecret("WvwnarPgqKJ2sMDKxH0tXLvR2N1gMpzNN484JHaYCeeW0lyJ8i")
-//				.setOAuthAccessToken("4784213706-IqzIyd8oWhpYYrhaoNo18FmAg9BfjWRe79zk0gn")
-//				.setOAuthAccessTokenSecret("SQLAqbZtd2MixfhoVXWGiqmBl1osGRSYV2SB8wHG0Bo0w");
-//		TwitterFactory tf = new TwitterFactory(cb.build());
+		String result ="";
 		Twitter twitter = tf.getInstance();
-
-		String result = null;
 		List<Status> statuses = twitter.getUserTimeline("@annieloof");
 		for (Status status : statuses) {
-
 			result += status.getUser().getName() + ":" + status.getText();
 		}
-
 		return result;
 
 	}
-
 }
