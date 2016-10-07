@@ -122,7 +122,7 @@ public class TestAPI {
 	@GET
 	@Path("/tweets")
 	@Produces(MediaType.TEXT_PLAIN + ";charset=utf-8" )
-	public String print5() throws TwitterException {
+	public String print5() {
 		int nbrTweets = 5;
 		Paging p = new Paging();
 		p.setCount(nbrTweets); //How many tweets we want
@@ -131,10 +131,17 @@ public class TestAPI {
 		String result ="";
 		
 		Twitter twitter = tf.getInstance();
-		List<Status> statuses = twitter.getUserTimeline(userID, p);
-		for (Status status : statuses) {
-			result += status.getUser().getName() + ":" + status.getText() + '\n';
+		List<Status> statuses;
+		try {
+			statuses = twitter.getUserTimeline(userID, p);
+			for (Status status : statuses) {
+				result += status.getUser().getName() + ":" + status.getText() + '\n';
+			}
+		} catch (TwitterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	
 		return preString + result;
 
 	}
