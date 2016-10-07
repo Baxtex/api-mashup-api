@@ -10,18 +10,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONObject;
-import org.glassfish.jersey.client.oauth2.ClientIdentifier;
-import org.glassfish.jersey.client.oauth2.OAuth2ClientSupport;
-import org.glassfish.jersey.client.oauth2.OAuth2CodeGrantFlow;
-import org.glassfish.jersey.client.oauth2.TokenResult;
 
+import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
-
-import org.glassfish.jersey.client.authentication.*;;
+import twitter4j.conf.ConfigurationBuilder;;
 
 /**
  * This class acts as a simple API. The URI for accessing these resorces is:
@@ -35,6 +30,7 @@ import org.glassfish.jersey.client.authentication.*;;
 public class TestAPI {
 	
 	private TwitterFactory tf;
+	
 	/**
 	 * Initializes Twitter framework.
 	 */
@@ -117,20 +113,29 @@ public class TestAPI {
 	/**
 	 *  Gets user specific tweets if we are in /v1/foo/twitter 
 	 * 
+	 * TODO: If we have all politicians in a db, we need to loop through
+	 * it and call this method for each one to get their tweets.
+	 * 
 	 * @return
 	 * @throws TwitterException
 	 */
 	@GET
-	@Path("/twitter")
-	@Produces(MediaType.TEXT_HTML + ";charset=utf-8" )
+	@Path("/tweets")
+	@Produces(MediaType.TEXT_PLAIN + ";charset=utf-8" )
 	public String print5() throws TwitterException {
+		int nbrTweets = 5;
+		Paging p = new Paging();
+		p.setCount(nbrTweets); //How many tweets we want
+		String userID ="@annieloof";
+		String preString ="We got " + nbrTweets + " tweets from " + userID + ":" + '\n' ;
 		String result ="";
+		
 		Twitter twitter = tf.getInstance();
-		List<Status> statuses = twitter.getUserTimeline("@annieloof");
+		List<Status> statuses = twitter.getUserTimeline(userID, p);
 		for (Status status : statuses) {
-			result += status.getUser().getName() + ":" + status.getText();
+			result += status.getUser().getName() + ":" + status.getText() + '\n';
 		}
-		return result;
+		return preString + result;
 
 	}
 }
