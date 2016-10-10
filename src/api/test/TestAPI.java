@@ -107,7 +107,7 @@ public class TestAPI {
 			e.printStackTrace();
 			return Response.status(500).entity("Server was not able to process your request").build();
 		}
-		return Response.ok(returnString).build();
+		return Response.ok(returnString).header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	/**
