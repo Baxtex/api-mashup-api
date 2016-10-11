@@ -11,12 +11,18 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONObject;
 
+import facebook4j.Facebook;
+import facebook4j.FacebookException;
+import facebook4j.FacebookFactory;
+import facebook4j.Post;
+import facebook4j.ResponseList;
+//import facebook4j.conf.ConfigurationBuilder;
 import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;;
+//import twitter4j.conf.ConfigurationBuilder;;
 
 /**
  * This class acts as a simple API. The URI for accessing these resorces is:
@@ -30,17 +36,32 @@ import twitter4j.conf.ConfigurationBuilder;;
 public class TestAPI {
 	
 	private TwitterFactory tf;
+	private FacebookFactory ff;
 	
 	/**
-	 * Initializes Twitter framework.
+	 * Initializes Twitter and Facebook framework by creating factories and providing tokens.
+	 * Cannot import ConfigurationBuilder directl in the class as both twitter4j and facebook4j uses
+	 * the same name.
 	 */
 	public TestAPI(){
-		ConfigurationBuilder cb = new ConfigurationBuilder();
+		
+		twitter4j.conf.ConfigurationBuilder cb = new twitter4j.conf.ConfigurationBuilder();
 		cb.setDebugEnabled(true).setOAuthConsumerKey("H3tHZ9FUpB2vmH9c61ZcfVyjg")
 				.setOAuthConsumerSecret("WvwnarPgqKJ2sMDKxH0tXLvR2N1gMpzNN484JHaYCeeW0lyJ8i")
 				.setOAuthAccessToken("4784213706-IqzIyd8oWhpYYrhaoNo18FmAg9BfjWRe79zk0gn")
 				.setOAuthAccessTokenSecret("SQLAqbZtd2MixfhoVXWGiqmBl1osGRSYV2SB8wHG0Bo0w");
 		tf = new TwitterFactory(cb.build());
+		
+		facebook4j.conf.ConfigurationBuilder cb2 = new  facebook4j.conf.ConfigurationBuilder();
+		cb2.setDebugEnabled(true)
+		  .setOAuthAppId("1781740452084874")
+		  .setOAuthAppSecret("cc2f66af625b9ce52adc1990b9050dc8")
+		  .setOAuthAccessToken("1781740452084874|HRv3MSZw2nVUf5j8C8G6ZsERxvo")
+		  .setOAuthPermissions("email,publish_stream");
+		 ff = new FacebookFactory(cb2.build());
+		
+
+		
 	}
 
 	/**
@@ -112,7 +133,7 @@ public class TestAPI {
 
 	/**
 	 *  Gets user specific tweets if we are in /v1/foo/twitter 
-	 * 
+	 *  Mostly for testing purposes.
 	 * TODO: If we have all politicians in a db, we need to loop through
 	 * it and call this method for each one to get their tweets.
 	 * 
@@ -138,11 +159,34 @@ public class TestAPI {
 				result += status.getUser().getName() + ":" + status.getText() + '\n';
 			}
 		} catch (TwitterException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
 		return preString + result;
-
 	}
+	
+	/**
+	 * Should return user specific posts.
+	 * Mostly for testing purposes
+	 * @return
+	 */
+	@GET
+	@Path("/fbPosts")
+	@Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
+	public String print6(){
+		String res ="";
+		Facebook facebook = ff.getInstance();
+		try {
+			ResponseList<Post> feed = facebook.getFeed("eclipse.org");
+			for (Post post : feed){
+				res +=post.getMessage();
+			}
+		} catch (FacebookException e) {
+			e.printStackTrace();
+		}
+		
+		return res;
+	}
+	
+	
+	
 }
