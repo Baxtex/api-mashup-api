@@ -27,7 +27,6 @@ public class Politician {
 	public void setParty(String party) {
 		this.party = party;
 	}
-
 	
 	public String toString() {
 		return "{" + name + ", " + party + "}";

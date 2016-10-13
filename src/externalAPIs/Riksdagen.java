@@ -17,15 +17,21 @@ import databaseObjects.Politician;
 public class Riksdagen {
 	 
 	private final String URL = "http://data.riksdagen.se/personlista/?fnamn=&enamn=&parti=&utformat=json&charset=UTF-8";
+	private Callback_Politicians callback;
 	
 	public Riksdagen(){
 
 	}
 	
-	public void retrievePoliticiansFromApi(Callback_Politicians callback){
-		WebTarget target = getWebTarget();	
-		callback.getPoliticians(convertFromJSON(target.request(MediaType.APPLICATION_JSON).get(String.class).toString()));
+	public void registerCallback(Callback_Politicians callback){
+		this.callback = callback;
 	}
+	
+	public void addPoliticianToDB(){
+		WebTarget target = getWebTarget();	
+		callback.callbackPoliticians(convertFromJSON(target.request(MediaType.APPLICATION_JSON).get(String.class).toString()));
+	}
+	
 	private LinkedList<Politician> convertFromJSON(String response){
 		LinkedList<Politician> tempList = new LinkedList<Politician>();
 		try{
