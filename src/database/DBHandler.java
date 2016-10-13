@@ -23,7 +23,7 @@ public class DBHandler {
 	 * @return
 	 */
 	
-	public Connection getConnection() {
+	private Connection getConnection() {
 		Connection connection = null;
 		try {
 			Class.forName(DRIVER);
@@ -46,7 +46,7 @@ public class DBHandler {
 	 * @param connection
 	 */
 	
-	public void closeConnection(Connection connection) {
+	private void closeConnection(Connection connection) {
 		if(connection != null) {
 			try {
 				connection.close();
@@ -110,15 +110,14 @@ public class DBHandler {
 	 * @param politican
 	 */
 	
-	public void addPolitican(Politican politican) {
-		String query = "insert into politicans(id, name, party) VALUES (?, ?, ?)";
+	public void addPolitican(Politician politician) {
+		String query = "insert into politicians(name, party) VALUES (?, ?)";
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
 		try {
 			statement = getConnection().prepareStatement(query);
-			statement.setInt(1, politican.getID());
-			statement.setString(2, politican.getName());
-			statement.setString(3, politican.getParty());
+			statement.setString(1, politician.getName());
+			statement.setString(3, politician.getParty());
 			statement.executeUpdate();
 			System.out.println("DBHandler: Added politican to database");
 		} catch (SQLException e) {
@@ -129,26 +128,25 @@ public class DBHandler {
 	}
 	
 	/**
-	 * Adds a list of politicans to the database
+	 * Adds a list of politicians to the database
 	 * @param parties
 	 */
 	
-	public void addPoliticans(LinkedList<Politican> politicians) {
+	public void addPoliticians(LinkedList<Politician> politicians) {
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
 		String query = null;
 		try {
 			for(int i = 0; i < politicians.size(); i++) {
-				query = "insert into politicans(id, name, party) VALUES (?, ?, ?)";
+				query = "insert into politicians(name, party) VALUES (?, ?)";
 				statement = connection.prepareStatement(query);
-				statement.setInt(1, politicians.get(i).getID());
-				statement.setString(2, politicians.get(i).getName());
-				statement.setString(3, politicians.get(i).getParty());
+				statement.setString(1, politicians.get(i).getName());
+				statement.setString(2, politicians.get(i).getParty());
 				statement.executeUpdate();
-				System.out.println("DBHandler: Added a list of politicans to database");
+				System.out.println("DBHandler: Added a list of politicians to database");
 			} 
 		} catch (SQLException e) {
-			System.out.println("DBHandler: Exception when trying to add a list of politicans");
+			System.out.println("DBHandler: Exception when trying to add a list of politicians");
 		} finally {
 			closeConnection(connection);
 		}
@@ -203,10 +201,10 @@ public class DBHandler {
 				statement.setInt(6, posts.get(i).getLikes());
 				statement.setInt(7, posts.get(i).getRetweets());
 				statement.executeUpdate();
-				System.out.println("DBHandler: Added a list of politicans to database");
+				System.out.println("DBHandler: Added a list of politicians to database");
 			} 
 		} catch (SQLException e) {
-			System.out.println("DBHandler: Exception when trying to add a list of politicans");
+			System.out.println("DBHandler: Exception when trying to add a list of politicians");
 		} finally {
 			closeConnection(connection);
 		}
@@ -271,30 +269,29 @@ public class DBHandler {
 	}
 	
 	/**
-	 * Returns a list of all politicans in the database
+	 * Returns a list of all politicians in the database
 	 * @return
 	 */
 	
-	public LinkedList<Politican> getPoliticans() {
-		LinkedList<Politican> politicans = new LinkedList<Politican>();
+	public LinkedList<Politician> getPoliticians() {
+		LinkedList<Politician> politicians = new LinkedList<Politician>();
 		Connection connection = getConnection();
 		try {
-			String query = "select * from politicans";
+			String query = "select * from politicians";
 			PreparedStatement statement = connection.prepareStatement(query);
 			ResultSet rs = statement.executeQuery();
 			while(rs.next()) {
-				Politican politican = new Politican();
-				politican.setId(rs.getInt("id"));
-				politican.setName(rs.getString("name"));
-				politican.setParty(rs.getString("party"));
-				politicans.add(politican);
+				Politician politician = new Politician();
+				politician.setName(rs.getString("name"));
+				politician.setParty(rs.getString("party"));
+				politicians.add(politician);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			closeConnection(connection);
 		}
-		return politicans;	
+		return politicians;	
 	}
 	
 	/**
@@ -368,44 +365,7 @@ public class DBHandler {
 	
 	public static void main(String[] args) {
 		DBHandler db = new DBHandler();
-		
-
-//		ArrayList<Party> parties = new ArrayList<Party>();
-//		parties.add(new Party(1000, "Kajsas parti", "K"));
-//		parties.add(new Party(1001, "Christoffers parti", "GEEK"));
-//		parties.add(new Party(1002, "Antons parti", "ERNST"));
-//		db.addParties(parties);
-//		
-//		System.out.println(db.getParties().toString());
-//		
-//		ArrayList<Politican> politicans = new ArrayList<Politican>();
-//		politicans.add(new Politican(1, "Kajsa Ornstein", "S"));
-//		politicans.add(new Politican(2, "Chris THE GEEK", "M"));
-//		politicans.add(new Politican(3, "Anton", "V"));
-//		db.addPoliticans(politicans);
-//		
-//		System.out.println(db.getPoliticans().toString());
-//		
-//		Post post1 = new Post(1, "Text1", "2016-10-10, 01:32", 1, 0, 53, "Twitter" );
-//		Post post2 = new Post(2, "Text2", "2016-10-12, 01:48", 2, 15, 0, "Facebook");
-//		Post post3 = new Post(3, "Text3", "2016-10-12, 01:48", 2, 15, 0, "Facebook");
-//		Post post4 = new Post(4, "Text4", "2016-10-12, 01:48", 3, 15, 0, "Facebook");
-//		ArrayList<Post> posts = new ArrayList();
-//		posts.add(post1);
-//		posts.add(post2);
-//		posts.add(post3);
-//		posts.add(post4);
-//		db.addPosts(posts);
-//		
-//		System.out.println(db.getPosts(2).toString());
-//
-//		Comment comment = new Comment(10, "Kommentar 1", "Timestamp", "kajsa@gmail.com", 3);
-//		Comment comment2 = new Comment(11, "Kommentar 2", "2016-11-11, 11:11", "mrrobot@gmail.com", 3);
-//		db.addComment(comment);
-//		db.addComment(comment2);
-
-//		System.out.println(db.getComments(3));
-		
+			
 
 	}
 	
