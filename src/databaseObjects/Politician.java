@@ -1,40 +1,29 @@
 package databaseObjects;
 
 public class Politician {
-	
-	private String firstname;
-	private String surname;
+	private String name;
 	private String party;
 	
 	public Politician() {
-		
 	}
 	
-	public Politician(String firstname, String surname, String party) {
-//		this.id = id;
-		this.firstname = firstname;
-		this.surname = surname;
+	public Politician(String name, String party) {
+		this.name = name;
 		this.party = party;
 	}
 	
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
-	
-	public String getFirstname() {
-		return firstname;
-	}
-	
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-	
-	public String getSurname() {
-		return surname;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public void setParty(String party) {
 		this.party = party;
+	}
+	
+
+	
+	public String getName() {
+		return name;
 	}
 	
 	public String getParty() {
@@ -42,6 +31,6 @@ public class Politician {
 	}
 	
 	public String toString() {
-		return "{" + firstname + ", " + surname + ", " + party + "}";
+		return "{" + name + ", " + party + "}";
 	}
 }
