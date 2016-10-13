@@ -27,7 +27,7 @@ public class Riksdagen {
 		this.callback = callback;
 	}
 	
-	public void addPoliticianToDB(){
+	public void addPoliticiansToDB(){
 		WebTarget target = getWebTarget();	
 		callback.callbackPoliticians(convertFromJSON(target.request(MediaType.APPLICATION_JSON).get(String.class).toString()));
 	}

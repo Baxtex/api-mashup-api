@@ -16,6 +16,7 @@ public class Controller {
 		dbHandler = new DBHandler();
 		riksdagen = new Riksdagen();
 		riksdagen.registerCallback(new DBImplementer_Politicians(dbHandler));
+		riksdagen.addPoliticiansToDB();
 	}
 
 	
@@ -31,8 +32,17 @@ public class Controller {
 		}
 
 		public void callbackPoliticians(LinkedList<Politician> politicians) {
-			dbHandler.addPoliticians(politicians);
+			/**
+			 * Ändra här för att byta vad som hämtas
+			 * syso sker i klassen
+			 */
+//			new GoogleSearchHandler().getPoliticians_Twitter(politicians);
+			new GoogleSearchHandler().getPoliticians_Facebook(politicians);
 		}
+	}
+	
+	public static void main(String[] args){
+		new Controller();
 	}
 	
 	
