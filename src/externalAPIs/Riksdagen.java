@@ -17,10 +17,9 @@ import databaseObjects.Politician;
 public class Riksdagen {
 	 
 	private final String URL = "http://data.riksdagen.se/personlista/?fnamn=&enamn=&parti=&utformat=json&charset=UTF-8";
-//	private LinkedList<Politician> politicians;
 	
 	public Riksdagen(){
-//		politicians = new LinkedList<Politician>();
+
 	}
 	
 	public void retrievePoliticiansFromApi(Callback_Politicians callback){
@@ -37,7 +36,7 @@ public class Riksdagen {
 			
 			for(int i = 0; i < entryArray.length(); i++){
 				JSONObject tempObj = entryArray.getJSONObject(i);
-				tempList.add(new Politician((String)tempObj.get("tilltalsnamn"),(String)tempObj.get("efternamn"),(String)tempObj.get("parti")));
+				tempList.add(new Politician((String)tempObj.get("tilltalsnamn") +" " + (String)tempObj.get("efternamn"),(String)tempObj.get("parti")));
 			}
 		}catch(JSONException e){
 			e.printStackTrace();
