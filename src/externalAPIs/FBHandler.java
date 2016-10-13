@@ -13,7 +13,7 @@ import facebook4j.ResponseList;
 import facebook4j.conf.ConfigurationBuilder;
 
 /**
- * 
+ * Handles connection and integration to Facebook API.
  * @author Anton Gustafsson
  *
  */
@@ -21,6 +21,9 @@ public class FBHandler {
 	private FacebookFactory ff;
 	private Facebook facebook;
 	
+	/**
+	 * Setup authentication for using the Facebook api. 
+	 */
 	public FBHandler(){
 		ConfigurationBuilder cb = new ConfigurationBuilder();
 		cb.setDebugEnabled(true).setOAuthAppId("1781740452084874")
@@ -31,10 +34,15 @@ public class FBHandler {
 		facebook = ff.getInstance();
 	}
 	
+	/**
+	 * Retrieves posts from facebook via the facebook api.
+	 * @param amount - the number of posts to retrieve.
+	 * @param id - the id of the user we want posts from.
+	 * @return - JSONArray containing posts.
+	 */
 	public JSONArray getPosts(int amount, String id){
 		Reading reader = new Reading().limit(amount);
 		JSONArray jArray = new JSONArray();
-
 		try {
 			ResponseList<Post> feed = facebook.getPosts(id, reader );
 			for (Post post : feed) {

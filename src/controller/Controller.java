@@ -15,13 +15,6 @@ public class Controller {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
 	// Metoder som Kajsa behöver
 	
 	/**
