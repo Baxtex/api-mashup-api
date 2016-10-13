@@ -1,5 +1,5 @@
 package externalAPIs;
 
-public class Twitter {
+public class RDHandler {
 
 }
