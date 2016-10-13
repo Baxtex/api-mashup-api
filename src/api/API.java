@@ -14,7 +14,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import externalAPIs.FBHandler;
-import externalAPIs.RDHandler;
+
+import externalAPIs.Riksdagen;
 import externalAPIs.TWHandler;
 import facebook4j.Facebook;
 import facebook4j.FacebookException;
@@ -31,7 +32,7 @@ import twitter4j.TwitterFactory;
 //import twitter4j.conf.ConfigurationBuilder;;
 
 /**
- * This class acts as a simple API. The URI for accessing these resorces is:
+ * This class acts as a simple API. The URI for accessing these resources is:
  * localhost:8080/api-mashup-api/api/v1/
  * 
  * @author Anton Gustafsson
@@ -42,13 +43,12 @@ import twitter4j.TwitterFactory;
 public class API {
 	private FBHandler fbHandler;
 	private TWHandler twHandler;
-	private RDHandler rdHandler;
+	private Riksdagen rdHandler;
 	
 	public API (){
 		fbHandler = new FBHandler();
 		twHandler = new TWHandler();
 	}
-	
 
 	/**
 	 * Prints to the screen if we are in /v1/foo
