@@ -7,18 +7,52 @@ import databaseObjects.Politician;
 import externalAPIs.*;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
+
+import api.API;
+
 public class Controller {
 	private DBHandler dbHandler;
 	private Riksdagen riksdagen;
+	private FBHandler fbHandler;
+	private TWHandler twHandler;
 
 	public Controller() {
-
+		init();
+	}
+	
+	private void init(){
+		fbHandler = new FBHandler();
+		twHandler = new TWHandler();
 		dbHandler = new DBHandler();
 		riksdagen = new Riksdagen();
 		riksdagen.registerCallback(new DBImplementer_Politicians(dbHandler));
 		riksdagen.addPoliticiansToDB();
 	}
 
+	/**
+	 * Retrieves facebook and twitter post and mashes them up
+	 * into a new JSONObject.
+	 * @return
+	 */
+	public JSONObject getSocialPosts(String fbId, String tId){
+		JSONArray jsonArrayFB = new JSONArray();
+		JSONArray jsonArrayT = new JSONArray();
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("HTTP_CODE", "200");
+			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
+			jsonArrayFB = fbHandler.getPosts(5, fbId);
+			jsonArrayT = twHandler.getPosts(5, tId);
+			jsonObject.put("fbposts", jsonArrayFB);
+			jsonObject.put("twposts", jsonArrayT);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
+	
 	
 	
 	

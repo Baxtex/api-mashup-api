@@ -18,7 +18,7 @@ import twitter4j.conf.ConfigurationBuilder;
  * @author Anton Gustafsson
  *
  */
-public class TWHandler {
+public class TWHandler implements ExternalAPIs {
 	private TwitterFactory tf;
 	private Twitter twitter;
 
@@ -53,7 +53,6 @@ public class TWHandler {
 			}
 		} catch (JSONException | TwitterException e) {
 			e.printStackTrace();
-			throw new IllegalArgumentException("Something happend with the T retriever.");
 		}
 		return jArray;
 	}
