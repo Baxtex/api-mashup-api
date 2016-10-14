@@ -20,7 +20,11 @@ import controller.Controller;
 
 @Path("/v1")
 public class API {
-	private Controller controller = new Controller();
+	private Controller controller;
+	
+	public API(){
+		controller = new Controller();
+	}
 	
 	
 	/**
@@ -29,11 +33,17 @@ public class API {
 	 * @return
 	 */
 	@GET
+	@Path("/foobar")
+	@Produces(MediaType.TEXT_HTML)
+	public String print2() {
+		return "Please specify what resource you need.";
+	}
+
+	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String print1() {
 		return "Please specify what resource you need.";
 	}
-
 	/**
 	 * This method is serious and it's purpose is to return a JSON Array
 	 * containing posts from both twitter and facebook. The question is how we
