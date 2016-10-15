@@ -1,7 +1,5 @@
 package databaseObjects;
 
-import java.sql.Timestamp;
-
 public class Comment {
 	
 	private int id;

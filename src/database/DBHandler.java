@@ -1,28 +1,30 @@
 package database;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
-import databaseObjects.*;
-
-import java.sql.Connection;
+import databaseObjects.Comment;
+import databaseObjects.Party;
+import databaseObjects.Politician;
+import databaseObjects.Post;
 
 public class DBHandler {
-	
-	private final String DRIVER ="com.mysql.jdbc.Driver";
+
+	private final String DRIVER = "com.mysql.jdbc.Driver";
 	private final String URL = "jdbc:mysql://195.178.232.16:3306/AB7455";
 	private final String USER = "AB7455";
 	private final String PASSWORD = "kajsaecool";
-	
+
 	/**
 	 * Opens connection to database
+	 * 
 	 * @return
 	 */
-	
+
 	private Connection getConnection() {
 		Connection connection = null;
 		try {
@@ -39,15 +41,16 @@ public class DBHandler {
 			e.printStackTrace();
 		}
 		return connection;
-	} 
-	
+	}
+
 	/**
 	 * Closes the connection to database
+	 * 
 	 * @param connection
 	 */
-	
+
 	private void closeConnection(Connection connection) {
-		if(connection != null) {
+		if (connection != null) {
 			try {
 				connection.close();
 			} catch (SQLException e) {
@@ -57,12 +60,13 @@ public class DBHandler {
 	}
 
 	// Insert methods
-	
+
 	/**
 	 * Adds a new party to the database
+	 * 
 	 * @param party
 	 */
-	
+
 	public void addParty(Party party) {
 		String query = "insert into parties(name, nameShort) VALUES (?, ?)";
 		Connection connection = getConnection();
@@ -79,37 +83,39 @@ public class DBHandler {
 			closeConnection(connection);
 		}
 	}
-	
+
 	/**
 	 * Adds a list of parties to the database
+	 * 
 	 * @param parties
 	 */
-	
+
 	public void addParties(LinkedList<Party> parties) {
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
 		String query = null;
 		try {
-			for(int i = 0; i < parties.size(); i++) {
+			for (int i = 0; i < parties.size(); i++) {
 				query = "insert into parties(name, nameShort) VALUES (?, ?)";
 				statement = connection.prepareStatement(query);
 				statement.setString(1, parties.get(i).getName());
 				statement.setString(2, parties.get(i).getNameShort());
 				statement.executeUpdate();
 				System.out.println("DBHandler: Added a list of parties to database");
-			} 
+			}
 		} catch (SQLException e) {
 			System.out.println("DBHandler: Exception when trying to add a list of parties");
 		} finally {
 			closeConnection(connection);
 		}
 	}
-	
+
 	/**
 	 * Adds a new politican to database
+	 * 
 	 * @param politican
 	 */
-	
+
 	public void addPolitican(Politician politician) {
 		String query = "insert into politicians(name, party) VALUES (?, ?)";
 		Connection connection = getConnection();
@@ -126,37 +132,39 @@ public class DBHandler {
 			closeConnection(connection);
 		}
 	}
-	
+
 	/**
 	 * Adds a list of politicians to the database
+	 * 
 	 * @param parties
 	 */
-	
+
 	public void addPoliticians(LinkedList<Politician> politicians) {
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
 		String query = null;
 		try {
-			for(int i = 0; i < politicians.size(); i++) {
+			for (int i = 0; i < politicians.size(); i++) {
 				query = "insert into politicians(name, party) VALUES (?, ?)";
 				statement = connection.prepareStatement(query);
 				statement.setString(1, politicians.get(i).getName());
 				statement.setString(2, politicians.get(i).getParty());
 				statement.executeUpdate();
 				System.out.println("DBHandler: Added a list of politicians to database");
-			} 
+			}
 		} catch (SQLException e) {
 			System.out.println("DBHandler: Exception when trying to add a list of politicians");
 		} finally {
 			closeConnection(connection);
 		}
 	}
-	
+
 	/**
 	 * Adds a new post to the database
+	 * 
 	 * @param post
 	 */
-	
+
 	public void addPost(Post post) {
 		String query = "insert into posts(id, text, time, likes, retweets, politican, source) VALUES (?, ?, ?, ?, ?, ?, ?)";
 		Connection connection = getConnection();
@@ -179,18 +187,19 @@ public class DBHandler {
 			closeConnection(connection);
 		}
 	}
-	
+
 	/**
 	 * Adds a list of posts to database
+	 * 
 	 * @param posts
 	 */
-	
+
 	public void addPosts(LinkedList<Post> posts) {
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
 		String query = null;
 		try {
-			for(int i = 0; i < posts.size(); i++) {
+			for (int i = 0; i < posts.size(); i++) {
 				query = "insert into posts(id, text, time, politican, source, likes, retweets) VALUES (?, ?, ?, ?, ?, ?, ?)";
 				statement = connection.prepareStatement(query);
 				statement.setInt(1, posts.get(i).getID());
@@ -202,19 +211,20 @@ public class DBHandler {
 				statement.setInt(7, posts.get(i).getRetweets());
 				statement.executeUpdate();
 				System.out.println("DBHandler: Added a list of politicians to database");
-			} 
+			}
 		} catch (SQLException e) {
 			System.out.println("DBHandler: Exception when trying to add a list of politicians");
 		} finally {
 			closeConnection(connection);
 		}
 	}
-	
+
 	/**
 	 * Adds a new comment to the database
+	 * 
 	 * @param comment
 	 */
-	
+
 	public void addComment(Comment comment) {
 		String query = "insert into comments(id, text, time, email, post) VALUES (?, ?, ?, ?, ?)";
 		Connection connection = getConnection();
@@ -234,19 +244,16 @@ public class DBHandler {
 			closeConnection(connection);
 		}
 	}
-	
-	
-	
-	
-	
-	
-	// Get methods -----------------------------------------------------------------------
-	
+
+	// Get methods
+	// -----------------------------------------------------------------------
+
 	/**
 	 * Returns a list of all parties in database
+	 * 
 	 * @return
 	 */
-	
+
 	public LinkedList<Party> getParties() {
 		LinkedList<Party> parties = new LinkedList<Party>();
 		Connection connection = getConnection();
@@ -254,7 +261,7 @@ public class DBHandler {
 			String query = "select * from parties";
 			PreparedStatement statement = connection.prepareStatement(query);
 			ResultSet rs = statement.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				Party party = new Party();
 				party.setName(rs.getString("name"));
 				party.setNameShort(rs.getString("nameShort"));
@@ -265,14 +272,15 @@ public class DBHandler {
 		} finally {
 			closeConnection(connection);
 		}
-		return parties;	
+		return parties;
 	}
-	
+
 	/**
 	 * Returns a list of all politicians in the database
+	 * 
 	 * @return
 	 */
-	
+
 	public LinkedList<Politician> getPoliticians() {
 		LinkedList<Politician> politicians = new LinkedList<Politician>();
 		Connection connection = getConnection();
@@ -280,7 +288,7 @@ public class DBHandler {
 			String query = "select * from politicians";
 			PreparedStatement statement = connection.prepareStatement(query);
 			ResultSet rs = statement.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				Politician politician = new Politician();
 				politician.setName(rs.getString("name"));
 				politician.setParty(rs.getString("party"));
@@ -291,15 +299,16 @@ public class DBHandler {
 		} finally {
 			closeConnection(connection);
 		}
-		return politicians;	
+		return politicians;
 	}
-	
+
 	/**
 	 * Returns a list of all posts from the specified politican
+	 * 
 	 * @param politican
 	 * @return
 	 */
-	
+
 	public LinkedList<Post> getPosts(int politican) {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
@@ -307,7 +316,7 @@ public class DBHandler {
 			String query = "select * from posts where politican = " + politican + ";";
 			PreparedStatement statement = connection.prepareStatement(query);
 			ResultSet rs = statement.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				Post post = new Post();
 				post.setId(rs.getInt("id"));
 				post.setText(rs.getString("text"));
@@ -323,15 +332,16 @@ public class DBHandler {
 		} finally {
 			closeConnection(connection);
 		}
-		return posts;	
+		return posts;
 	}
-	
+
 	/**
 	 * Returns a list of all comments on the specified post
+	 * 
 	 * @param post
 	 * @return
 	 */
-	
+
 	public LinkedList<Comment> getComments(int post) {
 		LinkedList<Comment> comments = new LinkedList<Comment>();
 		Connection connection = getConnection();
@@ -339,7 +349,7 @@ public class DBHandler {
 			String query = "select * from comments where post = " + post + ";";
 			PreparedStatement statement = connection.prepareStatement(query);
 			ResultSet rs = statement.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				Comment comment = new Comment();
 				comment.setId(rs.getInt("id"));
 				comment.setText(rs.getString("text"));
@@ -352,23 +362,13 @@ public class DBHandler {
 			e.printStackTrace();
 		} finally {
 			closeConnection(connection);
-		}		
-		return comments;	
+		}
+		return comments;
 	}
-		
-		
 
-	
-	
-	
-	
-	
 	public static void main(String[] args) {
 		DBHandler db = new DBHandler();
-			
 
 	}
-	
-	
-	
+
 }
