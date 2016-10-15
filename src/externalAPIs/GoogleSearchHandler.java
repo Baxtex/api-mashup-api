@@ -53,9 +53,6 @@ public class GoogleSearchHandler {
     	    	returnUrl = url;
     	    	break;
     	    }
-    	    
-//    	    System.out.println("Title: " + title);
-//    	    System.out.println("URL: " + url);
     	}
     	return returnUrl;
 	}
