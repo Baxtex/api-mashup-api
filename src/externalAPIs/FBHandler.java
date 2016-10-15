@@ -17,7 +17,7 @@ import facebook4j.conf.ConfigurationBuilder;
  * @author Anton Gustafsson
  *
  */
-public class FBHandler {
+public class FBHandler implements ExternalAPIs {
 	private FacebookFactory ff;
 	private Facebook facebook;
 	
@@ -50,7 +50,6 @@ public class FBHandler {
 			}
 		} catch (FacebookException | JSONException e) {
 			e.printStackTrace();
-			throw new IllegalArgumentException("Something happend with the FBHandler.");
 		}
 		return jArray;
 	}
