@@ -15,6 +15,7 @@ public class Controller {
 	private RDHandler rdHandler;
 	private FBHandler fbHandler;
 	private TWHandler twHandler;
+	private GSHandler gsHandler;
 
 	public Controller() {
 		init();
@@ -26,11 +27,19 @@ public class Controller {
 	
 	private void init() {
 		fbHandler = new FBHandler();
+		System.out.println("fbHandler up");
 		twHandler = new TWHandler();
+		System.out.println("twHandler up");
 		dbHandler = new DBHandler();
-		// rdHandler = new RDHandler();
-		// rdHandler.registerCallback(new DBImplementer_Politicians(dbHandler));
-		// rdHandler.addPoliticiansToDB();
+		System.out.println("dbHandler up");
+		gsHandler = new GSHandler();
+		System.out.println("gsHandler up");
+		rdHandler = new RDHandler();
+		System.out.println("rdHandler up");
+//		rdHandler.registerCallback(new DBImplementer_Politicians(dbHandler));
+		System.out.println("callback set");
+//		rdHandler.addPoliticiansToDB();
+		System.out.println("politicians retrieved");
 	}
 
 	/**
@@ -64,21 +73,17 @@ public class Controller {
 		}
 
 		public void callbackPoliticians(LinkedList<Politician> politicians) {
-			/**
-			 * Ändra här för att byta vad som hämtas syso sker i klassen
-			 */
-			// new GoogleSearchHandler().getPoliticians_Twitter(politicians);
-			new GSHandler().getPoliticians_Facebook(politicians);
+
+			dbHandler.addPoliticians(gsHandler.getPoliticians_SocialMedia(politicians));
+			System.out.println("Politicians added to Database");
 		}
 	}
-
-
 	/**
 	 * Returns a JSON response containing images of all the party logos
 	 * 
 	 * @return
 	 */
-
+	
 	public Response getPartyLogos() {
 		return null;
 	}

@@ -101,6 +101,7 @@ public class DBHandler {
 				statement.setString(1, parties.get(i).getName());
 				statement.setString(2, parties.get(i).getNameShort());
 				statement.executeUpdate();
+				
 				System.out.println("DBHandler: Added a list of parties to database");
 			}
 		} catch (SQLException e) {
@@ -117,14 +118,17 @@ public class DBHandler {
 	 */
 
 	public void addPolitican(Politician politician) {
-		String query = "insert into politicians(name, party) VALUES (?, ?)";
+		String query = "insert into politicians(name, party, fb_url, twitter_url) VALUES (?, ?, ?, ?)";
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
 		try {
 			statement = getConnection().prepareStatement(query);
 			statement.setString(1, politician.getName());
-			statement.setString(3, politician.getParty());
+			statement.setString(2, politician.getParty());
+			statement.setString(3, politician.getFacebook_URL());
+			statement.setString(4, politician.getTwitter_URL());
 			statement.executeUpdate();
+//			closeConnection(connection);
 			System.out.println("DBHandler: Added politican to database");
 		} catch (SQLException e) {
 			System.out.print("DBHandler: Exception when adding politican to database");
@@ -142,14 +146,16 @@ public class DBHandler {
 	public void addPoliticians(LinkedList<Politician> politicians) {
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
-		String query = null;
+		String query = "insert into politicians(name, party, fb_url, twitter_url) VALUES (?, ?, ?, ?)";
 		try {
 			for (int i = 0; i < politicians.size(); i++) {
-				query = "insert into politicians(name, party) VALUES (?, ?)";
 				statement = connection.prepareStatement(query);
 				statement.setString(1, politicians.get(i).getName());
 				statement.setString(2, politicians.get(i).getParty());
+				statement.setString(3, politicians.get(i).getFacebook_URL());
+				statement.setString(4, politicians.get(i).getTwitter_URL());
 				statement.executeUpdate();
+//				closeConnection(connection);
 				System.out.println("DBHandler: Added a list of politicians to database");
 			}
 		} catch (SQLException e) {
@@ -157,6 +163,7 @@ public class DBHandler {
 		} finally {
 			closeConnection(connection);
 		}
+//		closeConnection(connection);
 	}
 
 	/**
