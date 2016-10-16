@@ -66,27 +66,13 @@ public class GSHandler {
 		System.out.println("Getting politicians social media...");
 		for (int i = 0; i < returnList.size(); i++) {
 			System.out.println("Getting social media for: " + returnList.get(i).getName());
-//			System.out.println(getPolitician_Facebook(politicians.get(i)));
-//			try {
-//				Thread.sleep(5000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-			returnList.get(i).setFacebook_URL(getPolitician_Facebook(returnList.get(i)));
 			
-//			try {
-//				Thread.sleep(5000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			returnList.get(i).setFacebook_URL(getPolitician_Facebook(returnList.get(i)));
 			returnList.get(i).setTwitter_URL(getPolitician_Twitter(returnList.get(i)));
 			
 			System.out.println(returnList.get(i).getFacebook_URL());
 			System.out.println(returnList.get(i).getTwitter_URL());
 			
-			// getPolitician_Facebook(politicians.get(i));
 		}
 		return returnList;
 	}
