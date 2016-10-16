@@ -15,16 +15,16 @@ import twitter4j.conf.ConfigurationBuilder;
 
 /**
  * Handles connection and integration with the twitter API.
+ * 
  * @author Anton Gustafsson
  *
  */
-public class TWHandler implements ExternalAPIs {
+public class TWHandler implements IExternalAPIs {
 	private TwitterFactory tf;
 	private Twitter twitter;
 
-	
 	/**
-	 * Setup authentication for using the twitter api. 
+	 * Setup authentication for using the twitter api.
 	 */
 	public TWHandler() {
 		ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -38,6 +38,7 @@ public class TWHandler implements ExternalAPIs {
 
 	/**
 	 * Retrieves posts from twitter via the twitter api.
+	 * 
 	 * @param amount - the number of posts to retrieve.
 	 * @param id - the id of the user we want posts from.
 	 * @return - JSONArray containing posts.

@@ -12,13 +12,13 @@ import org.jsoup.select.Elements;
 
 import databaseObjects.Politician;
 
-public class GoogleSearchHandler {
+public class GSHandler {
 	private static final String URL_GOOGLE = "http://www.google.com/search?q=";
 	private final String CHARSET = "UTF-8";
 	private final String USERAGENT = "API-MASHUP-API";
 	private Elements links;
 
-	public GoogleSearchHandler() {
+	public GSHandler() {
 
 	}
 

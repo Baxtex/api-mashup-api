@@ -18,7 +18,7 @@ import facebook4j.conf.ConfigurationBuilder;
  * @author Anton Gustafsson
  *
  */
-public class FBHandler implements ExternalAPIs {
+public class FBHandler implements IExternalAPIs {
 	private FacebookFactory ff;
 	private Facebook facebook;
 

@@ -12,7 +12,7 @@ import org.codehaus.jettison.json.JSONObject;
 
 public class Controller {
 	private DBHandler dbHandler;
-	// private Riksdagen riksdagen;
+	private RDHandler rdHandler;
 	private FBHandler fbHandler;
 	private TWHandler twHandler;
 
@@ -20,13 +20,17 @@ public class Controller {
 		init();
 	}
 
+	// public static void main(String[] args){
+	// 		new Controller();
+	// }
+	
 	private void init() {
 		fbHandler = new FBHandler();
 		twHandler = new TWHandler();
 		dbHandler = new DBHandler();
-		// riksdagen = new Riksdagen();
-		// riksdagen.registerCallback(new DBImplementer_Politicians(dbHandler));
-		// riksdagen.addPoliticiansToDB();
+		// rdHandler = new RDHandler();
+		// rdHandler.registerCallback(new DBImplementer_Politicians(dbHandler));
+		// rdHandler.addPoliticiansToDB();
 	}
 
 	/**
@@ -52,7 +56,7 @@ public class Controller {
 		return jsonObject;
 	}
 
-	private class DBImplementer_Politicians implements Callback_Politicians {
+	private class DBImplementer_Politicians implements ICallbackPoliticians {
 		private DBHandler dbHandler;
 
 		public DBImplementer_Politicians(DBHandler dbHandler) {
@@ -64,16 +68,10 @@ public class Controller {
 			 * Ändra här för att byta vad som hämtas syso sker i klassen
 			 */
 			// new GoogleSearchHandler().getPoliticians_Twitter(politicians);
-			new GoogleSearchHandler().getPoliticians_Facebook(politicians);
+			new GSHandler().getPoliticians_Facebook(politicians);
 		}
 	}
 
-	// public static void main(String[] args){
-	// new Controller();
-	// }
-	//
-
-	// Metoder som Kajsa beh�ver
 
 	/**
 	 * Returns a JSON response containing images of all the party logos

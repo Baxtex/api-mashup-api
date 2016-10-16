@@ -14,16 +14,16 @@ import org.codehaus.jettison.json.JSONObject;
 //import databaseObjects.AbbreviationTable;
 import databaseObjects.Politician;
 
-public class Riksdagen {
+public class RDHandler {
 
 	private final String URL = "http://data.riksdagen.se/personlista/?fnamn=&enamn=&parti=&utformat=json&charset=UTF-8";
-	private Callback_Politicians callback;
+	private ICallbackPoliticians callback;
 
-	public Riksdagen() {
+	public RDHandler() {
 
 	}
 
-	public void registerCallback(Callback_Politicians callback) {
+	public void registerCallback(ICallbackPoliticians callback) {
 		this.callback = callback;
 	}
 

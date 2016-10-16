@@ -51,9 +51,8 @@ public class API {
 
 	/**
 	 * 
-	 * This method is serious and it's purpose is to return a JSON Array
-	 * containing posts from both twitter and facebook. The question is how we
-	 * are going to retrieve the ids.
+	 * This method is super cereal and it's purpose is to return a JSON Array
+	 * containing posts from both twitter and facebook.
 	 * 
 	 * @return
 	 */
