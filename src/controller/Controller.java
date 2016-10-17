@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import database.*;
@@ -59,6 +60,42 @@ public class Controller {
 			jsonArrayT = twHandler.getPosts(5, tId);
 			jsonObject.put("fbposts", jsonArrayFB);
 			jsonObject.put("twposts", jsonArrayT);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
+	
+	/**
+	 * Retrieves post from a specific party
+	 * @param party
+	 * @return
+	 */
+	public JSONObject getSocialPostsSpecificParty(String party) {
+		JSONArray jsonArrayFB = new JSONArray();
+		JSONArray jsonArrayT = new JSONArray();
+		JSONArray jsonArray = new JSONArray();
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("HTTP_CODE", "200");
+			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
+			
+			LinkedList<Politician> politicians = dbHandler.getPoliticians();
+			Iterator iter = politicians.iterator();
+			while(iter.hasNext()){
+				Politician p = (Politician) iter.next();
+				System.out.println("HUHUH " + String.valueOf(p.getFacebookId()));
+				System.out.println("KORV " + p.getTwitterId());
+				System.out.println("KORV " + p.getName());
+				jsonArrayFB = fbHandler.getPosts(3, String.valueOf(p.getFacebookId())); //FB
+				jsonArrayT = twHandler.getPosts(3, p.getTwitterId()); //twitter
+				
+				jsonArray.put(jsonArrayFB);
+				jsonArray.put(jsonArrayT);
+				
+				jsonObject.put("name", p.getName());
+				jsonObject.put("posts", jsonArray);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

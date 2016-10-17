@@ -2,6 +2,7 @@ package api;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -51,15 +52,44 @@ public class API {
 
 	/**
 	 * 
+	 * This method should return posts from specific party.
+	 * 
+	 * @return
+	 */
+	@GET
+	@Path("/posts/{party}")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getPartyPosts(@PathParam("party") String party) {
+
+		
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject = controller.getSocialPostsSpecificParty(party);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*")
+					.entity("Server was not able to process your request").build();
+		}
+
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * 
 	 * This method is super cereal and it's purpose is to return a JSON Array
 	 * containing posts from both twitter and facebook.
 	 * 
 	 * @return
 	 */
 	@GET
-	@Path("/posts")
+	@Path("/testPosts")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getPosts() {
+	public Response getPostsTest() {
 
 		String fbId = "1064287767"; // Facebook id.
 		String tId = "@ingemarnilsson_"; // Twitter id.

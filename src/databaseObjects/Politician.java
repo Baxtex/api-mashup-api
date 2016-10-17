@@ -5,13 +5,13 @@ public class Politician {
 	private String party;
 	private String facebook_URL;
 	private String twitter_URL;
-	private int facebookId;
+	private long facebookId;
 	
-	public int getFacebookId() {
+	public long getFacebookId() {
 		return facebookId;
 	}
 
-	public void setFacebookId(int facebookId) {
+	public void setFacebookId(long facebookId) {
 		this.facebookId = facebookId;
 	}
 

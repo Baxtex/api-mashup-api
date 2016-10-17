@@ -313,6 +313,10 @@ public class DBHandler {
 				Politician politician = new Politician();
 				politician.setName(rs.getString("name"));
 				politician.setParty(rs.getString("party"));
+				politician.setFacebook_URL((rs.getString("fb_url")));
+				politician.setTwitter_URL((rs.getString("twitter_url")));
+				politician.setFacebookId((rs.getLong("fID")));
+				politician.setTwitterId((rs.getString("tID")));
 				politicians.add(politician);
 			}
 		} catch (SQLException e) {
@@ -324,24 +328,25 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a list of all politicians in the database with their URLs.
+	 * Returns a list of all politicians in the database from a specific party
 	 * 
 	 * @return
 	 */
 
-	public LinkedList<Politician> getPoliticiansURL() {
+	public LinkedList<Politician> getPoliticians(String party) {
 		LinkedList<Politician> politicians = new LinkedList<Politician>();
 		Connection connection = getConnection();
 		try {
-			String query = "select * from politicians";
+			String query = "SELECT * FROM politicians WHERE party = ?";
 			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setString(1, party);
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				Politician politician = new Politician();
 				politician.setName(rs.getString("name"));
 				politician.setParty(rs.getString("party"));
-				politician.setFacebook_URL((rs.getString("fb_url")));
-				politician.setTwitter_URL((rs.getString("twitter_url")));
+				politician.setFacebookId((rs.getLong("fID")));
+				politician.setTwitterId((rs.getString("tID")));
 				politicians.add(politician);
 			}
 		} catch (SQLException e) {
@@ -422,7 +427,7 @@ public class DBHandler {
 	 * facebook ID's and inserts them into the database.
 	 */
 	private void setPoliticiansFacebookIds() {
-		LinkedList<Politician> politicians = getPoliticiansURL();
+		LinkedList<Politician> politicians = getPoliticians();
 		int i = 0;
 		while (i < politicians.size()) {
 			i++;
@@ -476,7 +481,7 @@ public class DBHandler {
 	 * twitter URL to find their Twitter ID's-
 	 */
 	private void setPoliticiansTwitterIds() {
-		LinkedList<Politician> politicians = getPoliticiansURL();
+		LinkedList<Politician> politicians = getPoliticians();
 		int i = 0;
 		while (i < politicians.size()) {
 			i++;
