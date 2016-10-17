@@ -23,9 +23,9 @@ public class Controller {
 	}
 
 	// public static void main(String[] args){
-	// 		new Controller();
+	// new Controller();
 	// }
-	
+
 	private void init() {
 		fbHandler = new FBHandler();
 		System.out.println("fbHandler up");
@@ -37,9 +37,9 @@ public class Controller {
 		System.out.println("gsHandler up");
 		rdHandler = new RDHandler();
 		System.out.println("rdHandler up");
-//		rdHandler.registerCallback(new DBImplementer_Politicians(dbHandler));
+		// rdHandler.registerCallback(new DBImplementer_Politicians(dbHandler));
 		System.out.println("callback set");
-//		rdHandler.addPoliticiansToDB();
+		// rdHandler.addPoliticiansToDB();
 		System.out.println("politicians retrieved");
 	}
 
@@ -65,64 +65,51 @@ public class Controller {
 		}
 		return jsonObject;
 	}
-	
+
 	/**
 	 * Retrieves post from a specific party
+	 * 
 	 * @param party
 	 * @return
 	 */
 	public JSONObject getSocialPostsSpecificParty(String party) {
-		JSONArray jsonArrayFB = new JSONArray();
-		JSONArray jsonArrayT = new JSONArray();
-		JSONArray jsonArray = new JSONArray();
-		JSONObject jsonObject_return = new JSONObject();
+		JSONObject resultObject = new JSONObject();
+		JSONArray pArray = new JSONArray();
 		try {
-			jsonObject_return.put("HTTP_CODE", "200");
-			jsonObject_return.put("MSG", "jsonArray successfully retrieved, v1");
-			
+			resultObject.put("HTTP_CODE", "200");
+			resultObject.put("MSG", "jsonArray successfully retrieved, v1");
+
 			LinkedList<Politician> politicians = dbHandler.getPoliticians(party);
-			Iterator iter = politicians.iterator();
-			while(iter.hasNext()){
-				
+			Iterator<Politician> iter = politicians.iterator();
+			while (iter.hasNext()) {
 				Politician p = (Politician) iter.next();
-				if(p.getFacebookId() != 0 && p.getTwitterId() != null){
-					System.out.println("We got both fb and twitter | " + p.getName());
-					jsonArrayFB = fbHandler.getPosts(1, String.valueOf(p.getFacebookId())); //FB
-					if(jsonArrayFB.length() > 0)
-						jsonArray.put(jsonArrayFB);
-//					jsonArrayT = twHandler.getPosts(3, p.getTwitterId()); //twitter
-//					jsonArray.put(jsonArrayT);
-					
-					jsonObject_return.put("name", p.getName());
-					jsonObject_return.put("posts", jsonArray);
+				pArray.put(new JSONObject().put("name", p.getName()));
+
+				if (p.getFacebookId() != 0 && p.getTwitterId() != null) {
+					pArray.put(new JSONObject().put("fbPosts",
+							fbHandler.getPosts(3, String.valueOf(p.getFacebookId()).toString())));
+					pArray.put(new JSONObject().put("twPosts", twHandler.getPosts(3, p.getTwitterId()).toString()));
 				}
-				if(p.getFacebookId() != 0 && p.getTwitterId() == null){
-					System.out.println("We got only fb | " + p.getName());
-					jsonArrayFB = fbHandler.getPosts(1, String.valueOf(p.getFacebookId())); //FB
-					if(jsonArrayFB.length() > 0)
-						jsonArray.put(jsonArrayFB);
-					
-					jsonObject_return.put("name", p.getName());
-					jsonObject_return.put("posts", jsonArray);
+
+				if (p.getFacebookId() == 0 && p.getTwitterId() == null) {
+					pArray.put(new JSONObject().put("fbPosts", "None"));
+					pArray.put(new JSONObject().put("twPosts", "None"));
 				}
-				if(p.getFacebookId() == 0 && p.getTwitterId() != null){
-					System.out.println("We got only twitter | " + p.getName());
-//					jsonArrayT = twHandler.getPosts(3, p.getTwitterId()); //twitter
-//					jsonArray.put(jsonArrayT);
-//					
-//					jsonObject_return.put("name", p.getName());
-//					jsonObject_return.put("posts", jsonArray);
+
+				if (p.getFacebookId() != 0 && p.getTwitterId() == null) {
+					pArray.put(new JSONObject().put("fbPosts",
+							fbHandler.getPosts(3, String.valueOf(p.getFacebookId()).toString())));
+
 				}
-				System.out.println(jsonObject_return.toString());
-//				System.out.println(jsonArray.toString());
-//				jsonObject_return.put("name", p.getName());
-//				jsonObject_return.put("posts", jsonArray);
+				if (p.getFacebookId() == 0 && p.getTwitterId() != null) {
+					pArray.put(new JSONObject().put("twPosts", twHandler.getPosts(3, p.getTwitterId()).toString()));
+				}
+				resultObject.put("politicians", pArray);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("Done");
-		return jsonObject_return;
+		return resultObject;
 	}
 
 	private class DBImplementer_Politicians implements ICallbackPoliticians {
@@ -138,12 +125,13 @@ public class Controller {
 			System.out.println("Politicians added to Database");
 		}
 	}
+
 	/**
 	 * Returns a JSON response containing images of all the party logos
 	 * 
 	 * @return
 	 */
-	
+
 	public Response getPartyLogos() {
 		return null;
 	}

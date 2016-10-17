@@ -489,7 +489,17 @@ public class DBHandler {
 			String twitterUrl = p.getTwitter_URL();
 			if (twitterUrl != null) {
 				String twitterUrlSub = "@" + twitterUrl.substring(20);
-				System.out.println(twitterUrlSub);
+				
+				char[] subArray = twitterUrlSub.toCharArray();
+				int pos1 = subArray.length;
+				for (int j = 0; j < subArray.length; j++) {
+					if (subArray[j] == '?') {
+						pos1 = j;
+					}
+				}
+				twitterUrlSub = twitterUrlSub.substring(0,pos1);
+				System.out.println("twitter urlsub "+twitterUrlSub);
+				
 				addIdDB("UPDATE politicians SET tID = ? WHERE twitter_url = ?", twitterUrlSub, twitterUrl);
 			}
 		}
@@ -526,6 +536,7 @@ public class DBHandler {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// DBHandler db = new DBHandler();
+//		DBHandler db = new DBHandler();
+
 	}
 }

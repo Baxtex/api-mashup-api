@@ -49,7 +49,8 @@ public class FBHandler implements IExternalAPIs {
 		try {
 			ResponseList<Post> feed = facebook.getPosts(id, reader);
 			for (Post post : feed) {
-				jArray.put(new JSONObject().put("FBpost", post.getMessage()));
+				jArray.put(new JSONObject().put("post", post.getMessage()).put("date",post.getCreatedTime()));
+			
 			}
 		} catch (FacebookException | JSONException e) {
 			e.printStackTrace();

@@ -50,7 +50,7 @@ public class TWHandler implements IExternalAPIs {
 		try {
 			List<Status> statuses = twitter.getUserTimeline(id, paging);
 			for (Status status : statuses) {
-				jArray.put(new JSONObject().put("Tpost", status.getText()));
+				jArray.put(new JSONObject().put("post", status.getText()).put("date", status.getCreatedAt()).put("retweets", status.getRetweetCount()));
 			}
 		} catch (JSONException | TwitterException e) {
 			e.printStackTrace();
