@@ -29,7 +29,7 @@ public class FBHandler implements IExternalAPIs {
 		ConfigurationBuilder cb = new ConfigurationBuilder();
 		cb.setDebugEnabled(true).setOAuthAppId("1781740452084874").setOAuthAppSecret("cc2f66af625b9ce52adc1990b9050dc8")
 				.setOAuthAccessToken("1781740452084874|HRv3MSZw2nVUf5j8C8G6ZsERxvo")
-				.setOAuthPermissions("email,publish_stream");
+				.setOAuthPermissions("user_posts,email,publish_stream");
 		ff = new FacebookFactory(cb.build());
 		facebook = ff.getInstance();
 	}

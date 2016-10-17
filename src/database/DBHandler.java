@@ -167,6 +167,7 @@ public class DBHandler {
 				statement.setString(2, politicians.get(i).getParty());
 				statement.setString(3, politicians.get(i).getFacebook_URL());
 				statement.setString(4, politicians.get(i).getTwitter_URL());
+
 				statement.executeUpdate();
 				// closeConnection(connection);
 				System.out.println("DBHandler: Added a list of politicians to database");
@@ -415,67 +416,104 @@ public class DBHandler {
 		return comments;
 	}
 
-	public LinkedList<Politician> getPoliticiansIds() {
-
+	/**
+	 * ADMIN METHOD!
+	 * This method loops over the politicians and converts their facebook URL to
+	 * facebook ID's and inserts them into the database.
+	 */
+	private void setPoliticiansFacebookIds() {
 		LinkedList<Politician> politicians = getPoliticiansURL();
-
-		Iterator iter = politicians.iterator();
-
-		while (iter.hasNext()) {
-			Politician p = (Politician) iter.next();
-			System.out.println("url " + p.getFacebook_URL());
-			Document doc;
-
+		int i = 0;
+		while (i < politicians.size()) {
+			i++;
+			Politician p = (Politician) politicians.get(i);
+			System.out.println("Counter: " + i + " url " + p.getFacebook_URL());
 			try {
 				if (p.getFacebook_URL() != null) {
+					Document doc;
 					doc = Jsoup.connect(p.getFacebook_URL()).get();
-					Elements docElement = doc.select("a[href*=profile_id");
+					Elements docElement = doc.select("a[href*=profile_id]");
 					System.out.println("Printing docElement...");
 					System.out.println(docElement);
-
+					String newString = null;
 					if (!docElement.isEmpty()) {
 						String subStr = "";
-						if (docElement.get(0).toString().contains("m.facebook.com")) {
-
+						if (p.getFacebook_URL().startsWith("https://m.facebook.com/")) {
+							System.out.println("Starts with m.facebook.");
 							subStr = docElement.get(0).toString().substring(5, 110);
 						} else {
-
 							subStr = docElement.get(0).toString().substring(60, 110);
 						}
-						System.out.println("Printing...");
+						System.out.println("Printing subStr...");
 						System.out.println(subStr);
-
-						char[] array = subStr.toCharArray();
-						String newString;
+						char[] subArray = subStr.toCharArray();
 						int pos0 = 0;
 						int pos1 = 0;
-						for (int i = 0; i < array.length; i++) {
-							if (array[i] == '=') {
-								pos0 = i + 1;
-
+						for (int j = 0; j < subArray.length; j++) {
+							if (subArray[j] == '=') {
+								pos0 = j + 1;
 							}
-							if (array[i] == '&') {
-								pos1 = i--;
+							if (subArray[j] == '&') {
+								pos1 = j--;
 								break;
 							}
-
 						}
 						System.out.println(pos0 + "   och  " + pos1);
-
 						newString = subStr.substring(pos0, pos1);
 						System.out.println("FBId is: " + newString);
 					}
-
+					addIdDB("UPDATE politicians SET fID = ? WHERE fb_url = ?", newString, p.getFacebook_URL());
 				}
 			} catch (IOException e) {
-
 				System.out.println("Socket timeout");
 			}
-
 		}
+	}
 
-		return null;
+	/**
+	 * ADMIN METHOD 
+	 * This method loops over the politicians and uses their
+	 * twitter URL to find their Twitter ID's-
+	 */
+	private void setPoliticiansTwitterIds() {
+		LinkedList<Politician> politicians = getPoliticiansURL();
+		int i = 0;
+		while (i < politicians.size()) {
+			i++;
+			System.out.println(i);
+			Politician p = (Politician) politicians.get(i);
+			String twitterUrl = p.getTwitter_URL();
+			if (twitterUrl != null) {
+				String twitterUrlSub = "@" + twitterUrl.substring(20);
+				System.out.println(twitterUrlSub);
+				addIdDB("UPDATE politicians SET tID = ? WHERE twitter_url = ?", twitterUrlSub, twitterUrl);
+			}
+		}
+	}
 
+	/**
+	 * ADMIN METHOD! 
+	 * Adds id to database.
+	 * 
+	 * @param query - the statement to execute.
+	 * @param id - id to add.
+	 * @param url- the url corresponding each id.
+	 */
+	private void addIdDB(String query, String id, String url) {
+		Connection connection = getConnection();
+		PreparedStatement statement;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setString(1, id);
+			statement.setString(2, url);
+			statement.executeUpdate();
+			closeConnection(connection);
+			System.out.println("DBHandler: Added id to db.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
 	}
 
 	/**
@@ -484,9 +522,6 @@ public class DBHandler {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		DBHandler db = new DBHandler();
-		System.out.println(db.getPoliticiansIds());
-
+		// DBHandler db = new DBHandler();
 	}
-
 }
