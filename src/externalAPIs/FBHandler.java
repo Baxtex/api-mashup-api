@@ -44,6 +44,8 @@ public class FBHandler implements IExternalAPIs {
 	public JSONArray getPosts(int amount, String id) {
 		Reading reader = new Reading().limit(amount);
 		JSONArray jArray = new JSONArray();
+		
+		
 		try {
 			ResponseList<Post> feed = facebook.getPosts(id, reader);
 			for (Post post : feed) {

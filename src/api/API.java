@@ -61,8 +61,8 @@ public class API {
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPosts() {
 
-		String fbId = "118943054880945"; // Annie löfs fb id.
-		String tId = "@annieloof"; // Annie Löfs Twitter id.
+		String fbId = "118943054880945"; // Annie lï¿½fs fb id.
+		String tId = "@annieloof"; // Annie Lï¿½fs Twitter id.
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject = controller.getSocialPosts(fbId, tId);

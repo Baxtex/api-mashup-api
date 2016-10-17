@@ -5,12 +5,25 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.LinkedList;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import databaseObjects.Comment;
 import databaseObjects.Party;
 import databaseObjects.Politician;
 import databaseObjects.Post;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class DBHandler {
 
@@ -101,7 +114,7 @@ public class DBHandler {
 				statement.setString(1, parties.get(i).getName());
 				statement.setString(2, parties.get(i).getNameShort());
 				statement.executeUpdate();
-				
+
 				System.out.println("DBHandler: Added a list of parties to database");
 			}
 		} catch (SQLException e) {
@@ -128,7 +141,7 @@ public class DBHandler {
 			statement.setString(3, politician.getFacebook_URL());
 			statement.setString(4, politician.getTwitter_URL());
 			statement.executeUpdate();
-//			closeConnection(connection);
+			// closeConnection(connection);
 			System.out.println("DBHandler: Added politican to database");
 		} catch (SQLException e) {
 			System.out.print("DBHandler: Exception when adding politican to database");
@@ -155,7 +168,7 @@ public class DBHandler {
 				statement.setString(3, politicians.get(i).getFacebook_URL());
 				statement.setString(4, politicians.get(i).getTwitter_URL());
 				statement.executeUpdate();
-//				closeConnection(connection);
+				// closeConnection(connection);
 				System.out.println("DBHandler: Added a list of politicians to database");
 			}
 		} catch (SQLException e) {
@@ -163,7 +176,7 @@ public class DBHandler {
 		} finally {
 			closeConnection(connection);
 		}
-//		closeConnection(connection);
+		// closeConnection(connection);
 	}
 
 	/**
@@ -310,6 +323,35 @@ public class DBHandler {
 	}
 
 	/**
+	 * Returns a list of all politicians in the database with their URLs.
+	 * 
+	 * @return
+	 */
+
+	public LinkedList<Politician> getPoliticiansURL() {
+		LinkedList<Politician> politicians = new LinkedList<Politician>();
+		Connection connection = getConnection();
+		try {
+			String query = "select * from politicians";
+			PreparedStatement statement = connection.prepareStatement(query);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				Politician politician = new Politician();
+				politician.setName(rs.getString("name"));
+				politician.setParty(rs.getString("party"));
+				politician.setFacebook_URL((rs.getString("fb_url")));
+				politician.setTwitter_URL((rs.getString("twitter_url")));
+				politicians.add(politician);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return politicians;
+	}
+
+	/**
 	 * Returns a list of all posts from the specified politican
 	 * 
 	 * @param politican
@@ -373,8 +415,77 @@ public class DBHandler {
 		return comments;
 	}
 
+	public LinkedList<Politician> getPoliticiansIds() {
+
+		LinkedList<Politician> politicians = getPoliticiansURL();
+
+		Iterator iter = politicians.iterator();
+
+		while (iter.hasNext()) {
+			Politician p = (Politician) iter.next();
+			System.out.println("url " + p.getFacebook_URL());
+			Document doc;
+
+			try {
+				if (p.getFacebook_URL() != null) {
+					doc = Jsoup.connect(p.getFacebook_URL()).get();
+					Elements docElement = doc.select("a[href*=profile_id");
+					System.out.println("Printing docElement...");
+					System.out.println(docElement);
+
+					if (!docElement.isEmpty()) {
+						String subStr = "";
+						if (docElement.get(0).toString().contains("m.facebook.com")) {
+
+							subStr = docElement.get(0).toString().substring(5, 110);
+						} else {
+
+							subStr = docElement.get(0).toString().substring(60, 110);
+						}
+						System.out.println("Printing...");
+						System.out.println(subStr);
+
+						char[] array = subStr.toCharArray();
+						String newString;
+						int pos0 = 0;
+						int pos1 = 0;
+						for (int i = 0; i < array.length; i++) {
+							if (array[i] == '=') {
+								pos0 = i + 1;
+
+							}
+							if (array[i] == '&') {
+								pos1 = i--;
+								break;
+							}
+
+						}
+						System.out.println(pos0 + "   och  " + pos1);
+
+						newString = subStr.substring(pos0, pos1);
+						System.out.println("FBId is: " + newString);
+					}
+
+				}
+			} catch (IOException e) {
+
+				System.out.println("Socket timeout");
+			}
+
+		}
+
+		return null;
+
+	}
+
+	/**
+	 * Testing some stuff.
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		DBHandler db = new DBHandler();
+		System.out.println(db.getPoliticiansIds());
 
 	}
 

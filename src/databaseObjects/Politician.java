@@ -5,6 +5,26 @@ public class Politician {
 	private String party;
 	private String facebook_URL;
 	private String twitter_URL;
+	private int facebookId;
+	
+	public int getFacebookId() {
+		return facebookId;
+	}
+
+	public void setFacebookId(int facebookId) {
+		this.facebookId = facebookId;
+	}
+
+	public String getTwitterId() {
+		return twitterId;
+	}
+
+	public void setTwitterId(String twitterId) {
+		this.twitterId = twitterId;
+	}
+
+	private String twitterId;
+	
 
 	public Politician() {
 		
