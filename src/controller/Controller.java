@@ -80,7 +80,7 @@ public class Controller {
 			jsonObject.put("HTTP_CODE", "200");
 			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
 			
-			LinkedList<Politician> politicians = dbHandler.getPoliticians();
+			LinkedList<Politician> politicians = dbHandler.getPoliticians(party);
 			Iterator iter = politicians.iterator();
 			while(iter.hasNext()){
 				Politician p = (Politician) iter.next();

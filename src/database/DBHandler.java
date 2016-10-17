@@ -344,7 +344,6 @@ public class DBHandler {
 			while (rs.next()) {
 				Politician politician = new Politician();
 				politician.setName(rs.getString("name"));
-				politician.setParty(rs.getString("party"));
 				politician.setFacebookId((rs.getLong("fID")));
 				politician.setTwitterId((rs.getString("tID")));
 				politicians.add(politician);
