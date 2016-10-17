@@ -75,31 +75,52 @@ public class Controller {
 		JSONArray jsonArrayFB = new JSONArray();
 		JSONArray jsonArrayT = new JSONArray();
 		JSONArray jsonArray = new JSONArray();
-		JSONObject jsonObject = new JSONObject();
+		JSONObject jsonObject_return = new JSONObject();
 		try {
-			jsonObject.put("HTTP_CODE", "200");
-			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
+			jsonObject_return.put("HTTP_CODE", "200");
+			jsonObject_return.put("MSG", "jsonArray successfully retrieved, v1");
 			
 			LinkedList<Politician> politicians = dbHandler.getPoliticians(party);
 			Iterator iter = politicians.iterator();
 			while(iter.hasNext()){
+				
 				Politician p = (Politician) iter.next();
-				System.out.println("HUHUH " + String.valueOf(p.getFacebookId()));
-				System.out.println("KORV " + p.getTwitterId());
-				System.out.println("KORV " + p.getName());
-				jsonArrayFB = fbHandler.getPosts(3, String.valueOf(p.getFacebookId())); //FB
-				jsonArrayT = twHandler.getPosts(3, p.getTwitterId()); //twitter
-				
-				jsonArray.put(jsonArrayFB);
-				jsonArray.put(jsonArrayT);
-				
-				jsonObject.put("name", p.getName());
-				jsonObject.put("posts", jsonArray);
+				if(p.getFacebookId() != 0 && p.getTwitterId() != null){
+					System.out.println("We got both fb and twitter | " + p.getName());
+					jsonArrayFB = fbHandler.getPosts(1, String.valueOf(p.getFacebookId())); //FB
+					jsonArray.put(jsonArrayFB);
+//					jsonArrayT = twHandler.getPosts(3, p.getTwitterId()); //twitter
+//					jsonArray.put(jsonArrayT);
+					
+					jsonObject_return.put("name", p.getName());
+					jsonObject_return.put("posts", jsonArray);
+				}
+				if(p.getFacebookId() != 0 && p.getTwitterId() == null){
+					System.out.println("We got only fb | " + p.getName());
+					jsonArrayFB = fbHandler.getPosts(1, String.valueOf(p.getFacebookId())); //FB
+					jsonArray.put(jsonArrayFB);
+					
+					jsonObject_return.put("name", p.getName());
+					jsonObject_return.put("posts", jsonArray);
+				}
+				if(p.getFacebookId() == 0 && p.getTwitterId() != null){
+					System.out.println("We got only twitter | " + p.getName());
+//					jsonArrayT = twHandler.getPosts(3, p.getTwitterId()); //twitter
+//					jsonArray.put(jsonArrayT);
+//					
+//					jsonObject_return.put("name", p.getName());
+//					jsonObject_return.put("posts", jsonArray);
+				}
+				System.out.println(jsonObject_return.toString());
+//				System.out.println(jsonArray.toString());
+//				jsonObject_return.put("name", p.getName());
+//				jsonObject_return.put("posts", jsonArray);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return jsonObject;
+		System.out.println("Done");
+		return jsonObject_return;
 	}
 
 	private class DBImplementer_Politicians implements ICallbackPoliticians {

@@ -64,6 +64,7 @@ public class API {
 		
 		JSONObject jsonObject = new JSONObject();
 		try {
+			System.out.println(party);
 			jsonObject = controller.getSocialPostsSpecificParty(party);
 		} catch (Exception e) {
 			e.printStackTrace();
