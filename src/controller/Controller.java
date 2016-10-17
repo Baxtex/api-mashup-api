@@ -88,7 +88,8 @@ public class Controller {
 				if(p.getFacebookId() != 0 && p.getTwitterId() != null){
 					System.out.println("We got both fb and twitter | " + p.getName());
 					jsonArrayFB = fbHandler.getPosts(1, String.valueOf(p.getFacebookId())); //FB
-					jsonArray.put(jsonArrayFB);
+					if(jsonArrayFB.length() > 0)
+						jsonArray.put(jsonArrayFB);
 //					jsonArrayT = twHandler.getPosts(3, p.getTwitterId()); //twitter
 //					jsonArray.put(jsonArrayT);
 					
@@ -98,7 +99,8 @@ public class Controller {
 				if(p.getFacebookId() != 0 && p.getTwitterId() == null){
 					System.out.println("We got only fb | " + p.getName());
 					jsonArrayFB = fbHandler.getPosts(1, String.valueOf(p.getFacebookId())); //FB
-					jsonArray.put(jsonArrayFB);
+					if(jsonArrayFB.length() > 0)
+						jsonArray.put(jsonArrayFB);
 					
 					jsonObject_return.put("name", p.getName());
 					jsonObject_return.put("posts", jsonArray);
