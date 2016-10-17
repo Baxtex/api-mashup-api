@@ -87,8 +87,8 @@ public class Controller {
 
 				if (p.getFacebookId() != 0 && p.getTwitterId() != null) {
 					pArray.put(new JSONObject().put("fbPosts",
-							fbHandler.getPosts(3, String.valueOf(p.getFacebookId()).toString())));
-					pArray.put(new JSONObject().put("twPosts", twHandler.getPosts(3, p.getTwitterId()).toString()));
+							fbHandler.getPosts(3, String.valueOf(p.getFacebookId()))));
+					pArray.put(new JSONObject().put("twPosts", twHandler.getPosts(3, p.getTwitterId())));
 				}
 
 				if (p.getFacebookId() == 0 && p.getTwitterId() == null) {
