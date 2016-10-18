@@ -65,7 +65,6 @@ public class API {
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPartyPosts(@PathParam("party") String party) {
 
-		
 		JSONObject jsonObject = new JSONObject();
 		try {
 			System.out.println(party);
@@ -81,6 +80,7 @@ public class API {
 	
 	/**
 	 * Returns data about all politicians from a specified party, formatted as a JSON response
+	 * @param party the short name of the party, f.e. "s"
 	 * @return
 	 */
 	
@@ -90,15 +90,36 @@ public class API {
 	public Response getPoliticiansByParty(@PathParam("party") String party) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			System.out.println("From API: Recieved request of politicians belonging to party: " + party);
 			jsonObject = controller.getPoliticiansByParty(party);
-			System.out.println("From API: Trying to send JSONObject" + jsonObject.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
 		}
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
+	
+	/**
+	 * Returns posts from a specified politician, formatted as a JSON response
+	 * @param party the short name of the party, f.e. "s"
+	 * @param id the id of the politician stored in our database
+	 * @return 
+	 */
+
+	@GET
+	@Path("posts/{party}/{politician}")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getPostsByPolitican(@PathParam ("party") String party, @PathParam("politician") String id) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject = controller.getPostsByPolitician(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
+		}
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	
 	
 	
 	
