@@ -6,6 +6,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -22,6 +23,9 @@ import controller.Controller;
 
 @Path("/v1")
 public class API {
+	
+	private final String ERR_MSG = "Server was not able to process your request";
+	
 	private Controller controller = new Controller();
 
 	/**
@@ -72,6 +76,27 @@ public class API {
 					.entity("Server was not able to process your request").build();
 		}
 
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	/**
+	 * Returns data about all politicians from a specified party, formatted as a JSON response
+	 * @return
+	 */
+	
+	@GET
+	@Path("politicians/{party}")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getPoliticiansByParty(@PathParam("party") String party) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			System.out.println("From API: Recieved request of politicians belonging to party: " + party);
+			jsonObject = controller.getPoliticiansByParty(party);
+			System.out.println("From API: Trying to send JSONObject" + jsonObject.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
+		}
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
