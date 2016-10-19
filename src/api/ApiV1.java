@@ -22,7 +22,7 @@ import controller.Controller;
  */
 
 @Path("/v1")
-public class API {
+public class ApiV1 {
 	
 	private final String ERR_MSG = "Server was not able to process your request";
 	
