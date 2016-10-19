@@ -6,9 +6,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import controller.Controller;
@@ -21,11 +19,10 @@ import controller.Controller;
  *
  */
 
-@Path("/v1")
+@Path("/v1/")
 public class ApiV1 {
-	
+
 	private final String ERR_MSG = "Server was not able to process your request";
-	
 	private Controller controller = new Controller();
 
 	/**
@@ -35,55 +32,123 @@ public class ApiV1 {
 	 */
 	@GET
 	@Produces(MediaType.TEXT_HTML)
-	public String print1() {
-		return "Please specify what resource you need.";
+	public Response print1() {
+		return Response.ok("Please specify your resource.").header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	/**
-	 * Prints to the screen if we are in /foobar
+	 * Return posts from all politicans.
 	 * 
 	 * @return
-	 * @throws JSONException
 	 */
 	@GET
-	@Path("/foobar")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String print2() throws JSONException {
+	@Path("posts")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getAllPosts() {
+
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.append("Is this working?", "YES");
-		return jsonObject.toString();
+		try {
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
+		}
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	/**
 	 * 
-	 * This method should return posts from specific party.
+	 * Return posts from all politicans in specific party.
 	 * 
 	 * @return
 	 */
 	@GET
-	@Path("/posts/{party}")
+	@Path("posts/{party}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPartyPosts(@PathParam("party") String party) {
 
 		JSONObject jsonObject = new JSONObject();
 		try {
-			System.out.println(party);
-			jsonObject = controller.getSocialPostsSpecificParty(party);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Response.status(500).header("Access-Control-Allow-Origin", "*")
-					.entity("Server was not able to process your request").build();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
 		}
 
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
-	
+
 	/**
-	 * Returns data about all politicians from a specified party, formatted as a JSON response
+	 * Return posts from specific politician in specific party.
+	 * 
+	 * @param party the short name of the party, f.e. "s"
+	 * @param id the id of the politician stored in our database
+	 * @return
+	 */
+
+	@GET
+	@Path("posts/{party}/{politician}")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getPostsByPolitican(@PathParam("party") String party, @PathParam("politician") String id) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			// jsonObject = controller.getPostsByPolitician(id);
+			jsonObject = controller.getPostByPolitican();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
+		}
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+	}
+
+	/**
+	 * Return specified number of comments for a polititan.
+	 * 
+	 * @param party
+	 * @param id
+	 * @param nbrComments
+	 * @return
+	 */
+	@GET
+	@Path("posts/{party}/{politician}/{nbrComments}")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getPostsCommentsByPolitican(@PathParam("party") String party, @PathParam("politician") String id,
+			@PathParam("nbrComments") String nbrComments) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			// jsonObject = controller.getSomething.;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
+		}
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+	}
+
+	/**
+	 * Return all politician objects.
+	 * 
+	 * @param party
+	 * @return
+	 */
+	@GET
+	@Path("politicians")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getPoliticians() {
+		JSONObject jsonObject = new JSONObject();
+		try {
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
+		}
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+	}
+
+	/**
+	 * Return all politican objects from specific party.
+	 * 
 	 * @param party the short name of the party, f.e. "s"
 	 * @return
 	 */
-	
+
 	@GET
 	@Path("politicians/{party}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -97,36 +162,64 @@ public class ApiV1 {
 		}
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
-	
+
 	/**
-	 * Returns posts from a specified politician, formatted as a JSON response
+	 * Return specific politican objects from specific party.
+	 * 
 	 * @param party the short name of the party, f.e. "s"
-	 * @param id the id of the politician stored in our database
-	 * @return 
+	 * @return
 	 */
 
 	@GET
-	@Path("posts/{party}/{politician}")
+	@Path("politicians/{party}/{politician}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getPostsByPolitican(@PathParam ("party") String party, @PathParam("politician") String id) {
+	public Response getSpecificPoliticianByParty(@PathParam("party") String party, @PathParam("politician") String id) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			//jsonObject = controller.getPostsByPolitician(id);
-			jsonObject = controller.getPostByPolitican();
+			jsonObject = controller.getPoliticiansByParty(party);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
 		}
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
+	/**
+	 * Return a specific party object.
+	 * 
+	 * @return
+	 */
+	@GET
+	@Path("party")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getPartyInformation() {
+		JSONObject jsonObject = new JSONObject();
+		try {
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
+		}
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+	}
+
+	/**
+	 * Return a specific party object.
+	 * 
+	 * @return
+	 */
+	@GET
+	@Path("party/{party}")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getSpecificPartyInformation(@PathParam("party") String party) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
+		}
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+	}
+
 	/**
 	 * 
 	 * This method is super cereal and it's purpose is to return a JSON Array
@@ -135,19 +228,18 @@ public class ApiV1 {
 	 * @return
 	 */
 	@GET
-	@Path("/testPosts")
+	@Path("testPosts")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPostsTest() {
 
-		String fbId = "1064287767"; // Facebook id.
-		String tId = "@ingemarnilsson_"; // Twitter id.
+		String fbId = "1064287767";
+		String tId = "@ingemarnilsson_";
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject = controller.getSocialPosts(fbId, tId);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Response.status(500).header("Access-Control-Allow-Origin", "*")
-					.entity("Server was not able to process your request").build();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
 		}
 
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
