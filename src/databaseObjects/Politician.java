@@ -6,6 +6,7 @@ public class Politician {
 	private String facebook_URL;
 	private String twitter_URL;
 	private long facebookId;
+	private int id;
 	
 	public long getFacebookId() {
 		return facebookId;
@@ -21,6 +22,14 @@ public class Politician {
 
 	public void setTwitterId(String twitterId) {
 		this.twitterId = twitterId;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public int getId() {
+		return id;
 	}
 
 	private String twitterId;

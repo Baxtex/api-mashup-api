@@ -317,6 +317,7 @@ public class DBHandler {
 				politician.setTwitter_URL((rs.getString("twitter_url")));
 				politician.setFacebookId((rs.getLong("fID")));
 				politician.setTwitterId((rs.getString("tID")));
+				politician.setId(rs.getInt("id"));
 				politicians.add(politician);
 			}
 		} catch (SQLException e) {
@@ -344,8 +345,10 @@ public class DBHandler {
 			while (rs.next()) {
 				Politician politician = new Politician();
 				politician.setName(rs.getString("name"));
-				politician.setFacebookId((rs.getLong("fID")));
-				politician.setTwitterId((rs.getString("tID")));
+				politician.setFacebookId(rs.getLong("fID"));
+				politician.setTwitterId(rs.getString("tID"));
+				politician.setId(rs.getInt("id"));
+				politician.setParty(rs.getString("party"));
 				politicians.add(politician);
 			}
 		} catch (SQLException e) {

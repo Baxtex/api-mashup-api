@@ -111,7 +111,8 @@ public class API {
 	public Response getPostsByPolitican(@PathParam ("party") String party, @PathParam("politician") String id) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject = controller.getPostsByPolitician(id);
+			//jsonObject = controller.getPostsByPolitician(id);
+			jsonObject = controller.getPostByPolitican();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();

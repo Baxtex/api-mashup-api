@@ -20,7 +20,7 @@ public class Controller {
 	private TWHandler twHandler;
 	private GSHandler gsHandler;
 	
-	private final String MSG_OK = "JSON object successfully retrieved (v1)";
+	private final String MSG_OK = "success";
 	private final String HTTP_OK = "200";
 
 	public Controller() {
@@ -123,23 +123,26 @@ public class Controller {
 	 * @return
 	 */
 	
-	// TODO: Fix img_url and add more data about politician in jsonData array
+	// TODO: Fix img_url and add more data about politician in jsonPolitician object
 	
 	public JSONObject getPoliticiansByParty(String party) {
 		JSONObject jsonObject = new JSONObject();
 		JSONArray jsonPoliticians = new JSONArray();
-		JSONArray jsonData = new JSONArray();
 		try {
-			jsonObject.put("HTTP_CODE", HTTP_OK);
-			jsonObject.put("MSG", MSG_OK);		
 			LinkedList<Politician> politicians = dbHandler.getPoliticians(party);
+			jsonObject.put("HTTP_CODE", HTTP_OK);
+			jsonObject.put("message", MSG_OK);		
+			jsonObject.put("size", politicians.size());
 			for(int i = 0; i < politicians.size(); i++) {
 				Politician p = politicians.get(i);
-				jsonData.put(new JSONObject().put("name", p.getName()));
-				jsonData.put(new JSONObject().put("img_url", "someURL"));
-				jsonPoliticians.put(new JSONObject().put("Politician", jsonData));
+				JSONObject jsonPolitician = new JSONObject();			
+				jsonPolitician.put("id", p.getId());
+				jsonPolitician.put("name", p.getName());
+				jsonPolitician.put("party", p.getParty());
+				jsonPolitician.put("img_url", "someURL");
+				jsonPoliticians.put(jsonPolitician);
 			}
-			jsonObject.put("Politicians", jsonPoliticians);
+			jsonObject.put("politicians", jsonPoliticians);
 		} catch (JSONException e) {
 			System.out.println("Controller: Error while loading jsonObject with politicians from specific party");
 			e.printStackTrace();
@@ -156,20 +159,49 @@ public class Controller {
 	public JSONObject getPostsByPolitician(String id) {
 		JSONObject jsonObject = new JSONObject();
 		JSONArray jsonPosts = new JSONArray();
-		JSONArray jsonData = new JSONArray();
 		try {
-			jsonObject.put("HTTP_CODE", HTTP_OK);
-			jsonObject.put("MSG", MSG_OK);
 			LinkedList<Post> posts = dbHandler.getPosts(Integer.parseInt(id));
+			jsonObject.put("HTTP_CODE", HTTP_OK);
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", posts.size());
 			for(int i = 0; i < posts.size(); i++) {
 				Post p = posts.get(i);
-				jsonData.put(new JSONObject().put("id", p.getID()));
-				jsonData.put(new JSONObject().put("time", p.getTime()));
-				jsonData.put(new JSONObject().put("source", p.getSource()));
-				jsonData.put(new JSONObject().put("text", p.getText()));
-				jsonPosts.put(new JSONObject().put("Post", jsonData));
+				JSONObject jsonPost = new JSONObject();
+				jsonPost.put("id", p.getID());
+				jsonPost.put("time", p.getTime());
+				jsonPost.put("source", p.getSource());
+				jsonPost.put("text", p.getText());
+				jsonPost.put("politician", p.getPolitican());
+				jsonPosts.put(jsonPost);
 			}
-			jsonObject.put("Posts", jsonPosts);
+			jsonObject.put("posts", jsonPosts);
+		} catch (JSONException e) {
+			System.out.println("Controller: Error while loading jsonObject with posts from specific politician");
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
+	
+	// Test method that will be destroyed
+	
+	public JSONObject getPostByPolitican() {
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonPosts = new JSONArray();
+		try {
+			jsonObject.put("HTTP_CODE", HTTP_OK);
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", 5);
+			for(int i = 0; i < 5; i++) {
+				Post p = new Post(i*10, "Detta är ett inlägg", "06:21, 2016-10-19", i+56789, 15, 0, "Facebook");
+				JSONObject post = new JSONObject();
+				post.put("id", p.getID());
+				post.put("time", p.getTime());
+				post.put("source", p.getSource());
+				post.put("text", p.getText());
+				post.put("politician", p.getPolitican());
+				jsonPosts.put(post);
+			}
+				jsonObject.put("posts", jsonPosts);
 		} catch (JSONException e) {
 			System.out.println("Controller: Error while loading jsonObject with posts from specific politician");
 			e.printStackTrace();
