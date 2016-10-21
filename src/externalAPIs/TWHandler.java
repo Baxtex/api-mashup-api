@@ -43,7 +43,7 @@ public class TWHandler implements IExternalAPIs {
 	 * @param id - the id of the user we want posts from.
 	 * @return - JSONArray containing posts.
 	 */
-	public JSONArray getPosts(int amount, String id) {
+	public JSONArray getPostsJSONArray(int amount, String id) {
 		Paging paging = new Paging();
 		paging.setCount(amount);
 		JSONArray jArray = new JSONArray();
@@ -57,5 +57,18 @@ public class TWHandler implements IExternalAPIs {
 			e.printStackTrace();
 		}
 		return jArray;
+	}
+
+	public List<Status> getPostsList(int amount, String id) {
+		Paging paging = new Paging();
+		paging.setCount(amount);
+		List<Status> statuses = null;
+		try {
+			statuses = twitter.getUserTimeline(id, paging);
+
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+		return statuses;
 	}
 }

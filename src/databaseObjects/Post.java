@@ -91,7 +91,7 @@ public class Post {
 	}
 
 	public String toString() {
-		return "\nby: " + politican + "\npostID: " + id + "\ntime: " + date + "\ntext: " + text + "\nsource: " + source
+		return "\npID: " + politican + "\npostID: " + id + "\ntime: " + date + "\ntext: " + text + "\nsource: " + source
 				+ "\nrank: " + rank;
 	}
 }

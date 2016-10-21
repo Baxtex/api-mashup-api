@@ -37,7 +37,7 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return posts from all politicans with the specified amount of posts.
+	 * Return posts from all politicans
 	 * 
 	 * @return
 	 */
@@ -237,7 +237,7 @@ public class ApiV1 {
 		String tId = "@ingemarnilsson_";
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject = controller.getSocialPosts(fbId, tId);
+			// jsonObject = controller.getSocialPosts(fbId, tId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();

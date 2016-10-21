@@ -41,7 +41,7 @@ public class FBHandler implements IExternalAPIs {
 	 * @param id - the id of the user we want posts from.
 	 * @return - JSONArray containing posts.
 	 */
-	public JSONArray getPosts(int amount, String id) {
+	public JSONArray getPostsJSONArray(int amount, String id) {
 		Reading reader = new Reading().limit(amount);
 		JSONArray jArray = new JSONArray();
 		try {
@@ -53,5 +53,23 @@ public class FBHandler implements IExternalAPIs {
 			e.printStackTrace();
 		}
 		return jArray;
+	}
+
+	/**
+	 * Retrieves posts from facebook via the facebook api.
+	 * 
+	 * @param amount - the number of posts to retrieve.
+	 * @param id - the id of the user we want posts from.
+	 * @return - JSONArray containing posts.
+	 */
+	public ResponseList<Post> getPostsList(int amount, String id) {
+		Reading reader = new Reading().limit(amount);
+		ResponseList<Post> feed = null;
+		try {
+			feed = facebook.getPosts(id, reader);
+		} catch (FacebookException e) {
+			e.printStackTrace();
+		}
+		return feed;
 	}
 }

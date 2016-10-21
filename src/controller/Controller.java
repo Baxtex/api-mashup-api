@@ -184,73 +184,7 @@ public class Controller {
 		}
 	}
 
-	/**
-	 * Retrieves facebook and twitter post and mashes them up into a new
-	 * JSONObject.
-	 * 
-	 * @return
-	 */
-	public JSONObject getSocialPosts(String fbId, String tId) {
-		JSONArray jsonArrayFB = new JSONArray();
-		JSONArray jsonArrayT = new JSONArray();
-		JSONObject jsonObject = new JSONObject();
-		try {
-			jsonObject.put("HTTP_CODE", "200");
-			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
-			jsonArrayFB = fbHandler.getPosts(5, fbId);
-			jsonArrayT = twHandler.getPosts(5, tId);
-			jsonObject.put("fbposts", jsonArrayFB);
-			jsonObject.put("twposts", jsonArrayT);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return jsonObject;
-	}
 
-	/**
-	 * Retrieves post from a specific party
-	 * 
-	 * @param party
-	 * @return
-	 */
-	public JSONObject test2(String party) {
-		JSONObject resultObject = new JSONObject();
-		JSONArray pArray = new JSONArray();
-		try {
-			resultObject.put("HTTP_CODE", "200");
-			resultObject.put("MSG", "jsonArray successfully retrieved, v1");
 
-			LinkedList<Politician> politicians = dbHandler.getPoliticians(party);
-			Iterator<Politician> iter = politicians.iterator();
-			while (iter.hasNext()) {
-				Politician p = (Politician) iter.next();
-				pArray.put(new JSONObject().put("name", p.getName()));
-
-				if (p.getFacebookId() != 0 && p.getTwitterId() != null) {
-					pArray.put(
-							new JSONObject().put("fbPosts", fbHandler.getPosts(3, String.valueOf(p.getFacebookId()))));
-					pArray.put(new JSONObject().put("twPosts", twHandler.getPosts(1, p.getTwitterId())));
-				}
-
-				if (p.getFacebookId() == 0 && p.getTwitterId() == null) {
-					pArray.put(new JSONObject().put("fbPosts", "None"));
-					pArray.put(new JSONObject().put("twPosts", "None"));
-				}
-
-				if (p.getFacebookId() != 0 && p.getTwitterId() == null) {
-					pArray.put(new JSONObject().put("fbPosts",
-							fbHandler.getPosts(3, String.valueOf(p.getFacebookId()).toString())));
-
-				}
-				if (p.getFacebookId() == 0 && p.getTwitterId() != null) {
-					pArray.put(new JSONObject().put("twPosts", twHandler.getPosts(1, p.getTwitterId()).toString()));
-				}
-				resultObject.put("politicians", pArray);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return resultObject;
-	}
 
 }
