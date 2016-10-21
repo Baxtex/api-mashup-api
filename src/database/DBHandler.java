@@ -1,11 +1,11 @@
 package database;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.jsoup.Jsoup;
@@ -16,14 +16,6 @@ import databaseObjects.Comment;
 import databaseObjects.Party;
 import databaseObjects.Politician;
 import databaseObjects.Post;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 
 public class DBHandler {
 
@@ -267,7 +259,72 @@ public class DBHandler {
 	}
 
 	// Get methods
-	// -----------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------
+
+	/**
+	 * Returns a list of at least 1 post from every politican in the database.
+	 * database.
+	 * 
+	 * @param politican
+	 * @return
+	 */
+
+	public LinkedList<Post> getAllPosts() {
+		LinkedList<Post> posts = new LinkedList<Post>();
+		Connection connection = getConnection();
+		try {
+			String query = "SELECT DISTINCT id,text,politican,source,date,rank FROM posts group by politican;";
+			PreparedStatement statement = connection.prepareStatement(query);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				Post post = new Post();
+				post.setId(rs.getInt("id"));
+				post.setText(rs.getString("text"));
+				post.setPolitican(rs.getInt("politican"));
+				post.setSource(rs.getString("source"));
+				post.setTime(rs.getString("date"));
+				post.setRank(rs.getInt("rank"));
+				posts.add(post);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return posts;
+	}
+
+	/**
+	 * Returns a list of all posts from the specified politican in the db.
+	 * 
+	 * @param politican
+	 * @return
+	 */
+
+	public LinkedList<Post> getPosts(int politican) {
+		LinkedList<Post> posts = new LinkedList<Post>();
+		Connection connection = getConnection();
+		try {
+			String query = "select * from posts where politican = " + politican + ";";
+			PreparedStatement statement = connection.prepareStatement(query);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				Post post = new Post();
+				post.setId(rs.getInt("id"));
+				post.setText(rs.getString("text"));
+				post.setPolitican(rs.getInt("politican"));
+				post.setSource(rs.getString("source"));
+				post.setTime(rs.getString("date"));
+				post.setRank(rs.getInt("rank"));
+				posts.add(post);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return posts;
+	}
 
 	/**
 	 * Returns a list of all parties in database
@@ -359,38 +416,7 @@ public class DBHandler {
 		return politicians;
 	}
 
-	/**
-	 * Returns a list of all posts from the specified politican
-	 * 
-	 * @param politican
-	 * @return
-	 */
 
-	public LinkedList<Post> getPosts(int politican) {
-		LinkedList<Post> posts = new LinkedList<Post>();
-		Connection connection = getConnection();
-		try {
-			String query = "select * from posts where politican = " + politican + ";";
-			PreparedStatement statement = connection.prepareStatement(query);
-			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				Post post = new Post();
-				post.setId(rs.getInt("id"));
-				post.setText(rs.getString("text"));
-				post.setTime(rs.getString("time"));
-				post.setLikes(rs.getInt("likes"));
-				post.setRetweets(rs.getInt("retweets"));
-				post.setPolitican(rs.getInt("politican"));
-				post.setSource(rs.getString("source"));
-				posts.add(post);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(connection);
-		}
-		return posts;
-	}
 
 	/**
 	 * Returns a list of all comments on the specified post

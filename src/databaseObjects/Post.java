@@ -9,6 +9,8 @@ public class Post {
 	private int likes;
 	private int retweets;
 	private String source;
+	private int rank;
+
 
 	public Post() {
 	}
@@ -23,6 +25,13 @@ public class Post {
 		this.source = source;
 	}
 
+	public int getRank() {
+		return rank;
+	}
+
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -80,7 +89,7 @@ public class Post {
 	}
 
 	public String toString() {
-		return "\nSkriven av: " + politican + "\nPost-id: " + id + "\nTid: " + time + "\nText: " + text + "\nKälla: "
-				+ source + "\nLikes: " + likes + "\nRetweets: " + retweets;
+		return "\nby: " + politican + "\npostID: " + id + "\ntime: " + time + "\ntext: " + text + "\nsource: " + source
+				+ "\nrank: " + rank;
 	}
 }

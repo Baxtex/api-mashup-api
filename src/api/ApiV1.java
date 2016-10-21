@@ -12,8 +12,8 @@ import org.codehaus.jettison.json.JSONObject;
 import controller.Controller;
 
 /**
- * This class acts as a simple API. The URI for accessing these resources is:
- * http://localhost:8080/api-mashup-api/api/v1
+ * This class acts as the endpoint for the API. The URI for accessing these
+ * resources is: http://localhost:8080/api-mashup-api/api/v1/<resource>
  * 
  * @author Anton Gustafsson
  *
@@ -37,7 +37,7 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return posts from all politicans.
+	 * Return posts from all politicans with the specified amount of posts.
 	 * 
 	 * @return
 	 */
@@ -45,10 +45,9 @@ public class ApiV1 {
 	@Path("posts")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getAllPosts() {
-
 		JSONObject jsonObject = new JSONObject();
 		try {
-
+			jsonObject = controller.getAllPosts();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -60,6 +59,7 @@ public class ApiV1 {
 	 * 
 	 * Return posts from all politicans in specific party.
 	 * 
+	 * @param party the short name of the party, f.e. "s"
 	 * @return
 	 */
 	@GET
@@ -185,7 +185,7 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return a specific party object.
+	 * Return all parties.
 	 * 
 	 * @return
 	 */
@@ -222,8 +222,7 @@ public class ApiV1 {
 
 	/**
 	 * 
-	 * This method is super cereal and it's purpose is to return a JSON Array
-	 * containing posts from both twitter and facebook.
+	 * This method is super cereal and it's for testing purposes only.
 	 * 
 	 * @return
 	 */
