@@ -60,7 +60,7 @@ public class Controller {
 			while (iter.hasNext()) {
 				Post p = (Post) iter.next();
 				postArray.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
-						.put("date", p.getTime()).put("text", p.getText()).put("source", p.getSource())
+						.put("date", p.getDate()).put("text", p.getText()).put("source", p.getSource())
 						.put("rank", p.getRank()));
 			}
 			jsonObject.put("posts", postArray);
@@ -89,7 +89,7 @@ public class Controller {
 			while (iter.hasNext()) {
 				Post p = (Post) iter.next();
 				postArray.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
-						.put("date", p.getTime()).put("text", p.getText()).put("source", p.getSource())
+						.put("date", p.getDate()).put("text", p.getText()).put("source", p.getSource())
 						.put("rank", p.getRank()));
 			}
 			jsonObject.put("posts", postArray);
@@ -117,13 +117,9 @@ public class Controller {
 			jsonObject.put("size", posts.size());
 			for (int i = 0; i < posts.size(); i++) {
 				Post p = posts.get(i);
-				JSONObject jsonPost = new JSONObject();
-				jsonPost.put("id", p.getID());
-				jsonPost.put("time", p.getTime());
-				jsonPost.put("source", p.getSource());
-				jsonPost.put("text", p.getText());
-				jsonPost.put("politician", p.getPolitican());
-				jsonPosts.put(jsonPost);
+				jsonPosts.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
+						.put("date", p.getDate()).put("text", p.getText()).put("source", p.getSource())
+						.put("rank", p.getRank()));
 			}
 			jsonObject.put("posts", jsonPosts);
 		} catch (JSONException e) {
@@ -173,32 +169,6 @@ public class Controller {
 
 
 
-	// Test method that will be destroyed
-
-	public JSONObject getPostByPolitican() {
-		JSONObject jsonObject = new JSONObject();
-		JSONArray jsonPosts = new JSONArray();
-		try {
-			jsonObject.put("HTTP_CODE", HTTP_OK);
-			jsonObject.put("message", MSG_OK);
-			jsonObject.put("size", 5);
-			for (int i = 0; i < 5; i++) {
-				Post p = new Post(i * 10, "Detta är ett inlägg", "06:21, 2016-10-19", i + 56789, 15, 0, "Facebook");
-				JSONObject post = new JSONObject();
-				post.put("id", p.getID());
-				post.put("time", p.getTime());
-				post.put("source", p.getSource());
-				post.put("text", p.getText());
-				post.put("politician", p.getPolitican());
-				jsonPosts.put(post);
-			}
-			jsonObject.put("posts", jsonPosts);
-		} catch (JSONException e) {
-			System.out.println("Controller: Error while loading jsonObject with posts from specific politician");
-			e.printStackTrace();
-		}
-		return jsonObject;
-	}
 
 	private class DBImplementer_Politicians implements ICallbackPoliticians {
 		private DBHandler dbHandler;

@@ -1,10 +1,12 @@
 package databaseObjects;
 
+import java.util.Date;
+
 public class Post {
 
 	private int id;
 	private String text;
-	private String time;
+	private Date date;
 	private int politican;
 	private int likes;
 	private int retweets;
@@ -15,14 +17,14 @@ public class Post {
 	public Post() {
 	}
 
-	public Post(int id, String text, String time, int politican, int likes, int retweets, String source) {
-		this.id = id;
+
+
+	public Post(String text, int politican, String source, Date date, int rank) {
 		this.text = text;
-		this.time = time;
+		this.date = date;
 		this.politican = politican;
-		this.likes = likes;
-		this.retweets = retweets;
 		this.source = source;
+		this.rank = rank;
 	}
 
 	public int getRank() {
@@ -40,8 +42,8 @@ public class Post {
 		this.text = text;
 	}
 
-	public void setTime(String time) {
-		this.time = time;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	public void setPolitican(int politican) {
@@ -68,8 +70,8 @@ public class Post {
 		return text;
 	}
 
-	public String getTime() {
-		return time;
+	public Date getDate() {
+		return date;
 	}
 
 	public int getPolitican() {
@@ -89,7 +91,7 @@ public class Post {
 	}
 
 	public String toString() {
-		return "\nby: " + politican + "\npostID: " + id + "\ntime: " + time + "\ntext: " + text + "\nsource: " + source
+		return "\nby: " + politican + "\npostID: " + id + "\ntime: " + date + "\ntext: " + text + "\nsource: " + source
 				+ "\nrank: " + rank;
 	}
 }

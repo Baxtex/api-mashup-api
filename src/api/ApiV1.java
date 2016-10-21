@@ -100,6 +100,8 @@ public class ApiV1 {
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
 
+	// TODO METHODS BELOW DON'T WORK!!!!!!!!
+
 	/**
 	 * Return specified number of comments for a polititan.
 	 * 
