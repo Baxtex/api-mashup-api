@@ -11,6 +11,7 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
 
 /**
@@ -70,5 +71,17 @@ public class TWHandler implements IExternalAPIs {
 			e.printStackTrace();
 		}
 		return statuses;
+	}
+
+	public String getProfileURL(String id) {
+
+		String result = null;
+		try {
+			User user = twitter.showUser(id);
+			result = user.getProfileImageURL().toString();
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 }

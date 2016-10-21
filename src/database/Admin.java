@@ -27,7 +27,6 @@ public class Admin {
 
 		Admin admin = new Admin();
 		admin.createPostsFromAPIs();
-		// admin.getSpecificPostMashup("690252680", "@aliesbati");
 	}
 
 	/**
@@ -75,7 +74,7 @@ public class Admin {
 						newString = subStr.substring(pos0, pos1);
 						System.out.println("FBId is: " + newString);
 					}
-					dbHandler.addIdDB("UPDATE politicians SET fID = ? WHERE fb_url = ?", newString,
+					dbHandler.addDataDB("UPDATE politicians SET fID = ? WHERE fb_url = ?", newString,
 							p.getFacebook_URL());
 				}
 			} catch (IOException e) {
@@ -109,7 +108,7 @@ public class Admin {
 				twitterUrlSub = twitterUrlSub.substring(0, pos1);
 				System.out.println("twitter urlsub " + twitterUrlSub);
 
-				dbHandler.addIdDB("UPDATE politicians SET tID = ? WHERE twitter_url = ?", twitterUrlSub, twitterUrl);
+				dbHandler.addDataDB("UPDATE politicians SET tID = ? WHERE twitter_url = ?", twitterUrlSub, twitterUrl);
 			}
 		}
 	}
@@ -147,7 +146,9 @@ public class Admin {
 							// TODO Fix how to get the number of likes for a
 							// post.
 							System.out.println("fbPost");
-							System.out.println(String.valueOf(fbPost.getLikes().getSummary().getTotalCount()));
+							System.out.println(fbPost.getCreatedTime());
+							// System.out.println(fbPost.getLikes().getSummary().getTotalCount());
+							System.out.println(fbPost.getMessage());
 							// System.out.println(dbPost.toString());
 							// dbHandler.addPost(dbPost);
 						}
@@ -176,6 +177,34 @@ public class Admin {
 					System.out.println("No Post created and added.");
 				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void addImageURL(){
+		int counter = 0;
+		try {
+			LinkedList<Politician> politicians = dbHandler.getPoliticians();
+			Iterator<Politician> iter = politicians.iterator();
+			// Loop through all politicans
+			while (iter.hasNext()) {
+				counter++;
+				System.out.println("counter " + counter);
+				Politician p = (Politician) iter.next();
+				String twID = p.getTwitterId();
+				int pID = p.getId();
+				String res = null;
+
+				if (twID != null) {
+					res = twHandler.getProfileURL(twID);
+					dbHandler.addDataDB("UPDATE politicians set profile_url = ? WHERE id = ? ",  res, String.valueOf(pID));
+
+
+				}
+
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -449,7 +449,7 @@ public class DBHandler {
 	 * @param id - id to add.
 	 * @param url- the url corresponding each id.
 	 */
-	public void addIdDB(String query, String id, String url) {
+	public void addDataDB(String query, String id, String url) {
 		Connection connection = getConnection();
 		PreparedStatement statement;
 		try {
