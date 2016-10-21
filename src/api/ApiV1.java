@@ -100,8 +100,6 @@ public class ApiV1 {
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
 
-	// TODO METHODS BELOW DON'T WORK!!!!!!!!
-
 	/**
 	 * Return specified number of comments for a polititan.
 	 * 
@@ -111,13 +109,13 @@ public class ApiV1 {
 	 * @return
 	 */
 	@GET
-	@Path("posts/{party}/{politician}/{nbrComments}")
+	@Path("posts/id/{politician}/{nbrComments}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPostsCommentsByPolitican(@PathParam("party") String party, @PathParam("politician") String id,
 			@PathParam("nbrComments") String nbrComments) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			// jsonObject = controller.getSomething.;
+			// TODO DOES NOT DO ANYTHING YET!!!
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -137,6 +135,7 @@ public class ApiV1 {
 	public Response getPoliticians() {
 		JSONObject jsonObject = new JSONObject();
 		try {
+			jsonObject = controller.getAllPoliticians();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -157,7 +156,7 @@ public class ApiV1 {
 	public Response getPoliticiansByParty(@PathParam("party") String party) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject = controller.getPoliticiansByParty(party);
+			jsonObject = controller.getPoliticiansParty(party);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -166,19 +165,18 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return specific politican objects from specific party.
+	 * Return specific politican object
 	 * 
-	 * @param party the short name of the party, f.e. "s"
 	 * @return
 	 */
 
 	@GET
-	@Path("politicians/{party}/{politician}")
+	@Path("politicians/id/{politician}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getSpecificPoliticianByParty(@PathParam("party") String party, @PathParam("politician") String id) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject = controller.getPoliticiansByParty(party);
+			jsonObject = controller.getPoliticiansParty(party);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();

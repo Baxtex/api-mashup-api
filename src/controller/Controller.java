@@ -123,12 +123,44 @@ public class Controller {
 			}
 			jsonObject.put("posts", jsonPosts);
 		} catch (JSONException e) {
-			System.out.println("Controller: Error while loading jsonObject with posts from specific politician");
 			e.printStackTrace();
 		}
 		return jsonObject;
 	}
 
+	/**
+	 * Returns all politicians from db as JSONObjects.
+	 * 
+	 * @return
+	 */
+	public JSONObject getAllPoliticians() {
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonPoliticians = new JSONArray();
+		try {
+			LinkedList<Politician> politicians = dbHandler.getPoliticians();
+			jsonObject.put("HTTP_CODE", HTTP_OK);
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", politicians.size());
+
+			for (int i = 0; i < politicians.size(); i++) {
+				Politician p = politicians.get(i);
+				JSONObject jsonPolitician = new JSONObject();
+				jsonPolitician.put("id", p.getId());
+				jsonPolitician.put("name", p.getName());
+				jsonPolitician.put("party", p.getParty());
+				jsonPolitician.put("fb_url", p.getFacebook_URL());
+				jsonPolitician.put("twitter_url", p.getTwitter_URL());
+				jsonPolitician.put("fID", p.getFacebookId());
+				jsonPolitician.put("tID", p.getTwitterId());
+				jsonPolitician.put("profile_url", p.getProfile_url());
+				jsonPoliticians.put(jsonPolitician);
+			}
+			jsonObject.put("politicians", jsonPoliticians);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
 
 
 	/**
@@ -142,7 +174,7 @@ public class Controller {
 	// TODO: Fix img_url and add more data about politician in jsonPolitician
 	// object
 
-	public JSONObject getPoliticiansByParty(String party) {
+	public JSONObject getPoliticiansParty(String party) {
 		JSONObject jsonObject = new JSONObject();
 		JSONArray jsonPoliticians = new JSONArray();
 		try {
@@ -156,7 +188,11 @@ public class Controller {
 				jsonPolitician.put("id", p.getId());
 				jsonPolitician.put("name", p.getName());
 				jsonPolitician.put("party", p.getParty());
-				jsonPolitician.put("img_url", "someURL");
+				jsonPolitician.put("fb_url", p.getFacebook_URL());
+				jsonPolitician.put("twitter_url", p.getTwitter_URL());
+				jsonPolitician.put("fID", p.getFacebookId());
+				jsonPolitician.put("tID", p.getTwitterId());
+				jsonPolitician.put("profile_url", p.getProfile_url());
 				jsonPoliticians.put(jsonPolitician);
 			}
 			jsonObject.put("politicians", jsonPoliticians);
@@ -183,6 +219,7 @@ public class Controller {
 			System.out.println("Politicians added to Database");
 		}
 	}
+
 
 
 

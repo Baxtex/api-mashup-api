@@ -195,7 +195,7 @@ public class DBHandler {
 		LinkedList<Politician> politicians = new LinkedList<Politician>();
 		Connection connection = getConnection();
 		try {
-			String query = "select * from politicians";
+			String query = "SELECT * FROM politicians";
 			PreparedStatement statement = connection.prepareStatement(query);
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
@@ -207,6 +207,7 @@ public class DBHandler {
 				politician.setFacebookId((rs.getLong("fID")));
 				politician.setTwitterId((rs.getString("tID")));
 				politician.setId(rs.getInt("id"));
+				politician.setProfile_url(rs.getString("profile_url"));
 				politicians.add(politician);
 			}
 		} catch (SQLException e) {
