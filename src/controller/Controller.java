@@ -54,7 +54,7 @@ public class Controller {
 		JSONArray postArray = new JSONArray();
 		// JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject.put("HTTP_CODE", "200");
+			jsonObject.put("HTTP_CODE", HTTP_OK);
 			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
 			Iterator<Post> iter = posts.iterator();
 			while (iter.hasNext()) {
@@ -62,7 +62,6 @@ public class Controller {
 				postArray.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
 						.put("date", p.getTime()).put("text", p.getText()).put("source", p.getSource())
 						.put("rank", p.getRank()));
-
 			}
 			jsonObject.put("posts", postArray);
 		} catch (Exception e) {
@@ -73,73 +72,68 @@ public class Controller {
 	}
 
 	/**
-	 * Retrieves facebook and twitter post and mashes them up into a new
-	 * JSONObject.
+	 * Returns 1 post from every politican in specific party.
 	 * 
 	 * @return
 	 */
-	public JSONObject getSocialPosts(String fbId, String tId) {
-		JSONArray jsonArrayFB = new JSONArray();
-		JSONArray jsonArrayT = new JSONArray();
+	public JSONObject getAllPostsParty(String party) {
+		LinkedList<Post> posts = dbHandler.getAllPostsParty(party);
+		System.out.println(posts);
 		JSONObject jsonObject = new JSONObject();
+		JSONArray postArray = new JSONArray();
+		// JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject.put("HTTP_CODE", "200");
+			jsonObject.put("HTTP_CODE", HTTP_OK);
 			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
-			jsonArrayFB = fbHandler.getPosts(5, fbId);
-			jsonArrayT = twHandler.getPosts(5, tId);
-			jsonObject.put("fbposts", jsonArrayFB);
-			jsonObject.put("twposts", jsonArrayT);
+			Iterator<Post> iter = posts.iterator();
+			while (iter.hasNext()) {
+				Post p = (Post) iter.next();
+				postArray.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
+						.put("date", p.getTime()).put("text", p.getText()).put("source", p.getSource())
+						.put("rank", p.getRank()));
+			}
+			jsonObject.put("posts", postArray);
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+
+	}
+	/**
+	 * Returns data about all posts from a specified politician, formatted as a
+	 * JSON object
+	 * 
+	 * @param id the id of the politician stored in our database
+	 * @return
+	 */
+
+	public JSONObject getPostsPolitician(String id) {
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonPosts = new JSONArray();
+		try {
+			LinkedList<Post> posts = dbHandler.getPostsPolitician(Integer.parseInt(id));
+			jsonObject.put("HTTP_CODE", HTTP_OK);
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", posts.size());
+			for (int i = 0; i < posts.size(); i++) {
+				Post p = posts.get(i);
+				JSONObject jsonPost = new JSONObject();
+				jsonPost.put("id", p.getID());
+				jsonPost.put("time", p.getTime());
+				jsonPost.put("source", p.getSource());
+				jsonPost.put("text", p.getText());
+				jsonPost.put("politician", p.getPolitican());
+				jsonPosts.put(jsonPost);
+			}
+			jsonObject.put("posts", jsonPosts);
+		} catch (JSONException e) {
+			System.out.println("Controller: Error while loading jsonObject with posts from specific politician");
 			e.printStackTrace();
 		}
 		return jsonObject;
 	}
 
-	/**
-	 * Retrieves post from a specific party
-	 * 
-	 * @param party
-	 * @return
-	 */
-	public JSONObject getSocialPostsSpecificParty(String party) {
-		JSONObject resultObject = new JSONObject();
-		JSONArray pArray = new JSONArray();
-		try {
-			resultObject.put("HTTP_CODE", "200");
-			resultObject.put("MSG", "jsonArray successfully retrieved, v1");
 
-			LinkedList<Politician> politicians = dbHandler.getPoliticians(party);
-			Iterator<Politician> iter = politicians.iterator();
-			while (iter.hasNext()) {
-				Politician p = (Politician) iter.next();
-				pArray.put(new JSONObject().put("name", p.getName()));
-
-				if (p.getFacebookId() != 0 && p.getTwitterId() != null) {
-					pArray.put(
-							new JSONObject().put("fbPosts", fbHandler.getPosts(3, String.valueOf(p.getFacebookId()))));
-					pArray.put(new JSONObject().put("twPosts", twHandler.getPosts(1, p.getTwitterId())));
-				}
-
-				if (p.getFacebookId() == 0 && p.getTwitterId() == null) {
-					pArray.put(new JSONObject().put("fbPosts", "None"));
-					pArray.put(new JSONObject().put("twPosts", "None"));
-				}
-
-				if (p.getFacebookId() != 0 && p.getTwitterId() == null) {
-					pArray.put(new JSONObject().put("fbPosts",
-							fbHandler.getPosts(3, String.valueOf(p.getFacebookId()).toString())));
-
-				}
-				if (p.getFacebookId() == 0 && p.getTwitterId() != null) {
-					pArray.put(new JSONObject().put("twPosts", twHandler.getPosts(1, p.getTwitterId()).toString()));
-				}
-				resultObject.put("politicians", pArray);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return resultObject;
-	}
 
 	/**
 	 * Returns data about all politicians from a specified party, formatted as a
@@ -177,39 +171,7 @@ public class Controller {
 		return jsonObject;
 	}
 
-	/**
-	 * Returns data about all posts from a specified politician, formatted as a
-	 * JSON object
-	 * 
-	 * @param id the id of the politician stored in our database
-	 * @return
-	 */
 
-	public JSONObject getPostsByPolitician(String id) {
-		JSONObject jsonObject = new JSONObject();
-		JSONArray jsonPosts = new JSONArray();
-		try {
-			LinkedList<Post> posts = dbHandler.getPosts(Integer.parseInt(id));
-			jsonObject.put("HTTP_CODE", HTTP_OK);
-			jsonObject.put("message", MSG_OK);
-			jsonObject.put("size", posts.size());
-			for (int i = 0; i < posts.size(); i++) {
-				Post p = posts.get(i);
-				JSONObject jsonPost = new JSONObject();
-				jsonPost.put("id", p.getID());
-				jsonPost.put("time", p.getTime());
-				jsonPost.put("source", p.getSource());
-				jsonPost.put("text", p.getText());
-				jsonPost.put("politician", p.getPolitican());
-				jsonPosts.put(jsonPost);
-			}
-			jsonObject.put("posts", jsonPosts);
-		} catch (JSONException e) {
-			System.out.println("Controller: Error while loading jsonObject with posts from specific politician");
-			e.printStackTrace();
-		}
-		return jsonObject;
-	}
 
 	// Test method that will be destroyed
 
@@ -250,6 +212,75 @@ public class Controller {
 			dbHandler.addPoliticians(gsHandler.getPoliticians_SocialMedia(politicians));
 			System.out.println("Politicians added to Database");
 		}
+	}
+
+	/**
+	 * Retrieves facebook and twitter post and mashes them up into a new
+	 * JSONObject.
+	 * 
+	 * @return
+	 */
+	public JSONObject getSocialPosts(String fbId, String tId) {
+		JSONArray jsonArrayFB = new JSONArray();
+		JSONArray jsonArrayT = new JSONArray();
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("HTTP_CODE", "200");
+			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
+			jsonArrayFB = fbHandler.getPosts(5, fbId);
+			jsonArrayT = twHandler.getPosts(5, tId);
+			jsonObject.put("fbposts", jsonArrayFB);
+			jsonObject.put("twposts", jsonArrayT);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
+
+	/**
+	 * Retrieves post from a specific party
+	 * 
+	 * @param party
+	 * @return
+	 */
+	public JSONObject test2(String party) {
+		JSONObject resultObject = new JSONObject();
+		JSONArray pArray = new JSONArray();
+		try {
+			resultObject.put("HTTP_CODE", "200");
+			resultObject.put("MSG", "jsonArray successfully retrieved, v1");
+
+			LinkedList<Politician> politicians = dbHandler.getPoliticians(party);
+			Iterator<Politician> iter = politicians.iterator();
+			while (iter.hasNext()) {
+				Politician p = (Politician) iter.next();
+				pArray.put(new JSONObject().put("name", p.getName()));
+
+				if (p.getFacebookId() != 0 && p.getTwitterId() != null) {
+					pArray.put(
+							new JSONObject().put("fbPosts", fbHandler.getPosts(3, String.valueOf(p.getFacebookId()))));
+					pArray.put(new JSONObject().put("twPosts", twHandler.getPosts(1, p.getTwitterId())));
+				}
+
+				if (p.getFacebookId() == 0 && p.getTwitterId() == null) {
+					pArray.put(new JSONObject().put("fbPosts", "None"));
+					pArray.put(new JSONObject().put("twPosts", "None"));
+				}
+
+				if (p.getFacebookId() != 0 && p.getTwitterId() == null) {
+					pArray.put(new JSONObject().put("fbPosts",
+							fbHandler.getPosts(3, String.valueOf(p.getFacebookId()).toString())));
+
+				}
+				if (p.getFacebookId() == 0 && p.getTwitterId() != null) {
+					pArray.put(new JSONObject().put("twPosts", twHandler.getPosts(1, p.getTwitterId()).toString()));
+				}
+				resultObject.put("politicians", pArray);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return resultObject;
 	}
 
 }

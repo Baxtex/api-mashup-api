@@ -63,7 +63,227 @@ public class DBHandler {
 			}
 		}
 	}
+	// Get methods
 
+	/**
+	 * Returns a list of at least 1 post from every politican in the database.
+	 * database.
+	 * 
+	 * @param politican
+	 * @return
+	 */
+
+	public LinkedList<Post> getAllPosts() {
+		LinkedList<Post> posts = new LinkedList<Post>();
+		Connection connection = getConnection();
+		try {
+			String query = "SELECT DISTINCT id,text,politican,source,date,rank FROM posts group by politican;";
+			PreparedStatement statement = connection.prepareStatement(query);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				Post post = new Post();
+				post.setId(rs.getInt("id"));
+				post.setText(rs.getString("text"));
+				post.setPolitican(rs.getInt("politican"));
+				post.setSource(rs.getString("source"));
+				post.setTime(rs.getString("date"));
+				post.setRank(rs.getInt("rank"));
+				posts.add(post);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return posts;
+	}
+
+	/**
+	 * Return 1 post from all politicans in specific party
+	 * 
+	 * @param party
+	 * @return
+	 */
+	public LinkedList<Post> getAllPostsParty(String party) {
+		LinkedList<Post> posts = new LinkedList<Post>();
+		Connection connection = getConnection();
+		try {
+			String query = "SELECT * FROM posts WHERE politican in( select politicians.id from politicians where politicians.party = ?);";
+
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setString(1, party);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				Post post = new Post();
+				post.setId(rs.getInt("id"));
+				post.setText(rs.getString("text"));
+				post.setPolitican(rs.getInt("politican"));
+				post.setSource(rs.getString("source"));
+				post.setTime(rs.getString("date"));
+				post.setRank(rs.getInt("rank"));
+				posts.add(post);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return posts;
+	}
+
+	/**
+	 * Returns a list of all posts from the specified politican in the db.
+	 * 
+	 * @param politican
+	 * @return
+	 */
+
+	public LinkedList<Post> getPostsPolitician(int politican) {
+		LinkedList<Post> posts = new LinkedList<Post>();
+		Connection connection = getConnection();
+		try {
+			String query = "select * from posts where politican = " + politican + ";";
+			PreparedStatement statement = connection.prepareStatement(query);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				Post post = new Post();
+				post.setId(rs.getInt("id"));
+				post.setText(rs.getString("text"));
+				post.setPolitican(rs.getInt("politican"));
+				post.setSource(rs.getString("source"));
+				post.setTime(rs.getString("date"));
+				post.setRank(rs.getInt("rank"));
+				posts.add(post);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return posts;
+	}
+
+	/**
+	 * Returns a list of all parties in database
+	 * 
+	 * @return
+	 */
+
+	public LinkedList<Party> getParties() {
+		LinkedList<Party> parties = new LinkedList<Party>();
+		Connection connection = getConnection();
+		try {
+			String query = "select * from parties";
+			PreparedStatement statement = connection.prepareStatement(query);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				Party party = new Party();
+				party.setName(rs.getString("name"));
+				party.setNameShort(rs.getString("nameShort"));
+				parties.add(party);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return parties;
+	}
+
+	/**
+	 * Returns a list of all politicians in the database
+	 * 
+	 * @return
+	 */
+
+	public LinkedList<Politician> getPoliticians() {
+		LinkedList<Politician> politicians = new LinkedList<Politician>();
+		Connection connection = getConnection();
+		try {
+			String query = "select * from politicians";
+			PreparedStatement statement = connection.prepareStatement(query);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				Politician politician = new Politician();
+				politician.setName(rs.getString("name"));
+				politician.setParty(rs.getString("party"));
+				politician.setFacebook_URL((rs.getString("fb_url")));
+				politician.setTwitter_URL((rs.getString("twitter_url")));
+				politician.setFacebookId((rs.getLong("fID")));
+				politician.setTwitterId((rs.getString("tID")));
+				politician.setId(rs.getInt("id"));
+				politicians.add(politician);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return politicians;
+	}
+
+	/**
+	 * Returns a list of all politicians in the database from a specific party
+	 * 
+	 * @return
+	 */
+
+	public LinkedList<Politician> getPoliticians(String party) {
+		LinkedList<Politician> politicians = new LinkedList<Politician>();
+		Connection connection = getConnection();
+		try {
+			String query = "SELECT * FROM politicians WHERE party = ?";
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setString(1, party);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				Politician politician = new Politician();
+				politician.setName(rs.getString("name"));
+				politician.setFacebookId(rs.getLong("fID"));
+				politician.setTwitterId(rs.getString("tID"));
+				politician.setId(rs.getInt("id"));
+				politician.setParty(rs.getString("party"));
+				politicians.add(politician);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return politicians;
+	}
+
+	/**
+	 * Returns a list of all comments on the specified post
+	 * 
+	 * @param post
+	 * @return
+	 */
+
+	public LinkedList<Comment> getComments(int post) {
+		LinkedList<Comment> comments = new LinkedList<Comment>();
+		Connection connection = getConnection();
+		try {
+			String query = "select * from comments where post = " + post + ";";
+			PreparedStatement statement = connection.prepareStatement(query);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				Comment comment = new Comment();
+				comment.setId(rs.getInt("id"));
+				comment.setText(rs.getString("text"));
+				comment.setTime(rs.getString("time"));
+				comment.setEmail(rs.getString("email"));
+				comment.setPost(rs.getInt("post"));
+				comments.add(comment);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return comments;
+	}
+	// ------------------------------------------------------------------------------------
 	// Insert methods
 
 	/**
@@ -257,197 +477,8 @@ public class DBHandler {
 			closeConnection(connection);
 		}
 	}
-
-	// Get methods
-	// --------------------------------------------------------------------------------------------
-
-	/**
-	 * Returns a list of at least 1 post from every politican in the database.
-	 * database.
-	 * 
-	 * @param politican
-	 * @return
-	 */
-
-	public LinkedList<Post> getAllPosts() {
-		LinkedList<Post> posts = new LinkedList<Post>();
-		Connection connection = getConnection();
-		try {
-			String query = "SELECT DISTINCT id,text,politican,source,date,rank FROM posts group by politican;";
-			PreparedStatement statement = connection.prepareStatement(query);
-			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				Post post = new Post();
-				post.setId(rs.getInt("id"));
-				post.setText(rs.getString("text"));
-				post.setPolitican(rs.getInt("politican"));
-				post.setSource(rs.getString("source"));
-				post.setTime(rs.getString("date"));
-				post.setRank(rs.getInt("rank"));
-				posts.add(post);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(connection);
-		}
-		return posts;
-	}
-
-	/**
-	 * Returns a list of all posts from the specified politican in the db.
-	 * 
-	 * @param politican
-	 * @return
-	 */
-
-	public LinkedList<Post> getPosts(int politican) {
-		LinkedList<Post> posts = new LinkedList<Post>();
-		Connection connection = getConnection();
-		try {
-			String query = "select * from posts where politican = " + politican + ";";
-			PreparedStatement statement = connection.prepareStatement(query);
-			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				Post post = new Post();
-				post.setId(rs.getInt("id"));
-				post.setText(rs.getString("text"));
-				post.setPolitican(rs.getInt("politican"));
-				post.setSource(rs.getString("source"));
-				post.setTime(rs.getString("date"));
-				post.setRank(rs.getInt("rank"));
-				posts.add(post);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(connection);
-		}
-		return posts;
-	}
-
-	/**
-	 * Returns a list of all parties in database
-	 * 
-	 * @return
-	 */
-
-	public LinkedList<Party> getParties() {
-		LinkedList<Party> parties = new LinkedList<Party>();
-		Connection connection = getConnection();
-		try {
-			String query = "select * from parties";
-			PreparedStatement statement = connection.prepareStatement(query);
-			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				Party party = new Party();
-				party.setName(rs.getString("name"));
-				party.setNameShort(rs.getString("nameShort"));
-				parties.add(party);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(connection);
-		}
-		return parties;
-	}
-
-	/**
-	 * Returns a list of all politicians in the database
-	 * 
-	 * @return
-	 */
-
-	public LinkedList<Politician> getPoliticians() {
-		LinkedList<Politician> politicians = new LinkedList<Politician>();
-		Connection connection = getConnection();
-		try {
-			String query = "select * from politicians";
-			PreparedStatement statement = connection.prepareStatement(query);
-			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				Politician politician = new Politician();
-				politician.setName(rs.getString("name"));
-				politician.setParty(rs.getString("party"));
-				politician.setFacebook_URL((rs.getString("fb_url")));
-				politician.setTwitter_URL((rs.getString("twitter_url")));
-				politician.setFacebookId((rs.getLong("fID")));
-				politician.setTwitterId((rs.getString("tID")));
-				politician.setId(rs.getInt("id"));
-				politicians.add(politician);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(connection);
-		}
-		return politicians;
-	}
-
-	/**
-	 * Returns a list of all politicians in the database from a specific party
-	 * 
-	 * @return
-	 */
-
-	public LinkedList<Politician> getPoliticians(String party) {
-		LinkedList<Politician> politicians = new LinkedList<Politician>();
-		Connection connection = getConnection();
-		try {
-			String query = "SELECT * FROM politicians WHERE party = ?";
-			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setString(1, party);
-			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				Politician politician = new Politician();
-				politician.setName(rs.getString("name"));
-				politician.setFacebookId(rs.getLong("fID"));
-				politician.setTwitterId(rs.getString("tID"));
-				politician.setId(rs.getInt("id"));
-				politician.setParty(rs.getString("party"));
-				politicians.add(politician);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(connection);
-		}
-		return politicians;
-	}
-
-
-
-	/**
-	 * Returns a list of all comments on the specified post
-	 * 
-	 * @param post
-	 * @return
-	 */
-
-	public LinkedList<Comment> getComments(int post) {
-		LinkedList<Comment> comments = new LinkedList<Comment>();
-		Connection connection = getConnection();
-		try {
-			String query = "select * from comments where post = " + post + ";";
-			PreparedStatement statement = connection.prepareStatement(query);
-			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				Comment comment = new Comment();
-				comment.setId(rs.getInt("id"));
-				comment.setText(rs.getString("text"));
-				comment.setTime(rs.getString("time"));
-				comment.setEmail(rs.getString("email"));
-				comment.setPost(rs.getInt("post"));
-				comments.add(comment);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(connection);
-		}
-		return comments;
-	}
+	// ------------------------------------------------------------------------------------
+	// ADMIN methods
 
 	/**
 	 * ADMIN METHOD!
@@ -558,6 +589,7 @@ public class DBHandler {
 			closeConnection(connection);
 		}
 	}
+
 
 	/**
 	 * Testing some stuff.

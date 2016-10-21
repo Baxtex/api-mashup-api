@@ -69,6 +69,7 @@ public class ApiV1 {
 
 		JSONObject jsonObject = new JSONObject();
 		try {
+			jsonObject = controller.getAllPostsParty(party);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -78,7 +79,7 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return posts from specific politician in specific party.
+	 * Return posts from specific politician
 	 * 
 	 * @param party the short name of the party, f.e. "s"
 	 * @param id the id of the politician stored in our database
@@ -86,13 +87,12 @@ public class ApiV1 {
 	 */
 
 	@GET
-	@Path("posts/{party}/{politician}")
+	@Path("posts/id/{politicianID}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getPostsByPolitican(@PathParam("party") String party, @PathParam("politician") String id) {
+	public Response getPostsByPolitican(@PathParam("politicianID") String id) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			// jsonObject = controller.getPostsByPolitician(id);
-			jsonObject = controller.getPostByPolitican();
+			jsonObject = controller.getPostsPolitician(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
