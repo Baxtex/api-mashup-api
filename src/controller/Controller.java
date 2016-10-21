@@ -8,6 +8,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import database.DBHandler;
+import databaseObjects.Party;
 import databaseObjects.Politician;
 import databaseObjects.Post;
 import externalAPIs.FBHandler;
@@ -99,6 +100,7 @@ public class Controller {
 		return jsonObject;
 
 	}
+
 	/**
 	 * Returns data about all posts from a specified politician, formatted as a
 	 * JSON object
@@ -162,7 +164,6 @@ public class Controller {
 		return jsonObject;
 	}
 
-
 	/**
 	 * Returns data about all politicians from a specified party, formatted as a
 	 * JSON object
@@ -171,14 +172,11 @@ public class Controller {
 	 * @return
 	 */
 
-	// TODO: Fix img_url and add more data about politician in jsonPolitician
-	// object
-
 	public JSONObject getPoliticiansParty(String party) {
 		JSONObject jsonObject = new JSONObject();
 		JSONArray jsonPoliticians = new JSONArray();
 		try {
-			LinkedList<Politician> politicians = dbHandler.getPoliticians(party);
+			LinkedList<Politician> politicians = dbHandler.getPoliticiansParty(party);
 			jsonObject.put("HTTP_CODE", HTTP_OK);
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", politicians.size());
@@ -197,15 +195,104 @@ public class Controller {
 			}
 			jsonObject.put("politicians", jsonPoliticians);
 		} catch (JSONException e) {
-			System.out.println("Controller: Error while loading jsonObject with politicians from specific party");
 			e.printStackTrace();
 		}
 		return jsonObject;
 	}
 
+	/**
+	 * Return specific politician as JSONObject
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public JSONObject getPolitician(String id) {
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonPoliticians = new JSONArray();
+		try {
+			Politician p = dbHandler.getPolitician(id);
+			jsonObject.put("HTTP_CODE", HTTP_OK);
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", 1);
+			JSONObject jsonPolitician = new JSONObject();
+			jsonPolitician.put("id", p.getId());
+			jsonPolitician.put("name", p.getName());
+			jsonPolitician.put("party", p.getParty());
+			jsonPolitician.put("fb_url", p.getFacebook_URL());
+			jsonPolitician.put("twitter_url", p.getTwitter_URL());
+			jsonPolitician.put("fID", p.getFacebookId());
+			jsonPolitician.put("tID", p.getTwitterId());
+			jsonPolitician.put("profile_url", p.getProfile_url());
+			jsonPoliticians.put(jsonPolitician);
+			jsonObject.put("politicians", jsonPoliticians);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
 
+	/**
+	 * Returns all parties as JSONObject.
+	 * 
+	 * @return
+	 */
+	public JSONObject getParties() {
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonParties = new JSONArray();
+		try {
+			LinkedList<Party> parties = dbHandler.getParties();
+			jsonObject.put("HTTP_CODE", HTTP_OK);
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", parties.size());
+			for (int i = 0; i < parties.size(); i++) {
+				Party p = parties.get(i);
+				JSONObject jsonParty = new JSONObject();
+				jsonParty.put("name", p.getName());
+				jsonParty.put("abbrev", p.getNameShort());
+				jsonParty.put("logo_url", p.getParty_url());
+				jsonParties.put(jsonParty);
+			}
+			jsonObject.put("parties", jsonParties);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
 
+	/**
+	 * Returns specific party as JSONObject.
+	 * 
+	 * @param party
+	 * @return
+	 */
+	public JSONObject getParty(String party) {
 
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonParties = new JSONArray();
+		try {
+			Party p = dbHandler.getParty(party);
+			JSONObject jsonParty = new JSONObject();
+			jsonObject.put("HTTP_CODE", HTTP_OK);
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", 1);
+			jsonParty.put("name", p.getName());
+			jsonParty.put("abbrev", p.getNameShort());
+			jsonParty.put("logo_url", p.getParty_url());
+			jsonParties.put(jsonParty);
+			jsonObject.put("parties", jsonParties);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return jsonObject;
+	}
+
+	/**
+	 * Don't know what this stuff is.
+	 * 
+	 * @author Anton Gustafsson
+	 *
+	 */
 	private class DBImplementer_Politicians implements ICallbackPoliticians {
 		private DBHandler dbHandler;
 
@@ -219,9 +306,5 @@ public class Controller {
 			System.out.println("Politicians added to Database");
 		}
 	}
-
-
-
-
 
 }

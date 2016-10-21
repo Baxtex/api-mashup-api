@@ -4,10 +4,19 @@ public class Party {
 	
 	private String name;
 	private String nameShort;
+	private String party_url;
 	
+
 	public Party(){
 	}
 	
+	public String getParty_url() {
+		return party_url;
+	}
+
+	public void setParty_url(String party_url) {
+		this.party_url = party_url;
+	}
 	public Party(String name, String nameShort) {
 		this.name = name;
 		this.nameShort = nameShort;

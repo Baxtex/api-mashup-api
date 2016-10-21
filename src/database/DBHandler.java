@@ -158,32 +158,6 @@ public class DBHandler {
 		return posts;
 	}
 
-	/**
-	 * Returns a list of all parties in database
-	 * 
-	 * @return
-	 */
-
-	public LinkedList<Party> getParties() {
-		LinkedList<Party> parties = new LinkedList<Party>();
-		Connection connection = getConnection();
-		try {
-			String query = "select * from parties";
-			PreparedStatement statement = connection.prepareStatement(query);
-			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				Party party = new Party();
-				party.setName(rs.getString("name"));
-				party.setNameShort(rs.getString("nameShort"));
-				parties.add(party);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(connection);
-		}
-		return parties;
-	}
 
 	/**
 	 * Returns a list of all politicians in the database
@@ -224,7 +198,7 @@ public class DBHandler {
 	 * @return
 	 */
 
-	public LinkedList<Politician> getPoliticians(String party) {
+	public LinkedList<Politician> getPoliticiansParty(String party) {
 		LinkedList<Politician> politicians = new LinkedList<Politician>();
 		Connection connection = getConnection();
 		try {
@@ -235,10 +209,13 @@ public class DBHandler {
 			while (rs.next()) {
 				Politician politician = new Politician();
 				politician.setName(rs.getString("name"));
-				politician.setFacebookId(rs.getLong("fID"));
-				politician.setTwitterId(rs.getString("tID"));
-				politician.setId(rs.getInt("id"));
 				politician.setParty(rs.getString("party"));
+				politician.setFacebook_URL((rs.getString("fb_url")));
+				politician.setTwitter_URL((rs.getString("twitter_url")));
+				politician.setFacebookId((rs.getLong("fID")));
+				politician.setTwitterId((rs.getString("tID")));
+				politician.setId(rs.getInt("id"));
+				politician.setProfile_url(rs.getString("profile_url"));
 				politicians.add(politician);
 			}
 		} catch (SQLException e) {
@@ -247,6 +224,127 @@ public class DBHandler {
 			closeConnection(connection);
 		}
 		return politicians;
+	}
+
+	/**
+	 * Returns a specific politician from the database.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public Politician getPolitician(String id) {
+		Politician politician = new Politician();
+		Connection connection = getConnection();
+		try {
+			String query = "SELECT * FROM politicians WHERE id = ?";
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setString(1, id);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				politician.setName(rs.getString("name"));
+				politician.setParty(rs.getString("party"));
+				politician.setFacebook_URL((rs.getString("fb_url")));
+				politician.setTwitter_URL((rs.getString("twitter_url")));
+				politician.setFacebookId((rs.getLong("fID")));
+				politician.setTwitterId((rs.getString("tID")));
+				politician.setId(rs.getInt("id"));
+				politician.setProfile_url(rs.getString("profile_url"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+
+		return politician;
+	}
+
+	/**
+	 * Retrieves all parties from the database.
+	 * 
+	 * @param party
+	 * @return
+	 */
+	public Politician getParties(String party) {
+		Politician politician = new Politician();
+		Connection connection = getConnection();
+		try {
+			String query = "SELECT * FROM politicians WHERE id = ?";
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setString(1, party);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				politician.setName(rs.getString("name"));
+				politician.setParty(rs.getString("party"));
+				politician.setFacebook_URL((rs.getString("fb_url")));
+				politician.setTwitter_URL((rs.getString("twitter_url")));
+				politician.setFacebookId((rs.getLong("fID")));
+				politician.setTwitterId((rs.getString("tID")));
+				politician.setId(rs.getInt("id"));
+				politician.setProfile_url(rs.getString("profile_url"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+
+		return politician;
+	}
+
+	/**
+	 * Returns a list of all parties in database
+	 * 
+	 * @return
+	 */
+
+	public LinkedList<Party> getParties() {
+		LinkedList<Party> parties = new LinkedList<Party>();
+		Connection connection = getConnection();
+		try {
+			String query = "SELECT * FROM parties";
+			PreparedStatement statement = connection.prepareStatement(query);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				Party p = new Party();
+				p.setName(rs.getString("name"));
+				p.setNameShort(rs.getString("nameShort"));
+				p.setParty_url((rs.getString("logo_url")));
+				parties.add(p);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return parties;
+	}
+
+	/**
+	 * Retrives specific party from database.
+	 * 
+	 * @param party
+	 * @return
+	 */
+	public Party getParty(String party) {
+		Connection connection = getConnection();
+		Party p = new Party();
+		try {
+			String query = "SELECT * FROM parties WHERE nameShort = ?";
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setString(1, party);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				p.setName(rs.getString("name"));
+				p.setNameShort(rs.getString("nameShort"));
+				p.setParty_url((rs.getString("logo_url")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return p;
 	}
 
 	/**
@@ -307,8 +405,6 @@ public class DBHandler {
 			closeConnection(connection);
 		}
 	}
-
-
 
 	/**
 	 * Adds a new party to the database
@@ -416,7 +512,6 @@ public class DBHandler {
 		// closeConnection(connection);
 	}
 
-
 	/**
 	 * Adds a new comment to the database
 	 * 
@@ -442,7 +537,7 @@ public class DBHandler {
 			closeConnection(connection);
 		}
 	}
-	
+
 	/**
 	 * Adds id to database.
 	 * 
@@ -473,7 +568,9 @@ public class DBHandler {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-//		DBHandler db = new DBHandler();
+		// DBHandler db = new DBHandler();
 
 	}
+
+
 }

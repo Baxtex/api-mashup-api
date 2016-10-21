@@ -101,7 +101,7 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return specified number of comments for a polititan.
+	 * TODO DOES NOT WORK! Return specified number of comments for a polititan.
 	 * 
 	 * @param party
 	 * @param id
@@ -173,10 +173,10 @@ public class ApiV1 {
 	@GET
 	@Path("politicians/id/{politician}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getSpecificPoliticianByParty(@PathParam("party") String party, @PathParam("politician") String id) {
+	public Response getSpecificPoliticianByParty(@PathParam("politician") String id) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject = controller.getPoliticiansParty(party);
+			jsonObject = controller.getPolitician(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -185,22 +185,24 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return all parties.
+	 * Return all parties as objects.
 	 * 
 	 * @return
 	 */
 	@GET
-	@Path("party")
+	@Path("parties")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPartyInformation() {
 		JSONObject jsonObject = new JSONObject();
 		try {
+			jsonObject = controller.getParties();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
 		}
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
+
 
 	/**
 	 * Return a specific party object.
@@ -208,17 +210,19 @@ public class ApiV1 {
 	 * @return
 	 */
 	@GET
-	@Path("party/{party}")
+	@Path("parties/{party}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getSpecificPartyInformation(@PathParam("party") String party) {
 		JSONObject jsonObject = new JSONObject();
 		try {
+			jsonObject = controller.getParty(party);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
 		}
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
+
 
 	/**
 	 * 
