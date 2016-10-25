@@ -86,7 +86,7 @@ public class Admin {
 
 	/**
 	 * This method loops over the politicians and uses their twitter URL to find
-	 * their Twitter ID's-
+	 * their Twitter ID's.
 	 */
 	private void setPoliticiansTwitterIds() {
 		LinkedList<Politician> politicians = dbHandler.getPoliticians();
@@ -121,6 +121,7 @@ public class Admin {
 	 * @return
 	 */
 	private void createPostsFromAPIs() {
+
 		try {
 			LinkedList<Politician> politicians = dbHandler.getPoliticians();
 			Iterator<Politician> iter = politicians.iterator();
@@ -130,6 +131,7 @@ public class Admin {
 				i++;
 				System.out.println(i);
 				Politician p = (Politician) iter.next();
+
 				long fbID = p.getFacebookId();
 				String twID = p.getTwitterId();
 
@@ -143,13 +145,14 @@ public class Admin {
 									new Date(fbPost.getCreatedTime().getTime()),
 									new Time(fbPost.getCreatedTime().getTime()), 0);
 							System.out.println("fbPost");
+
 							dbHandler.addPost(dbPost);
 						}
 					}
 				} else {
 					System.out.println("No FBPost created and added.");
 				}
-				// if TW exist, create new posts from that data.
+				// if TWID exist, create new posts from that data.
 				if (twID != null) {
 					List<Status> statuses = twHandler.getPostsList(1, p.getTwitterId());
 					databaseObjects.Post dbPost = null;
@@ -216,4 +219,20 @@ public class Admin {
 		dbHandler.addComment(comment);
 	}
 	
+
+
+	/**
+	 * Just an example method for adding comments.
+	 */
+	private void addSpoofCommentsExample(){
+		System.out.println("Adding spoofcomment called.");
+		Date date = new Date();
+		Comment comment = new Comment();
+		comment.setDate(date);
+		comment.setEmail("foo@bar.com");
+		comment.setText("Vad snackar han om?");
+		comment.setPost(565);// post id
+		dbHandler.addComment(comment);
+		
+	}
 }

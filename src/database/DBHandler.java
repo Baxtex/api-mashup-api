@@ -349,7 +349,7 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a list of all comments on the specified post
+	 * Returns a list of all comments on the specified post TODO: Does not work.
 	 * 
 	 * @param post
 	 * @return
@@ -533,6 +533,7 @@ public class DBHandler {
 			statement.setString(4, comment.getEmail());
 			statement.setInt(5, comment.getPost());
 			statement.setDate(6, new java.sql.Date(comment.getDate().getTime()));
+
 			statement.executeUpdate();
 			System.out.println("DBHandler: Added comment to database");
 		} catch (SQLException e) {
@@ -543,7 +544,8 @@ public class DBHandler {
 	}
 
 	/**
-	 * Adds id to database.
+	 * Generic method for adding data to database. Used by other methods in this
+	 * class.
 	 * 
 	 * @param query - the statement to execute.
 	 * @param id - id to add.
