@@ -348,7 +348,7 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a list of all comments on the specified post
+	 * Returns a list of all comments on the specified post TODO: Does not work.
 	 * 
 	 * @param post
 	 * @return
@@ -365,7 +365,7 @@ public class DBHandler {
 				Comment comment = new Comment();
 				comment.setId(rs.getInt("id"));
 				comment.setText(rs.getString("text"));
-				comment.setTime(rs.getString("time"));
+
 				comment.setEmail(rs.getString("email"));
 				comment.setPost(rs.getInt("post"));
 				comments.add(comment);
@@ -519,27 +519,27 @@ public class DBHandler {
 	 */
 
 	public void addComment(Comment comment) {
-		String query = "insert into comments(id, text, time, email, post) VALUES (?, ?, ?, ?, ?)";
+		String query = "insert into comments(text, email, post, date) VALUES (?, ?, ?, ?)";
 		Connection connection = getConnection();
 		PreparedStatement statement;
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setInt(1, comment.getID());
-			statement.setString(2, comment.getText());
-			statement.setString(3, comment.getTime());
-			statement.setString(4, comment.getEmail());
-			statement.setInt(5, comment.getPost());
+			statement.setString(1, comment.getText());
+			statement.setString(2, comment.getEmail());
+			statement.setInt(3, comment.getPost());
+			statement.setDate(4, new java.sql.Date(comment.getDate().getTime()));
 			statement.executeUpdate();
 			System.out.println("DBHandler: Added comment to database");
 		} catch (SQLException e) {
-			System.out.print("DBHandler: Exception when adding comment to database");
+			e.printStackTrace();
 		} finally {
 			closeConnection(connection);
 		}
 	}
 
 	/**
-	 * Adds id to database.
+	 * Generic method for adding data to database. Used by other methods in this
+	 * class.
 	 * 
 	 * @param query - the statement to execute.
 	 * @param id - id to add.
