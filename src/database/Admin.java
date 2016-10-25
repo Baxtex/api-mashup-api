@@ -1,16 +1,17 @@
 package database;
 
 import java.io.IOException;
+import java.sql.Time;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import databaseObjects.Comment;
 import databaseObjects.Politician;
 import externalAPIs.FBHandler;
 import externalAPIs.TWHandler;
@@ -26,7 +27,7 @@ public class Admin {
 	public static void main(String[] args) {
 
 		Admin admin = new Admin();
-		admin.createPostsFromAPIs();
+
 	}
 
 	/**
@@ -113,7 +114,6 @@ public class Admin {
 		}
 	}
 
-
 	/**
 	 * Loops through all our politicans and retrieves their latest posts and
 	 * puts them in the database.
@@ -121,15 +121,14 @@ public class Admin {
 	 * @return
 	 */
 	private void createPostsFromAPIs() {
-		boolean postOrNot;
-		int counter = 0;
 		try {
 			LinkedList<Politician> politicians = dbHandler.getPoliticians();
 			Iterator<Politician> iter = politicians.iterator();
 			// Loop through all politicans
-			while (iter.hasNext()) {
-				postOrNot = false;
-				counter++;
+			int i = 0;
+			while (i < politicians.size()) {
+				i++;
+				System.out.println(i);
 				Politician p = (Politician) iter.next();
 				long fbID = p.getFacebookId();
 				String twID = p.getTwitterId();
@@ -141,20 +140,14 @@ public class Admin {
 					for (Post fbPost : feed) {
 						if (fbPost != null) {
 							dbPost = new databaseObjects.Post(fbPost.getMessage(), p.getId(), "fb",
-									fbPost.getCreatedTime(), 0);
-
-							// TODO Fix how to get the number of likes for a
-							// post.
+									new Date(fbPost.getCreatedTime().getTime()),
+									new Time(fbPost.getCreatedTime().getTime()), 0);
 							System.out.println("fbPost");
-							System.out.println(fbPost.getCreatedTime());
-							// System.out.println(fbPost.getLikes().getSummary().getTotalCount());
-							System.out.println(fbPost.getMessage());
-							// System.out.println(dbPost.toString());
-							// dbHandler.addPost(dbPost);
+							dbHandler.addPost(dbPost);
 						}
 					}
 				} else {
-					postOrNot = true;
+					System.out.println("No FBPost created and added.");
 				}
 				// if TW exist, create new posts from that data.
 				if (twID != null) {
@@ -162,27 +155,27 @@ public class Admin {
 					databaseObjects.Post dbPost = null;
 					for (Status twPost : statuses) {
 						if (twPost != null) {
-							dbPost = new databaseObjects.Post(twPost.getText(), p.getId(), "fb", twPost.getCreatedAt(),
-									twPost.getRetweetCount());
+							dbPost = new databaseObjects.Post(twPost.getText(), p.getId(), "tw",
+									new Date(twPost.getCreatedAt().getTime()),
+									new Time(twPost.getCreatedAt().getTime()), twPost.getRetweetCount());
 							System.out.println("twPost");
-							// dbHandler.addPost(dbPost);
+							dbHandler.addPost(dbPost);
 						}
 					}
 				} else {
-					postOrNot = false;
+
+					System.out.println("No TWPost created and added.");
 				}
 
-				System.out.println("counter " + counter);
-				if (postOrNot) {
-					System.out.println("No Post created and added.");
-				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-	private void addImageURL(){
+	/**
+	 * Adds profile picture urls to the database
+	 */
+	private void addImageURL() {
 		int counter = 0;
 		try {
 			LinkedList<Politician> politicians = dbHandler.getPoliticians();
@@ -198,146 +191,29 @@ public class Admin {
 
 				if (twID != null) {
 					res = twHandler.getProfileURL(twID);
-					dbHandler.addDataDB("UPDATE politicians set profile_url = ? WHERE id = ? ",  res, String.valueOf(pID));
-
-
+					dbHandler.addDataDB("UPDATE politicians set profile_url = ? WHERE id = ? ", res,
+							String.valueOf(pID));
 				}
-
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-
+	
 	/**
-	 * Loops through all our politicans and adds their data to a JSONObject.
-	 * 
-	 * @return
+	 * Example method that adds a comment.
 	 */
-	// private JSONObject getPostText() {
-	// System.out.println("CreatePost:");
-	// JSONObject resultObject = new JSONObject();
-	// JSONArray pArray = new JSONArray();
-	//
-	// try {
-	// resultObject.put("HTTP_CODE", "200");
-	// resultObject.put("MSG", "jsonArray successfully retrieved, v1");
-	//
-	// LinkedList<Politician> politicians = dbHandler.getPoliticians();
-	// Iterator<Politician> iter = politicians.iterator();
-	// while (iter.hasNext()) {
-	// Politician p = (Politician) iter.next();
-	// JSONObject tempObj1 = new JSONObject();
-	//
-	// long fbID = p.getFacebookId();
-	// String twID = p.getTwitterId();
-	//
-	// tempObj1.put("name", p.getName());
-	// // If FB
-	// if (fbID != 0) {
-	// tempObj1.put("fbPosts", fbHandler.getPosts(1,
-	// String.valueOf(p.getFacebookId()).toString()));
-	// } else {
-	// tempObj1.put("FBpost", "None");
-	// }
-	//
-	// // if TW
-	// if (twID != null) {
-	// tempObj1.put("twPosts", twHandler.getPosts(1,
-	// p.getTwitterId()).toString());
-	// } else {
-	// tempObj1.put("TWpost", "None");
-	// }
-	//
-	// pArray.put(new JSONObject().put("politican", tempObj1));
-	// System.out.println("...");
-	//
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	//
-	// try {
-	// resultObject.put("politicians", pArray);
-	// } catch (JSONException e) {
-	// e.printStackTrace();
-	// }
-	// System.out.println(resultObject.toString());
-	// return resultObject;
-	// }
-
-	/**
-	 * Retrieves facebook and twitter post for a specific politician and mashes
-	 * them up into a new JSONObject.
-	 * 
-	 * @return
-	 */
-	public void getSpecificPostMashup(String fbId, String tId) {
-		JSONArray jsonArrayFB = new JSONArray();
-		JSONArray jsonArrayT = new JSONArray();
-		JSONObject jsonObject = new JSONObject();
-		try {
-
-			jsonArrayFB = fbHandler.getPostsJSONArray(1, fbId);
-			jsonArrayT = twHandler.getPostsJSONArray(1, tId);
-			jsonObject.put("fbposts", jsonArrayFB);
-			jsonObject.put("twposts", jsonArrayT);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.out.println(jsonObject.toString());
-
+	private void addSpoofComment() {
+		System.out.println("Adding comment...");
+		Date date = new Date();
+		Time time = new Time(date.getTime());
+		Comment comment = new Comment();
+		comment.setDate(date);
+		comment.setTime(time);
+		comment.setEmail("foo@bar.com");
+		comment.setText("Beacuse f*** you that's why.");
+		comment.setPost(742);// post id
+		dbHandler.addComment(comment);
 	}
-
-	// /**
-	// * Retrieves post from a specificparty
-	// *
-	// * @param party
-	// * @return
-	// */
-	// public JSONObject test2(String party) {
-	// JSONObject resultObject = new JSONObject();
-	// JSONArray pArray = new JSONArray();
-	// try {
-	// resultObject.put("HTTP_CODE", "200");
-	// resultObject.put("MSG", "jsonArray successfully retrieved, v1");
-	//
-	// LinkedList<Politician> politicians = dbHandler.getPoliticians(party);
-	// Iterator<Politician> iter = politicians.iterator();
-	// while (iter.hasNext()) {
-	// Politician p = (Politician) iter.next();
-	// pArray.put(new JSONObject().put("name", p.getName()));
-	//
-	// if (p.getFacebookId() != 0 && p.getTwitterId() != null) {
-	// pArray.put(
-	// new JSONObject().put("fbPosts", fbHandler.getPosts(3,
-	// String.valueOf(p.getFacebookId()))));
-	// pArray.put(new JSONObject().put("twPosts", twHandler.getPosts(1,
-	// p.getTwitterId())));
-	// }
-	//
-	// if (p.getFacebookId() == 0 && p.getTwitterId() == null) {
-	// pArray.put(new JSONObject().put("fbPosts", "None"));
-	// pArray.put(new JSONObject().put("twPosts", "None"));
-	// }
-	//
-	// if (p.getFacebookId() != 0 && p.getTwitterId() == null) {
-	// pArray.put(new JSONObject().put("fbPosts",
-	// fbHandler.getPosts(3, String.valueOf(p.getFacebookId()).toString())));
-	//
-	// }
-	// if (p.getFacebookId() == 0 && p.getTwitterId() != null) {
-	// pArray.put(new JSONObject().put("twPosts", twHandler.getPosts(1,
-	// p.getTwitterId()).toString()));
-	// }
-	// resultObject.put("politicians", pArray);
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// return resultObject;
-	// }
-
+	
 }

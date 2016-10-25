@@ -1,20 +1,34 @@
 package databaseObjects;
 
+import java.sql.Time;
+import java.util.Date;
+
 public class Comment {
 	
 	private int id;
 	private String text;
-	private String time;
 	private String email;
+	private Date date;
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	private Time time;
 	private int post;
 	
 	public Comment() {
 	}
 	
-	public Comment(int id, String text, String time, String email, int post) {
+	public Comment(int id, String text, Time time, Date date, String email, int post) {
 		this.id = id;
 		this.text = text;
 		this.time = time;
+		this.date = date;
 		this.email = email;
 		this.post = post;
 	}
@@ -27,7 +41,7 @@ public class Comment {
 		this.text = text;
 	}
 	
-	public void setTime(String time) {
+	public void setTime(Time time) {
 		this.time = time;
 	}
 	
@@ -47,7 +61,7 @@ public class Comment {
 		return text;
 	}
 	
-	public String getTime() {
+	public Time getTime() {
 		return time;
 	}
 	
@@ -61,7 +75,7 @@ public class Comment {
 
 	public String toString() {
 		return "\nKommentars-id: " + id + "\nText: " + text + "\nTid: " + time + 
-				"\nEmail: " + email + "\nTillhör post-id: " + post + "\n";
+				"\nEmail: " + email + "\nTillhï¿½r post-id: " + post + "\n";
 	}
 	
 }

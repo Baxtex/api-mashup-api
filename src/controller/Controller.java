@@ -61,7 +61,8 @@ public class Controller {
 			while (iter.hasNext()) {
 				Post p = (Post) iter.next();
 				postArray.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
-						.put("date", p.getDate()).put("text", p.getText()).put("source", p.getSource())
+						.put("date", p.getDate()).put("time", p.getTime()).put("text", p.getText())
+						.put("source", p.getSource())
 						.put("rank", p.getRank()));
 			}
 			jsonObject.put("posts", postArray);

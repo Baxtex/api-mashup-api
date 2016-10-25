@@ -1,5 +1,7 @@
 package databaseObjects;
 
+
+import java.sql.Time;
 import java.util.Date;
 
 public class Post {
@@ -12,6 +14,15 @@ public class Post {
 	private int retweets;
 	private String source;
 	private int rank;
+	private Time time;
+
+	public Time getTime() {
+		return time;
+	}
+
+	public void setTime(Time time) {
+		this.time = time;
+	}
 
 
 	public Post() {
@@ -19,7 +30,8 @@ public class Post {
 
 
 
-	public Post(String text, int politican, String source, Date date, int rank) {
+	public Post(String text, int politican, String source, Date date, Time time, int rank) {
+		this.time = time;
 		this.text = text;
 		this.date = date;
 		this.politican = politican;

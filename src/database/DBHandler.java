@@ -72,7 +72,7 @@ public class DBHandler {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
-			String query = "SELECT DISTINCT id,text,politican,source,date,rank FROM posts group by politican;";
+			String query = "SELECT DISTINCT id,text,politican,source,date,rank,time FROM posts group by politican;";
 			PreparedStatement statement = connection.prepareStatement(query);
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
@@ -83,6 +83,7 @@ public class DBHandler {
 				post.setSource(rs.getString("source"));
 				post.setDate(rs.getDate("date"));
 				post.setRank(rs.getInt("rank"));
+				post.setTime(rs.getTime("time"));
 				posts.add(post);
 			}
 		} catch (SQLException e) {
@@ -365,7 +366,8 @@ public class DBHandler {
 				Comment comment = new Comment();
 				comment.setId(rs.getInt("id"));
 				comment.setText(rs.getString("text"));
-				comment.setTime(rs.getString("time"));
+				comment.setTime(rs.getTime("time"));
+				comment.setDate(rs.getDate("date"));
 				comment.setEmail(rs.getString("email"));
 				comment.setPost(rs.getInt("post"));
 				comments.add(comment);
@@ -387,7 +389,7 @@ public class DBHandler {
 	 */
 
 	public void addPost(Post post) {
-		String query = "INSERT INTO posts (text, politican, source, date, rank) VALUES (?, ?, ?, ?, ?)";
+		String query = "INSERT INTO posts (text, politican, source, date, rank, time) VALUES (?, ?, ?, ?, ?, ?)";
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
 		try {
@@ -397,6 +399,7 @@ public class DBHandler {
 			statement.setString(3, post.getSource());
 			statement.setDate(4, new java.sql.Date(post.getDate().getTime()));
 			statement.setInt(5, post.getRank());
+			statement.setTime(6, post.getTime());
 			statement.executeUpdate();
 			System.out.println("DBHandler: Added post to database");
 		} catch (SQLException e) {
@@ -519,20 +522,21 @@ public class DBHandler {
 	 */
 
 	public void addComment(Comment comment) {
-		String query = "insert into comments(id, text, time, email, post) VALUES (?, ?, ?, ?, ?)";
+		String query = "insert into comments(id, text, time, email, post, date) VALUES (?, ?, ?, ?, ?, ?)";
 		Connection connection = getConnection();
 		PreparedStatement statement;
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, comment.getID());
 			statement.setString(2, comment.getText());
-			statement.setString(3, comment.getTime());
+			statement.setTime(3, comment.getTime());
 			statement.setString(4, comment.getEmail());
 			statement.setInt(5, comment.getPost());
+			statement.setDate(6, new java.sql.Date(comment.getDate().getTime()));
 			statement.executeUpdate();
 			System.out.println("DBHandler: Added comment to database");
 		} catch (SQLException e) {
-			System.out.print("DBHandler: Exception when adding comment to database");
+			e.printStackTrace();
 		} finally {
 			closeConnection(connection);
 		}
