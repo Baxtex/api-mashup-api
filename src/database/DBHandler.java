@@ -110,7 +110,7 @@ public class DBHandler {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
-			String query = "SELECT * FROM posts WHERE politican in( select politicians.id from politicians where politicians.party = ?);";
+			String query = "SELECT * FROM posts WHERE politican in( select politicians.id from politicians where politicians.party = ? group by time;);";
 
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, party);
@@ -145,8 +145,9 @@ public class DBHandler {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
-			String query = "select * from posts where politican = " + politican + ";";
+			String query = "select * from posts where politican = ? group by time;";
 			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setInt(1, politican);
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				Post post = new Post();
