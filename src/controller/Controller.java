@@ -326,13 +326,23 @@ public class Controller {
 		dbHandler.addComment(comment);
 	}
 
-	public void postLike(int postID, String email) {
-		dbHandler.addLike(postID, email);
+	public boolean postLike(int postID, String email) {
+		return (dbHandler.addLike(postID, email));
 
 	}
 
-	public void postDislike(int postID, String email) {
-		dbHandler.addDislike(postID, email);
+	public boolean postDislike(int postID, String email) {
+		return (dbHandler.addDislike(postID, email));
+
+	}
+
+	public boolean postRevertLike(int postID, String email) {
+		return (dbHandler.revertLike(postID, email));
+
+	}
+
+	public boolean postRevertDislike(int postID, String email) {
+		return (dbHandler.revertDislike(postID, email));
 
 	}
 

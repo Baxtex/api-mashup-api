@@ -256,10 +256,71 @@ public class ApiV1 {
 	@Consumes({ MediaType.TEXT_PLAIN + ";charset=utf-8" })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response postLike(@PathParam("postID") int postID, @PathParam("email") String email) {
+		Response response = null;
 		JSONObject jsonObject = new JSONObject();
 		try {
-			controller.postLike(postID, email);
-			jsonObject.put("Success", true);
+			if (controller.postLike(postID, email)) {
+				jsonObject.put("MSG", "Succesfully added like");
+				response = Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+			} else {
+				jsonObject.put("MSG", "Failed to put like. Use revert if you want to remove the like");
+				response = Response.status(500).header("Access-Control-Allow-Origin", "*").entity(jsonObject.toString())
+						.build();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return response;
+	}
+
+	/**
+	 * This method should be used when someone is disliking a post.
+	 */
+	@PUT
+	@Path("dislike/{postID}/{email}")
+	@Consumes({ MediaType.TEXT_PLAIN + ";charset=utf-8" })
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response postDislike(@PathParam("postID") int postID, @PathParam("email") String email) {
+		Response response = null;
+		JSONObject jsonObject = new JSONObject();
+		try {
+			if (controller.postDislike(postID, email)) {
+				jsonObject.put("MSG", "Succesfully added dislike");
+				response = Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+			} else {
+				jsonObject.put("MSG", "Failed to put dislike. Use revert if you want to remove the like");
+				response = Response.status(500).header("Access-Control-Allow-Origin", "*").entity(jsonObject.toString())
+						.build();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+
+		return response;
+	}
+
+	/**
+	 * This method should be used when someone is liking a post.
+	 */
+	@PUT
+	@Path("like/revert/{postID}/{email}")
+	@Consumes({ MediaType.TEXT_PLAIN + ";charset=utf-8" })
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response postRevertLike(@PathParam("postID") int postID, @PathParam("email") String email) {
+		Response response = null;
+		JSONObject jsonObject = new JSONObject();
+		try {
+
+			if (controller.postRevertLike(postID, email)) {
+				jsonObject.put("MSG", "Succesfully reverted like");
+				response = Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+			} else {
+				jsonObject.put("MSG", "Failed to revert like. Use like first");
+				response = Response.status(500).header("Access-Control-Allow-Origin", "*").entity(jsonObject.toString())
+						.build();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -272,14 +333,21 @@ public class ApiV1 {
 	 * This method should be used when someone is disliking a post.
 	 */
 	@PUT
-	@Path("dislike/{postID}/{email}")
+	@Path("dislike/revert/{postID}/{email}")
 	@Consumes({ MediaType.TEXT_PLAIN + ";charset=utf-8" })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response postDislike(@PathParam("postID") int postID, @PathParam("email") String email) {
+	public Response postRevertDislike(@PathParam("postID") int postID, @PathParam("email") String email) {
+		Response response = null;
 		JSONObject jsonObject = new JSONObject();
 		try {
-			controller.postDislike(postID, email);
-			jsonObject.put("Success", true);
+			if (controller.postRevertDislike(postID, email)) {
+				jsonObject.put("MSG", "Succesfully reverted dislike");
+				response = Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+			} else {
+				jsonObject.put("MSG", "Failed to revert dislike. Use dislike first");
+				response = Response.status(500).header("Access-Control-Allow-Origin", "*").entity(jsonObject.toString())
+						.build();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
