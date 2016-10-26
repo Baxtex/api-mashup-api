@@ -148,6 +148,7 @@ public class DBHandler {
 				post.setSource(rs.getString("source"));
 				post.setDate(rs.getDate("date"));
 				post.setRank(rs.getInt("rank"));
+				post.setTime(rs.getTime("time"));
 				posts.add(post);
 			}
 		} catch (SQLException e) {

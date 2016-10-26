@@ -91,7 +91,7 @@ public class ApiV1 {
 
 	@GET
 	@Path("posts/id/{politicianID}")
-	@Consumes({ MediaType.TEXT_PLAIN })
+	// @Consumes({ MediaType.TEXT_PLAIN })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPostsByPolitican(@PathParam("politicianID") String id) {
 		JSONObject jsonObject = new JSONObject();
@@ -232,8 +232,8 @@ public class ApiV1 {
 	/**
 	 * This method should be used when posting a comment.
 	 */
-	@Path("comment/{postID}/{text}/{email}")
 	@PUT
+	@Path("comment/{postID}/{text}/{email}")
 	@Consumes({ MediaType.TEXT_PLAIN + ";charset=utf-8" })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response postComment(@PathParam("postID") int postID, @PathParam("text") String text,
