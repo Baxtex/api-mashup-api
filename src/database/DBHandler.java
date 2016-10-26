@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.LinkedList;
 
 import databaseObjects.Comment;
@@ -13,7 +14,8 @@ import databaseObjects.Politician;
 import databaseObjects.Post;
 
 public class DBHandler {
-	private final String DRIVER = "com.mysql.jdbc.Driver";
+	// private final String DRIVER = "com.mysql.jdbc.Driver";
+	private final String DRIVER = "com.mysql.cj.jdbc.Driver";
 	private final String URL = "jdbc:mysql://195.178.232.16:3306/AB7455";
 	private final String USER = "AB7455";
 	private final String PASSWORD = "kajsaecool";
@@ -71,8 +73,13 @@ public class DBHandler {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
-			String query = "SELECT DISTINCT id,text,politican,source,date,rank,time FROM posts group by politican;";
+			// String query = "SELECT DISTINCT
+			// id,text,politican,source,date,rank,time FROM posts group by
+			// politican ;";
+			String query = "SELECT id,text,politican,source,date,rank,time FROM posts  WHERE date=? group by time;";
+			Date date = new Date();
 			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setDate(1, new java.sql.Date(date.getTime()));
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				Post post = new Post();
@@ -116,6 +123,7 @@ public class DBHandler {
 				post.setSource(rs.getString("source"));
 				post.setDate(rs.getDate("date"));
 				post.setRank(rs.getInt("rank"));
+				post.setTime(rs.getTime("time"));
 				posts.add(post);
 			}
 		} catch (SQLException e) {
