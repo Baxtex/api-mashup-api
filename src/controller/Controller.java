@@ -326,4 +326,14 @@ public class Controller {
 		dbHandler.addComment(comment);
 	}
 
+	public void postLike(int postID, String email) {
+		dbHandler.addLike(postID, email);
+
+	}
+
+	public void postDislike(int postID, String email) {
+		dbHandler.addDislike(postID, email);
+
+	}
+
 }

@@ -69,7 +69,6 @@ public class ApiV1 {
 	@Consumes({ MediaType.TEXT_PLAIN })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPartyPosts(@PathParam("party") String party) {
-
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject = controller.getAllPostsParty(party);
@@ -77,7 +76,6 @@ public class ApiV1 {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
 		}
-
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
 
@@ -249,4 +247,45 @@ public class ApiV1 {
 
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
+
+	/**
+	 * This method should be used when someone is liking a post.
+	 */
+	@PUT
+	@Path("like/{postID}/{email}")
+	@Consumes({ MediaType.TEXT_PLAIN + ";charset=utf-8" })
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response postLike(@PathParam("postID") int postID, @PathParam("email") String email) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			controller.postLike(postID, email);
+			jsonObject.put("Success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
+		}
+
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+	}
+
+	/**
+	 * This method should be used when someone is disliking a post.
+	 */
+	@PUT
+	@Path("dislike/{postID}/{email}")
+	@Consumes({ MediaType.TEXT_PLAIN + ";charset=utf-8" })
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response postDislike(@PathParam("postID") int postID, @PathParam("email") String email) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			controller.postDislike(postID, email);
+			jsonObject.put("Success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
+		}
+
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+	}
+
 }

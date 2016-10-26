@@ -553,6 +553,177 @@ public class DBHandler {
 	}
 
 	/**
+	 * Method that handles Likes. If it's a new Like, add it as a Row to the
+	 * rank table and increase rank column by one. If like already exists, call
+	 * method to revert it.
+	 * 
+	 * @param postID
+	 * @param email
+	 */
+	public void addLike(int postID, String email) {
+		String queryAddRank = "insert into rank(postID, email, liked) VALUES (?, ?, ?)";
+		String queryAddLike = "UPDATE posts SET rank=rank + 1 WHERE id = ?";
+		boolean exceuteNext = true;
+		Connection connection = getConnection();
+		try {
+			PreparedStatement statement;
+			statement = connection.prepareStatement(queryAddRank);
+			statement.setInt(1, postID);
+			statement.setString(2, email);
+			statement.setBoolean(3, true);
+			statement.executeUpdate();
+			System.out.println("DBHandler: Added Rank to database with LIKE");
+
+		} catch (SQLException e) {
+			exceuteNext = false;
+			System.out.println("Already liked!"); // Code that reverts the
+			revertLike(postID, email); // dislike
+		}
+		if (exceuteNext) {
+			try {
+
+				PreparedStatement statement2;
+				statement2 = connection.prepareStatement(queryAddLike);
+				statement2.setInt(1, postID);
+				statement2.executeUpdate();
+				System.out.println("DBHandler: Added Like to post");
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				closeConnection(connection);
+			}
+		}
+
+
+	}
+
+	/**
+	 * If Like already existsed and same resource is called again, remove the
+	 * like.
+	 * 
+	 * @param postID
+	 * @param email
+	 */
+	private void revertLike(int postID, String email) {
+		String queryAlreadyLiked = "DELETE FROM rank WHERE postID = ? AND email = ? AND liked = ?;";
+		String retractRank = "UPDATE posts SET rank=rank - 1 WHERE id = ?;";
+		boolean exceuteNext = true;
+		Connection connection = getConnection();
+		try {
+			PreparedStatement statement;
+			statement = connection.prepareStatement(queryAlreadyLiked);
+			statement.setInt(1, postID);
+			statement.setString(2, email);
+			statement.setBoolean(3, true);
+			statement.executeUpdate();
+			System.out.println("DBHandler: Deleted like row");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+
+			PreparedStatement statement2;
+			statement2 = connection.prepareStatement(retractRank);
+			statement2.setInt(1, postID);
+			statement2.executeUpdate();
+			System.out.println("DBHandler: removed like from post");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+
+	}
+
+	/**
+	 * Method that handles Dislikes. If it's a new disLike, add it as a Row to
+	 * the rank table and decrease rank column by one. If dislike already
+	 * exists, call method to revert it.
+	 * 
+	 * @param postID
+	 * @param email
+	 */
+	public void addDislike(int postID, String email) {
+		String queryAddRank = "insert into rank(postID, email, liked) VALUES (?, ?, ?)";
+		String queryAddLike = "UPDATE posts SET rank=rank - 1 WHERE id = ?";
+	
+		boolean exceuteNext = true;
+		Connection connection = getConnection();
+		try {
+			PreparedStatement statement;
+			statement = connection.prepareStatement(queryAddRank);
+			statement.setInt(1, postID);
+			statement.setString(2, email);
+			statement.setBoolean(3, false);
+			statement.executeUpdate();
+			System.out.println("DBHandler: Added Rank to database With DISLIKE");
+
+		} catch (SQLException e) {
+			exceuteNext = false;
+			System.out.println("Already disliked!");// Code that reverts the
+			revertDislike(postID, email); // dislike
+		}
+		if (exceuteNext) {
+			try {
+
+				PreparedStatement statement2;
+				statement2 = connection.prepareStatement(queryAddLike);
+				statement2.setInt(1, postID);
+				statement2.executeUpdate();
+				System.out.println("DBHandler: Added dislike to post");
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				closeConnection(connection);
+			}
+		}
+	}
+	
+	/**
+	 * If Dislike already existed and same resource is called again, remove the
+	 * like.
+	 * 
+	 * @param postID
+	 * @param email
+	 */
+	private void revertDislike(int postID, String email) {
+		String queryAlreadyDisliked = "DELETE FROM rank WHERE postID = ? AND email = ? AND liked = ?;";
+		String retractRank = "UPDATE posts SET rank=rank + 1 WHERE id = ?;";
+		boolean exceuteNext = true;
+		Connection connection = getConnection();
+		try {
+			PreparedStatement statement;
+			statement = connection.prepareStatement(queryAlreadyDisliked);
+			statement.setInt(1, postID);
+			statement.setString(2, email);
+			statement.setBoolean(3, false);
+			statement.executeUpdate();
+			System.out.println("DBHandler: Deleted dislike row");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+			try {
+
+				PreparedStatement statement2;
+			statement2 = connection.prepareStatement(retractRank);
+				statement2.setInt(1, postID);
+				statement2.executeUpdate();
+			System.out.println("DBHandler: removed dislike from post");
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				closeConnection(connection);
+			}
+		
+
+	}
+	/**
 	 * Generic method for adding data to database. Used by other methods in this
 	 * class.
 	 * 
@@ -577,15 +748,7 @@ public class DBHandler {
 		}
 	}
 
-	/**
-	 * Testing some stuff.
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// DBHandler db = new DBHandler();
 
-	}
 
 
 }
