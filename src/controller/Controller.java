@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -8,6 +9,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import database.DBHandler;
+import databaseObjects.Comment;
 import databaseObjects.Party;
 import databaseObjects.Politician;
 import databaseObjects.Post;
@@ -49,11 +51,8 @@ public class Controller {
 	 */
 	public JSONObject getAllPosts() {
 		LinkedList<Post> posts = dbHandler.getAllPosts();
-		System.out.println(posts);
-
 		JSONObject jsonObject = new JSONObject();
 		JSONArray postArray = new JSONArray();
-		// JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("HTTP_CODE", HTTP_OK);
 			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
@@ -306,6 +305,23 @@ public class Controller {
 			dbHandler.addPoliticians(gsHandler.getPoliticians_SocialMedia(politicians));
 			System.out.println("Politicians added to Database");
 		}
+	}
+
+	/**
+	 * Used when posting a comment.
+	 * 
+	 * @param text
+	 * @param postID
+	 */
+	public void postComment(int postID, String text, String email) {
+		Date date = new Date();
+		Comment comment = new Comment();
+		comment.setDate(date);
+		comment.setEmail(email);
+		comment.setText(text);
+		comment.setPost(postID);
+
+		dbHandler.addComment(comment);
 	}
 
 }

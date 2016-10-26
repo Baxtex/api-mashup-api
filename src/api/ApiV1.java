@@ -1,6 +1,8 @@
 package api;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -64,6 +66,7 @@ public class ApiV1 {
 	 */
 	@GET
 	@Path("posts/{party}")
+	@Consumes({ MediaType.TEXT_PLAIN })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPartyPosts(@PathParam("party") String party) {
 
@@ -88,6 +91,7 @@ public class ApiV1 {
 
 	@GET
 	@Path("posts/id/{politicianID}")
+	@Consumes({ MediaType.TEXT_PLAIN })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPostsByPolitican(@PathParam("politicianID") String id) {
 		JSONObject jsonObject = new JSONObject();
@@ -110,6 +114,7 @@ public class ApiV1 {
 	 */
 	@GET
 	@Path("posts/id/{politician}/{nbrComments}")
+	@Consumes({ MediaType.TEXT_PLAIN })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPostsCommentsByPolitican(@PathParam("party") String party, @PathParam("politician") String id,
 			@PathParam("nbrComments") String nbrComments) {
@@ -152,6 +157,7 @@ public class ApiV1 {
 
 	@GET
 	@Path("politicians/{party}")
+	@Consumes({ MediaType.TEXT_PLAIN })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPoliticiansByParty(@PathParam("party") String party) {
 		JSONObject jsonObject = new JSONObject();
@@ -223,23 +229,19 @@ public class ApiV1 {
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
 
-
 	/**
-	 * 
-	 * This method is super cereal and it's for testing purposes only.
-	 * 
-	 * @return
+	 * This method should be used when posting a comment.
 	 */
-	@GET
-	@Path("testPosts")
+	@Path("comment/{postID}/{text}/{email}")
+	@PUT
+	@Consumes({ MediaType.TEXT_PLAIN + ";charset=utf-8" })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getPostsTest() {
-
-		String fbId = "1064287767";
-		String tId = "@ingemarnilsson_";
+	public Response postComment(@PathParam("postID") int postID, @PathParam("text") String text,
+			@PathParam("email") String email) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			// jsonObject = controller.getSocialPosts(fbId, tId);
+			controller.postComment(postID, text, email);
+			jsonObject.put("Success", true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();

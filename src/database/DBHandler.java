@@ -13,7 +13,6 @@ import databaseObjects.Politician;
 import databaseObjects.Post;
 
 public class DBHandler {
-
 	private final String DRIVER = "com.mysql.jdbc.Driver";
 	private final String URL = "jdbc:mysql://195.178.232.16:3306/AB7455";
 	private final String USER = "AB7455";
