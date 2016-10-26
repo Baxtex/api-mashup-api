@@ -110,7 +110,7 @@ public class DBHandler {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
-			String query = "SELECT * FROM posts WHERE politican in( select politicians.id from politicians where politicians.party = ? group by time;);";
+			String query = "SELECT * FROM posts WHERE politican in( select politicians.id from politicians where politicians.party = ? group by time);";
 
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, party);
