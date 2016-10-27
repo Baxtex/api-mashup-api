@@ -54,7 +54,6 @@ public class Controller {
 		JSONObject jsonObject = new JSONObject();
 		JSONArray postArray = new JSONArray();
 		try {
-			jsonObject.put("HTTP_CODE", HTTP_OK);
 			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
 			Iterator<Post> iter = posts.iterator();
 			while (iter.hasNext()) {
@@ -84,7 +83,6 @@ public class Controller {
 		JSONArray postArray = new JSONArray();
 		// JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject.put("HTTP_CODE", HTTP_OK);
 			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
 			Iterator<Post> iter = posts.iterator();
 			while (iter.hasNext()) {
@@ -115,7 +113,6 @@ public class Controller {
 		JSONArray jsonPosts = new JSONArray();
 		try {
 			LinkedList<Post> posts = dbHandler.getPostsPolitician(Integer.parseInt(id));
-			jsonObject.put("HTTP_CODE", HTTP_OK);
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", posts.size());
 			for (int i = 0; i < posts.size(); i++) {
@@ -142,7 +139,6 @@ public class Controller {
 		JSONArray jsonPoliticians = new JSONArray();
 		try {
 			LinkedList<Politician> politicians = dbHandler.getPoliticians();
-			jsonObject.put("HTTP_CODE", HTTP_OK);
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", politicians.size());
 
@@ -179,7 +175,6 @@ public class Controller {
 		JSONArray jsonPoliticians = new JSONArray();
 		try {
 			LinkedList<Politician> politicians = dbHandler.getPoliticiansParty(party);
-			jsonObject.put("HTTP_CODE", HTTP_OK);
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", politicians.size());
 			for (int i = 0; i < politicians.size(); i++) {
@@ -213,7 +208,6 @@ public class Controller {
 		JSONArray jsonPoliticians = new JSONArray();
 		try {
 			Politician p = dbHandler.getPolitician(id);
-			jsonObject.put("HTTP_CODE", HTTP_OK);
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", 1);
 			JSONObject jsonPolitician = new JSONObject();
@@ -243,7 +237,6 @@ public class Controller {
 		JSONArray jsonParties = new JSONArray();
 		try {
 			LinkedList<Party> parties = dbHandler.getParties();
-			jsonObject.put("HTTP_CODE", HTTP_OK);
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", parties.size());
 			for (int i = 0; i < parties.size(); i++) {
@@ -274,7 +267,6 @@ public class Controller {
 		try {
 			Party p = dbHandler.getParty(party);
 			JSONObject jsonParty = new JSONObject();
-			jsonObject.put("HTTP_CODE", HTTP_OK);
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", 1);
 			jsonParty.put("name", p.getName());
