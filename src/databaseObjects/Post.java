@@ -10,11 +10,19 @@ public class Post {
 	private String text;
 	private Date date;
 	private int politican;
-	private int likes;
 	private int retweets;
 	private String source;
-	private int rank;
 	private Time time;
+	private int likes;
+	private int dislikes;
+
+	public int getDislikes() {
+		return dislikes;
+	}
+
+	public void setDislikes(int dislikes) {
+		this.dislikes = dislikes;
+	}
 
 	public Time getTime() {
 		return time;
@@ -30,22 +38,18 @@ public class Post {
 
 
 
-	public Post(String text, int politican, String source, Date date, Time time, int rank) {
+	public Post(String text, int politican, String source, Date date, Time time, int likes, int dislikes) {
 		this.time = time;
 		this.text = text;
 		this.date = date;
 		this.politican = politican;
 		this.source = source;
-		this.rank = rank;
+		this.likes = likes;
+		this.dislikes = dislikes;
+
 	}
 
-	public int getRank() {
-		return rank;
-	}
 
-	public void setRank(int rank) {
-		this.rank = rank;
-	}
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -104,6 +108,6 @@ public class Post {
 
 	public String toString() {
 		return "\npID: " + politican + "\npostID: " + id + "\ntime: " + date + "\ntext: " + text + "\nsource: " + source
-				+ "\nrank: " + rank;
+		;
 	}
 }

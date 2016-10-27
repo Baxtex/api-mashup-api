@@ -62,7 +62,7 @@ public class Controller {
 				postArray.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
 						.put("date", p.getDate()).put("time", p.getTime()).put("text", p.getText())
 						.put("source", p.getSource())
-						.put("rank", p.getRank()));
+						.put("likes", p.getLikes()).put("dislikes", p.getDislikes()));
 			}
 			jsonObject.put("posts", postArray);
 		} catch (Exception e) {
@@ -92,7 +92,7 @@ public class Controller {
 				postArray.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
 						.put("date", p.getDate()).put("time", p.getTime()).put("text", p.getText())
 						.put("source", p.getSource())
-						.put("rank", p.getRank()));
+						.put("likes", p.getLikes()).put("dislikes", p.getDislikes()));
 			}
 			jsonObject.put("posts", postArray);
 		} catch (Exception e) {
@@ -123,7 +123,7 @@ public class Controller {
 				jsonPosts.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
 						.put("date", p.getDate()).put("time", p.getTime()).put("text", p.getText())
 						.put("source", p.getSource())
-						.put("rank", p.getRank()));
+						.put("likes", p.getLikes()).put("dislikes", p.getDislikes()));
 			}
 			jsonObject.put("posts", jsonPosts);
 		} catch (JSONException e) {

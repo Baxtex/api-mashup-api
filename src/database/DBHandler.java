@@ -73,10 +73,7 @@ public class DBHandler {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
-			// String query = "SELECT DISTINCT
-			// id,text,politican,source,date,rank,time FROM posts group by
-			// politican ;";
-			String query = "SELECT id,text,politican,source,date,rank,time FROM posts  WHERE date=? group by time;";
+			String query = "SELECT id,text,politican,source,date,time, likes, dislikes FROM posts  WHERE date=? group by time;";
 			Date date = new Date();
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setDate(1, new java.sql.Date(date.getTime()));
@@ -88,8 +85,9 @@ public class DBHandler {
 				post.setPolitican(rs.getInt("politican"));
 				post.setSource(rs.getString("source"));
 				post.setDate(rs.getDate("date"));
-				post.setRank(rs.getInt("rank"));
 				post.setTime(rs.getTime("time"));
+				post.setLikes(rs.getInt("likes"));
+				post.setDislikes(rs.getInt("dislikes"));
 				posts.add(post);
 			}
 		} catch (SQLException e) {
@@ -110,7 +108,7 @@ public class DBHandler {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
-			String query = "SELECT * FROM posts WHERE politican in( select politicians.id from politicians where politicians.party = ? group by time;);";
+			String query = "SELECT * FROM posts WHERE politican in(select politicians.id from politicians where politicians.party = ? group by time);";
 
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, party);
@@ -122,8 +120,9 @@ public class DBHandler {
 				post.setPolitican(rs.getInt("politican"));
 				post.setSource(rs.getString("source"));
 				post.setDate(rs.getDate("date"));
-				post.setRank(rs.getInt("rank"));
 				post.setTime(rs.getTime("time"));
+				post.setLikes(rs.getInt("likes"));
+				post.setDislikes(rs.getInt("dislikes"));
 				posts.add(post);
 			}
 		} catch (SQLException e) {
@@ -156,8 +155,9 @@ public class DBHandler {
 				post.setPolitican(rs.getInt("politican"));
 				post.setSource(rs.getString("source"));
 				post.setDate(rs.getDate("date"));
-				post.setRank(rs.getInt("rank"));
 				post.setTime(rs.getTime("time"));
+				post.setLikes(rs.getInt("likes"));
+				post.setDislikes(rs.getInt("dislikes"));
 				posts.add(post);
 			}
 		} catch (SQLException e) {
@@ -398,7 +398,7 @@ public class DBHandler {
 	 */
 
 	public void addPost(Post post) {
-		String query = "INSERT INTO posts (text, politican, source, date, rank, time) VALUES (?, ?, ?, ?, ?, ?)";
+		String query = "INSERT INTO posts (text, politican, source, date, time, likes, dislikes) VALUES (?, ?, ?, ?, ?, ?, ?)";
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
 		try {
@@ -407,8 +407,9 @@ public class DBHandler {
 			statement.setInt(2, post.getPolitican());
 			statement.setString(3, post.getSource());
 			statement.setDate(4, new java.sql.Date(post.getDate().getTime()));
-			statement.setInt(5, post.getRank());
-			statement.setTime(6, post.getTime());
+			statement.setTime(5, post.getTime());
+			statement.setInt(6, post.getLikes());
+			statement.setInt(7, post.getDislikes());
 			statement.executeUpdate();
 			System.out.println("DBHandler: Added post to database");
 		} catch (SQLException e) {
@@ -560,9 +561,9 @@ public class DBHandler {
 	 * @param email
 	 */
 	public boolean addLike(int postID, String email) {
-		System.out.println("ADDLIKE CALLED");
+		System.out.println("ADD LIKE CALLED");
 		String queryAddRank = "insert into rank(postID, email, liked) VALUES (?, ?, ?)";
-		String queryAddLike = "UPDATE posts SET rank=rank + 1 WHERE id = ?";
+		String queryAddLike = "UPDATE posts SET likes=likes + 1 WHERE id = ?";
 		boolean exceuteNext = true;
 		Connection connection = getConnection();
 		try {
@@ -607,9 +608,9 @@ public class DBHandler {
 	 * @param email
 	 */
 	public boolean revertLike(int postID, String email) {
-		System.out.println("REVERTLIKE CALLED");
+		System.out.println("REVERT LIKE CALLED");
 		String queryAlreadyLiked = "DELETE FROM rank WHERE postID = ? AND email = ? AND liked = ?;";
-		String retractRank = "UPDATE posts SET rank=rank - 1 WHERE id = ?;";
+		String retractRank = "UPDATE posts SET likes=likes - 1 WHERE id = ?;";
 		boolean exceuteNext = true;
 		Connection connection = getConnection();
 		if (checkIfRowExists(postID, email, true)) {
@@ -660,9 +661,9 @@ public class DBHandler {
 	 * @param email
 	 */
 	public boolean addDislike(int postID, String email) {
-		System.out.println("ADDDISLIKE CALLED");
+		System.out.println("ADD DISLIKE CALLED");
 		String queryAddRank = "insert into rank(postID, email, liked) VALUES (?, ?, ?)";
-		String queryAddLike = "UPDATE posts SET rank=rank - 1 WHERE id = ?";
+		String queryAddLike = "UPDATE posts SET dislikes=dislikes + 1 WHERE id = ?";
 	
 		boolean exceuteNext = true;
 		Connection connection = getConnection();
@@ -708,7 +709,7 @@ public class DBHandler {
 	public boolean revertDislike(int postID, String email) {
 		System.out.println("REVERTDISLIKE CALLED");
 		String queryAlreadyDisliked = "DELETE FROM rank WHERE postID = ? AND email = ? AND liked = ?;";
-		String retractRank = "UPDATE posts SET rank=rank + 1 WHERE id = ?;";
+		String retractRank = "UPDATE posts SET dislikes=dislikes - 1 WHERE id = ?;";
 		boolean exceuteNext = true;
 		Connection connection = getConnection();
 		if (checkIfRowExists(postID, email, false)) {
