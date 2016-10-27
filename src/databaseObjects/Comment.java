@@ -12,7 +12,6 @@ public class Comment {
 	private String email;
 	private Date date;
 	private Time time;
-
 	private int post;
 	
 	public Comment() {

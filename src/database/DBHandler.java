@@ -357,27 +357,28 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a list of all comments on the specified post TODO: Does not work.
+	 * Returns a list of all comments on the specified post
 	 * 
 	 * @param post
 	 * @return
 	 */
 
-	public LinkedList<Comment> getComments(int post) {
+	public LinkedList<Comment> getComments(int postID) {
 		LinkedList<Comment> comments = new LinkedList<Comment>();
 		Connection connection = getConnection();
 		try {
-			String query = "select * from comments where post = " + post + ";";
+			String query = "SELECT * FROM comments WHERE post = ? GROUP BY date AND time;";
 			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setInt(1, postID);
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				Comment comment = new Comment();
-				comment.setId(rs.getInt("id"));
 				comment.setText(rs.getString("text"));
-				comment.setTime(rs.getTime("time"));
-				comment.setDate(rs.getDate("date"));
+				comment.setId(rs.getInt("id"));
 				comment.setEmail(rs.getString("email"));
 				comment.setPost(rs.getInt("post"));
+				comment.setDate(rs.getDate("date"));
+				comment.setTime(rs.getTime("time"));
 				comments.add(comment);
 			}
 		} catch (SQLException e) {

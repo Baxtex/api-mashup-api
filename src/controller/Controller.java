@@ -13,35 +13,17 @@ import databaseObjects.Comment;
 import databaseObjects.Party;
 import databaseObjects.Politician;
 import databaseObjects.Post;
-import externalAPIs.FBHandler;
-import externalAPIs.GSHandler;
-import externalAPIs.ICallbackPoliticians;
-import externalAPIs.RDHandler;
-import externalAPIs.TWHandler;
 
 public class Controller {
 	private DBHandler dbHandler;
-	private RDHandler rdHandler;
-	private FBHandler fbHandler;
-	private TWHandler twHandler;
-	private GSHandler gsHandler;
 
 	private final String MSG_OK = "success";
 	private final String HTTP_OK = "200";
 
 	public Controller() {
-		init();
+		dbHandler = new DBHandler();
 	}
 
-	private void init() {
-		fbHandler = new FBHandler();
-		twHandler = new TWHandler();
-		dbHandler = new DBHandler();
-		gsHandler = new GSHandler();
-		rdHandler = new RDHandler();
-		// rdHandler.registerCallback(new DBImplementer_Politicians(dbHandler));
-		// rdHandler.addPoliticiansToDB();
-	}
 
 	/**
 	 * Should return posts from all the politicians with the specified amount
@@ -54,7 +36,8 @@ public class Controller {
 		JSONObject jsonObject = new JSONObject();
 		JSONArray postArray = new JSONArray();
 		try {
-			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", posts.size());
 			Iterator<Post> iter = posts.iterator();
 			while (iter.hasNext()) {
 				Post p = (Post) iter.next();
@@ -78,12 +61,11 @@ public class Controller {
 	 */
 	public JSONObject getAllPostsParty(String party) {
 		LinkedList<Post> posts = dbHandler.getAllPostsParty(party);
-		System.out.println(posts);
 		JSONObject jsonObject = new JSONObject();
 		JSONArray postArray = new JSONArray();
-		// JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject.put("MSG", "jsonArray successfully retrieved, v1");
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", posts.size());
 			Iterator<Post> iter = posts.iterator();
 			while (iter.hasNext()) {
 				Post p = (Post) iter.next();
@@ -209,7 +191,11 @@ public class Controller {
 		try {
 			Politician p = dbHandler.getPolitician(id);
 			jsonObject.put("message", MSG_OK);
-			jsonObject.put("size", 1);
+			if (p.getName() == null) {
+				jsonObject.put("size", 0);
+			} else {
+				jsonObject.put("size", 1);
+			}
 			JSONObject jsonPolitician = new JSONObject();
 			jsonPolitician.put("id", p.getId());
 			jsonPolitician.put("name", p.getName());
@@ -263,17 +249,18 @@ public class Controller {
 	public JSONObject getParty(String party) {
 
 		JSONObject jsonObject = new JSONObject();
-		JSONArray jsonParties = new JSONArray();
 		try {
 			Party p = dbHandler.getParty(party);
-			JSONObject jsonParty = new JSONObject();
 			jsonObject.put("message", MSG_OK);
-			jsonObject.put("size", 1);
-			jsonParty.put("name", p.getName());
-			jsonParty.put("abbrev", p.getNameShort());
-			jsonParty.put("logo_url", p.getParty_url());
-			jsonParties.put(jsonParty);
-			jsonObject.put("parties", jsonParties);
+			if (p.getName() == null) {
+				jsonObject.put("size", 0);
+			} else {
+
+				jsonObject.put("size", 1);
+			}
+			jsonObject.put("name", p.getName());
+			jsonObject.put("abbrev", p.getNameShort());
+			jsonObject.put("logo_url", p.getParty_url());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -282,24 +269,36 @@ public class Controller {
 	}
 
 	/**
-	 * Don't know what this stuff is.
+	 * Retrieves comments for a specific post.
 	 * 
-	 * @author Anton Gustafsson
-	 *
+	 * @return
 	 */
-	private class DBImplementer_Politicians implements ICallbackPoliticians {
-		private DBHandler dbHandler;
+	public JSONObject getComments(int postID) {
 
-		public DBImplementer_Politicians(DBHandler dbHandler) {
-			this.dbHandler = dbHandler;
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonComments = new JSONArray();
+		try {
+			LinkedList<Comment> comments = dbHandler.getComments(postID);
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", comments.size());
+			for (int i = 0; i < comments.size(); i++) {
+				Comment c = comments.get(i);
+				JSONObject jsonComment = new JSONObject();
+				jsonComment.put("id", c.getID());
+				jsonComment.put("text", c.getText());
+				jsonComment.put("email", c.getEmail());
+				jsonComment.put("post", c.getPost());
+				jsonComment.put("date", c.getDate());
+				jsonComment.put("time", c.getTime());
+				jsonComments.put(jsonComment);
+			}
+			jsonObject.put("comments", jsonComments);
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
-
-		public void callbackPoliticians(LinkedList<Politician> politicians) {
-
-			dbHandler.addPoliticians(gsHandler.getPoliticians_SocialMedia(politicians));
-			System.out.println("Politicians added to Database");
-		}
+		return jsonObject;
 	}
+
 
 	/**
 	 * Used when posting a comment.
@@ -337,5 +336,6 @@ public class Controller {
 		return (dbHandler.revertDislike(postID, email));
 
 	}
+
 
 }

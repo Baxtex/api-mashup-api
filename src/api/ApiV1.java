@@ -1,6 +1,7 @@
 package api;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -50,6 +51,10 @@ public class ApiV1 {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject = controller.getAllPosts();
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put("MSG", "No posts found");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -72,6 +77,10 @@ public class ApiV1 {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject = controller.getAllPostsParty(party);
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put("MSG", "No posts found");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -95,6 +104,10 @@ public class ApiV1 {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject = controller.getPostsPolitician(id);
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put("MSG", "No posts found");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -102,29 +115,6 @@ public class ApiV1 {
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
 
-	/**
-	 * TODO DOES NOT WORK! Return specified number of comments for a polititan.
-	 * 
-	 * @param party
-	 * @param id
-	 * @param nbrComments
-	 * @return
-	 */
-	@GET
-	@Path("posts/id/{politician}/{nbrComments}")
-	@Consumes({ MediaType.TEXT_PLAIN })
-	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getPostsCommentsByPolitican(@PathParam("party") String party, @PathParam("politician") String id,
-			@PathParam("nbrComments") String nbrComments) {
-		JSONObject jsonObject = new JSONObject();
-		try {
-			// TODO DOES NOT DO ANYTHING YET!!!
-		} catch (Exception e) {
-			e.printStackTrace();
-			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
-		}
-		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
-	}
 
 	/**
 	 * Return all politician objects.
@@ -139,6 +129,10 @@ public class ApiV1 {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject = controller.getAllPoliticians();
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put("MSG", "No politician found");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -161,6 +155,10 @@ public class ApiV1 {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject = controller.getPoliticiansParty(party);
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put("MSG", "No politicians found");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -181,6 +179,10 @@ public class ApiV1 {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject = controller.getPolitician(id);
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put("MSG", "No politician found");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -200,6 +202,10 @@ public class ApiV1 {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject = controller.getParties();
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put("MSG", "No parties found");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -220,12 +226,44 @@ public class ApiV1 {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject = controller.getParty(party);
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put("MSG", "No party found");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
 		}
 		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
+
+
+	/**
+	 * Methods that retrives comments for a specific post.
+	 * 
+	 * @param postID
+	 * @return
+	 */
+	@GET
+	@Path("comment/{postID}")
+	@Consumes({ MediaType.TEXT_PLAIN })
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getComment(@PathParam("postID") int postID) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject = controller.getComments(postID);
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put("MSG", "No comments found");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
+		}
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+	}
+
+	// -------------POSTS/PUTS/DELTES
 
 	/**
 	 * This method should be used when posting a comment.
@@ -239,7 +277,7 @@ public class ApiV1 {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			controller.postComment(postID, text, email);
-			jsonObject.put("Success", true);
+			jsonObject.put("message", "success");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(500).header("Access-Control-Allow-Origin", "*").entity(ERR_MSG).build();
@@ -256,22 +294,19 @@ public class ApiV1 {
 	@Consumes({ MediaType.TEXT_PLAIN + ";charset=utf-8" })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response postLike(@PathParam("postID") int postID, @PathParam("email") String email) {
-		Response response = null;
 		JSONObject jsonObject = new JSONObject();
 		try {
 			if (controller.postLike(postID, email)) {
-				jsonObject.put("MSG", "Succesfully added like");
-				response = Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+				jsonObject.put("message", "success");
 			} else {
-				jsonObject.put("MSG", "Failed to put like. Use revert if you want to remove the like");
-				response = Response.status(500).header("Access-Control-Allow-Origin", "*").entity(jsonObject.toString())
-						.build();
+				jsonObject.put("message", "Already liked");
 			}
 		} catch (Exception e) {
+			Response.status(500).header("Access-Control-Allow-Origin", "*").entity(jsonObject.toString()).build();
 			e.printStackTrace();
 		}
 
-		return response;
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	/**
@@ -282,44 +317,40 @@ public class ApiV1 {
 	@Consumes({ MediaType.TEXT_PLAIN + ";charset=utf-8" })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response postDislike(@PathParam("postID") int postID, @PathParam("email") String email) {
-		Response response = null;
+
 		JSONObject jsonObject = new JSONObject();
 		try {
 			if (controller.postDislike(postID, email)) {
-				jsonObject.put("MSG", "Succesfully added dislike");
-				response = Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+				jsonObject.put("message", "success");
 			} else {
-				jsonObject.put("MSG", "Failed to put dislike. Use revert if you want to remove the like");
-				response = Response.status(500).header("Access-Control-Allow-Origin", "*").entity(jsonObject.toString())
-						.build();
+				jsonObject.put("message", "Already disliked.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			Response.status(500).header("Access-Control-Allow-Origin", "*").entity(jsonObject.toString()).build();
 
 		}
 
-		return response;
+		return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	/**
-	 * This method should be used when someone is liking a post.
+	 * This method should be used when someone wants to remove their like.
 	 */
-	@PUT
-	@Path("like/revert/{postID}/{email}")
+	@DELETE
+	@Path("like/{postID}/{email}")
 	@Consumes({ MediaType.TEXT_PLAIN + ";charset=utf-8" })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response postRevertLike(@PathParam("postID") int postID, @PathParam("email") String email) {
-		Response response = null;
+
 		JSONObject jsonObject = new JSONObject();
 		try {
 
 			if (controller.postRevertLike(postID, email)) {
-				jsonObject.put("MSG", "Succesfully reverted like");
-				response = Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+				jsonObject.put("message", "success");
 			} else {
-				jsonObject.put("MSG", "Failed to revert like. Use like first");
-				response = Response.status(500).header("Access-Control-Allow-Origin", "*").entity(jsonObject.toString())
-						.build();
+				jsonObject.put("message", "Failed to revert like.");
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -330,23 +361,21 @@ public class ApiV1 {
 	}
 
 	/**
-	 * This method should be used when someone is disliking a post.
+	 * This method should be used when someone wants to remove their dislike
 	 */
-	@PUT
-	@Path("dislike/revert/{postID}/{email}")
+	@DELETE
+	@Path("dislike/{postID}/{email}")
 	@Consumes({ MediaType.TEXT_PLAIN + ";charset=utf-8" })
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response postRevertDislike(@PathParam("postID") int postID, @PathParam("email") String email) {
-		Response response = null;
+
 		JSONObject jsonObject = new JSONObject();
 		try {
 			if (controller.postRevertDislike(postID, email)) {
-				jsonObject.put("MSG", "Succesfully reverted dislike");
-				response = Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
+				jsonObject.put("message", "success");
 			} else {
-				jsonObject.put("MSG", "Failed to revert dislike. Use dislike first");
-				response = Response.status(500).header("Access-Control-Allow-Origin", "*").entity(jsonObject.toString())
-						.build();
+				jsonObject.put("message", "Failed to revert dislike.");
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
