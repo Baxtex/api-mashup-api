@@ -109,7 +109,6 @@ public class DBHandler {
 		Connection connection = getConnection();
 		try {
 			String query = "SELECT * FROM posts WHERE politican in(select politicians.id from politicians where politicians.party = ? group by time);";
-
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, party);
 			ResultSet rs = statement.executeQuery();
