@@ -5,7 +5,7 @@ import java.text.ParseException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -104,7 +104,7 @@ public class ApiV1 {
 	@Path("posts/politician/{politicianID}")
 	public Response getPostsByPolitican(@PathParam("politicianID") String id) {
 		JSONObject jsonObject = new JSONObject();
-		System.out.println(id);
+
 		try {
 			jsonObject = controller.getPostsPolitician(id);
 			if (jsonObject.getInt("size") == 0) {
@@ -195,7 +195,7 @@ public class ApiV1 {
 	 * @return - response with a JSONObject with politicians.
 	 */
 	@GET
-	@Path("politicians/{party}")
+	@Path("politicians/party/{party}")
 	public Response getPoliticiansByParty(@PathParam("party") String party) {
 		JSONObject jsonObject = new JSONObject();
 		try {
@@ -302,128 +302,6 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Puts a new comment into the database.
-	 * 
-	 * @param postID - id for the post.
-	 * @param text - the actual comment.
-	 * @param email - email of the comment author.
-	 * @return - response with a json success message.
-	 */
-	@PUT
-	@Path("comment/{postID}/{text}/{ip}")
-	public Response postComment(@PathParam("postID") int postID, @PathParam("text") String text,
-			@PathParam("ip") String ip) {
-		JSONObject jsonObject = new JSONObject();
-		try {
-			controller.postComment(postID, text, ip);
-			jsonObject.put(MSG, "success");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ERR_RESPONSE;
-		}
-		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
-	}
-
-	/**
-	 * Puts a new like for a post in the database.
-	 * 
-	 * @param postID - id for the post.
-	 * @param email - email of the user liking a post.
-	 * @return - response with a json success message.
-	 */
-	@PUT
-	@Path("like/{postID}/{ip}")
-	public Response postLike(@PathParam("postID") int postID, @PathParam("ip") String ip) {
-		JSONObject jsonObject = new JSONObject();
-		try {
-			if (controller.postLike(postID, ip)) {
-				jsonObject.put(MSG, "success");
-			} else {
-				jsonObject.put(MSG, "Already liked");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ERR_RESPONSE;
-		}
-		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
-	}
-
-	/**
-	 * Puts a new dislike for a post in the database.
-	 * 
-	 * @param postID - id for the post.
-	 * @param email - email of the user liking a post.
-	 * @return - response with a json success message.
-	 */
-	@PUT
-	@Path("dislike/{postID}/{ip}")
-	public Response postDislike(@PathParam("postID") int postID, @PathParam("ip") String ip) {
-
-		JSONObject jsonObject = new JSONObject();
-		try {
-			if (controller.postDislike(postID, ip)) {
-				jsonObject.put(MSG, "success");
-			} else {
-				jsonObject.put(MSG, "Already disliked.");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ERR_RESPONSE;
-		}
-		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
-	}
-
-	/**
-	 * Delets a previously added like in the datbase.
-	 * 
-	 * @param postID - id for the post.
-	 * @param email - email of the user liking a post.
-	 * @return - response with a json success message.
-	 */
-	@DELETE
-	@Path("like/{postID}/{ip}")
-	public Response postRevertLike(@PathParam("postID") int postID, @PathParam("ip") String ip) {
-		JSONObject jsonObject = new JSONObject();
-		try {
-
-			if (controller.postRevertLike(postID, ip)) {
-				jsonObject.put(MSG, "success");
-			} else {
-				jsonObject.put(MSG, "Failed to revert like.");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ERR_RESPONSE;
-		}
-		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
-	}
-
-	/**
-	 * Delets a previously added dislike in the datbase.
-	 * 
-	 * @param postID - id for the post.
-	 * @param email - email of the user liking a post.
-	 * @return - response with a json success message.
-	 */
-	@DELETE
-	@Path("dislike/{postID}/{ip}")
-	public Response postRevertDislike(@PathParam("postID") int postID, @PathParam("ip") String ip) {
-
-		JSONObject jsonObject = new JSONObject();
-		try {
-			if (controller.postRevertDislike(postID, ip)) {
-				jsonObject.put(MSG, "success");
-			} else {
-				jsonObject.put(MSG, "Failed to revert dislike.");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ERR_RESPONSE;
-		}
-		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
-	}
-
-	/**
 	 * Send and ip to check what posts they have liked. TODO Change URL
 	 */
 	@GET
@@ -469,4 +347,127 @@ public class ApiV1 {
 		}
 		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
 	}
+
+	/**
+	 * Puts a new comment into the database.
+	 * 
+	 * @param postID - id for the post.
+	 * @param text - the actual comment.
+	 * @param email - email of the comment author.
+	 * @return - response with a json success message.
+	 */
+	@POST
+	@Path("comment/{postID}/{text}/{ip}")
+	public Response postComment(@PathParam("postID") int postID, @PathParam("text") String text,
+			@PathParam("ip") String ip) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			controller.postComment(postID, text, ip);
+			jsonObject.put(MSG, "success");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERR_RESPONSE;
+		}
+		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
+	}
+
+	/**
+	 * Puts a new like for a post in the database.
+	 * 
+	 * @param postID - id for the post.
+	 * @param email - email of the user liking a post.
+	 * @return - response with a json success message.
+	 */
+	@POST
+	@Path("like/{postID}/{ip}")
+	public Response postLike(@PathParam("postID") int postID, @PathParam("ip") String ip) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			if (controller.postLike(postID, ip)) {
+				jsonObject.put(MSG, "success");
+			} else {
+				jsonObject.put(MSG, "Already liked");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERR_RESPONSE;
+		}
+		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
+	}
+
+	/**
+	 * Puts a new dislike for a post in the database.
+	 * 
+	 * @param postID - id for the post.
+	 * @param email - email of the user liking a post.
+	 * @return - response with a json success message.
+	 */
+	@POST
+	@Path("dislike/{postID}/{ip}")
+	public Response postDislike(@PathParam("postID") int postID, @PathParam("ip") String ip) {
+
+		JSONObject jsonObject = new JSONObject();
+		try {
+			if (controller.postDislike(postID, ip)) {
+				jsonObject.put(MSG, "success");
+			} else {
+				jsonObject.put(MSG, "Already disliked.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERR_RESPONSE;
+		}
+		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
+	}
+
+	/**
+	 * Delets a previously added like in the datbase.
+	 * 
+	 * @param postID - id for the post.
+	 * @param email - email of the user liking a post.
+	 * @return - response with a json success message.
+	 */
+	@DELETE
+	@Path("like/{postID}/{ip}")
+	public Response postRevertLike(@PathParam("postID") int postID, @PathParam("ip") String ip) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+
+			if (controller.postRevertLike(postID, ip)) {
+				jsonObject.put(MSG, "success");
+			} else {
+				jsonObject.put(MSG, "Failed to revert like.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERR_RESPONSE;
+		}
+		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
+	}
+
+	/**
+	 * Deletes a previously added dislike in the datbase.
+	 * 
+	 * @param postID - id for the post.
+	 * @param email - email of the user liking a post.
+	 * @return - response with a json success message.
+	 */
+	@DELETE
+	@Path("dislike/{postID}/{ip}")
+	public Response postRevertDislike(@PathParam("postID") int postID, @PathParam("ip") String ip) {
+
+		JSONObject jsonObject = new JSONObject();
+		try {
+			if (controller.postRevertDislike(postID, ip)) {
+				jsonObject.put(MSG, "success");
+			} else {
+				jsonObject.put(MSG, "Failed to revert dislike.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERR_RESPONSE;
+		}
+		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
+	}
+
 }
