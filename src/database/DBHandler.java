@@ -63,6 +63,7 @@ public class DBHandler {
 			}
 		}
 	}
+
 	// Get methods
 
 	/**
@@ -82,18 +83,7 @@ public class DBHandler {
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setDate(1, new java.sql.Date(date.getTime()));
 			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				Post post = new Post();
-				post.setId(rs.getInt("id"));
-				post.setText(rs.getString("text"));
-				post.setPolitican(rs.getInt("politican"));
-				post.setSource(rs.getString("source"));
-				post.setDate(rs.getDate("date"));
-				post.setTime(rs.getTime("time"));
-				post.setLikes(rs.getInt("likes"));
-				post.setDislikes(rs.getInt("dislikes"));
-				posts.add(post);
-			}
+			posts = loopRSPosts(rs);
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		} finally {
@@ -119,18 +109,7 @@ public class DBHandler {
 			statement.setString(1, party);
 			statement.setDate(2, new java.sql.Date(date.getTime()));
 			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				Post post = new Post();
-				post.setId(rs.getInt("id"));
-				post.setText(rs.getString("text"));
-				post.setPolitican(rs.getInt("politican"));
-				post.setSource(rs.getString("source"));
-				post.setDate(rs.getDate("date"));
-				post.setTime(rs.getTime("time"));
-				post.setLikes(rs.getInt("likes"));
-				post.setDislikes(rs.getInt("dislikes"));
-				posts.add(post);
-			}
+			posts = loopRSPosts(rs);
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		} finally {
@@ -156,6 +135,46 @@ public class DBHandler {
 			statement.setInt(1, politican);
 			statement.setDate(2, new java.sql.Date(date.getTime()));
 			ResultSet rs = statement.executeQuery();
+			posts = loopRSPosts(rs);
+		} catch (SQLException | ParseException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return posts;
+	}
+
+	/**
+	 * Returns specific post.
+	 * 
+	 * @param postID
+	 * @return
+	 */
+	public LinkedList<Post> getSpecificPost(int postID) {
+		LinkedList<Post> posts = new LinkedList<Post>();
+		Connection connection = getConnection();
+		try {
+			String query = "SELECT * FROM posts WHERE id = ?;";
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setInt(1, postID);
+			ResultSet rs = statement.executeQuery();
+			posts = loopRSPosts(rs);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return posts;
+	}
+	/**
+	 * Loops through ResultSet with posts.
+	 * 
+	 * @param rs
+	 * @return
+	 */
+	private LinkedList<Post> loopRSPosts(ResultSet rs) {
+		LinkedList<Post> posts = new LinkedList<Post>();
+		try {
 			while (rs.next()) {
 				Post post = new Post();
 				post.setId(rs.getInt("id"));
@@ -168,10 +187,9 @@ public class DBHandler {
 				post.setDislikes(rs.getInt("dislikes"));
 				posts.add(post);
 			}
-		} catch (SQLException | ParseException e) {
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			closeConnection(connection);
 		}
 		return posts;
 	}
@@ -190,23 +208,13 @@ public class DBHandler {
 			String query = "SELECT * FROM politicians";
 			PreparedStatement statement = connection.prepareStatement(query);
 			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				Politician politician = new Politician();
-				politician.setName(rs.getString("name"));
-				politician.setParty(rs.getString("party"));
-				politician.setFacebook_URL((rs.getString("fb_url")));
-				politician.setTwitter_URL((rs.getString("twitter_url")));
-				politician.setFacebookId((rs.getLong("fID")));
-				politician.setTwitterId((rs.getString("tID")));
-				politician.setId(rs.getInt("id"));
-				politician.setProfile_url(rs.getString("profile_url"));
-				politicians.add(politician);
-			}
+			politicians = loopRSPolitcians(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			closeConnection(connection);
 		}
+		System.out.println(politicians.toString());
 		return politicians;
 	}
 
@@ -224,18 +232,7 @@ public class DBHandler {
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, party);
 			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				Politician politician = new Politician();
-				politician.setName(rs.getString("name"));
-				politician.setParty(rs.getString("party"));
-				politician.setFacebook_URL((rs.getString("fb_url")));
-				politician.setTwitter_URL((rs.getString("twitter_url")));
-				politician.setFacebookId((rs.getLong("fID")));
-				politician.setTwitterId((rs.getString("tID")));
-				politician.setId(rs.getInt("id"));
-				politician.setProfile_url(rs.getString("profile_url"));
-				politicians.add(politician);
-			}
+			politicians = loopRSPolitcians(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -250,15 +247,29 @@ public class DBHandler {
 	 * @param id
 	 * @return
 	 */
-	public Politician getPolitician(String id) {
-		Politician politician = new Politician();
+	public LinkedList<Politician> getPolitician(String id) {
+		LinkedList<Politician> politicians = new LinkedList<Politician>();
 		Connection connection = getConnection();
 		try {
 			String query = "SELECT * FROM politicians WHERE id = ?";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, id);
 			ResultSet rs = statement.executeQuery();
+			politicians = loopRSPolitcians(rs);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+
+		return politicians;
+	}
+
+	private LinkedList<Politician> loopRSPolitcians(ResultSet rs) {
+		LinkedList<Politician> politicians = new LinkedList<Politician>();
+		try {
 			while (rs.next()) {
+				Politician politician = new Politician();
 				politician.setName(rs.getString("name"));
 				politician.setParty(rs.getString("party"));
 				politician.setFacebook_URL((rs.getString("fb_url")));
@@ -267,14 +278,12 @@ public class DBHandler {
 				politician.setTwitterId((rs.getString("tID")));
 				politician.setId(rs.getInt("id"));
 				politician.setProfile_url(rs.getString("profile_url"));
+				politicians.add(politician);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			closeConnection(connection);
 		}
-
-		return politician;
+		return politicians;
 	}
 
 	/**

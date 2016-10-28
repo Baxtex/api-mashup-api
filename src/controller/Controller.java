@@ -2,7 +2,6 @@ package controller;
 
 import java.sql.Time;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -19,7 +18,6 @@ public class Controller {
 	private DBHandler dbHandler;
 
 	private final String MSG_OK = "success";
-	private final String HTTP_OK = "200";
 
 	public Controller() {
 		dbHandler = new DBHandler();
@@ -35,19 +33,10 @@ public class Controller {
 	public JSONObject getAllPosts(String dateStr) {
 		LinkedList<Post> posts = dbHandler.getAllPosts(dateStr);
 		JSONObject jsonObject = new JSONObject();
-		JSONArray postArray = new JSONArray();
 		try {
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", posts.size());
-			Iterator<Post> iter = posts.iterator();
-			while (iter.hasNext()) {
-				Post p = (Post) iter.next();
-				postArray.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
-						.put("date", p.getDate()).put("time", p.getTime()).put("text", p.getText())
-						.put("source", p.getSource())
-						.put("likes", p.getLikes()).put("dislikes", p.getDislikes()));
-			}
-			jsonObject.put("posts", postArray);
+			jsonObject.put("posts", loopPosts(posts));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -63,19 +52,10 @@ public class Controller {
 	public JSONObject getAllPostsParty(String party, String dateStr) {
 		LinkedList<Post> posts = dbHandler.getAllPostsParty(party, dateStr);
 		JSONObject jsonObject = new JSONObject();
-		JSONArray postArray = new JSONArray();
 		try {
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", posts.size());
-			Iterator<Post> iter = posts.iterator();
-			while (iter.hasNext()) {
-				Post p = (Post) iter.next();
-				postArray.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
-						.put("date", p.getDate()).put("time", p.getTime()).put("text", p.getText())
-						.put("source", p.getSource())
-						.put("likes", p.getLikes()).put("dislikes", p.getDislikes()));
-			}
-			jsonObject.put("posts", postArray);
+			jsonObject.put("posts", loopPosts(posts));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -92,20 +72,30 @@ public class Controller {
 	 */
 
 	public JSONObject getPostsPolitician(String id, String dateStr) {
+		LinkedList<Post> posts = dbHandler.getPostsPolitician(Integer.parseInt(id), dateStr);
 		JSONObject jsonObject = new JSONObject();
-		JSONArray jsonPosts = new JSONArray();
 		try {
-			LinkedList<Post> posts = dbHandler.getPostsPolitician(Integer.parseInt(id), dateStr);
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", posts.size());
-			for (int i = 0; i < posts.size(); i++) {
-				Post p = posts.get(i);
-				jsonPosts.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
-						.put("date", p.getDate()).put("time", p.getTime()).put("text", p.getText())
-						.put("source", p.getSource())
-						.put("likes", p.getLikes()).put("dislikes", p.getDislikes()));
-			}
-			jsonObject.put("posts", jsonPosts);
+			jsonObject.put("posts", loopPosts(posts));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
+
+
+	/*
+	 * Returns a specific post with postID.
+	 * 
+	 */
+	public JSONObject getSpecificPost(int postID) {
+		LinkedList<Post> posts = dbHandler.getSpecificPost(postID);
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", posts.size());
+			jsonObject.put("posts", loopPosts(posts));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -113,32 +103,40 @@ public class Controller {
 	}
 
 	/**
+	 * Loops through a list of posts and puts them in a jsonArray.
+	 * 
+	 * @param posts
+	 * @return
+	 */
+	private JSONArray loopPosts(LinkedList<Post> posts) {
+		JSONArray jsonPosts = new JSONArray();
+		for (int i = 0; i < posts.size(); i++) {
+			Post p = posts.get(i);
+			try {
+				jsonPosts.put(new JSONObject().put("postID", p.getID()).put("politicanID", p.getPolitican())
+						.put("date", p.getDate()).put("time", p.getTime()).put("text", p.getText())
+						.put("source", p.getSource()).put("likes", p.getLikes()).put("dislikes", p.getDislikes()));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return jsonPosts;
+
+	}
+	/**
 	 * Returns all politicians from db as JSONObjects.
 	 * 
 	 * @return
 	 */
 	public JSONObject getAllPoliticians() {
 		JSONObject jsonObject = new JSONObject();
-		JSONArray jsonPoliticians = new JSONArray();
 		try {
 			LinkedList<Politician> politicians = dbHandler.getPoliticians();
+			System.out.println(politicians.toString());
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", politicians.size());
-
-			for (int i = 0; i < politicians.size(); i++) {
-				Politician p = politicians.get(i);
-				JSONObject jsonPolitician = new JSONObject();
-				jsonPolitician.put("id", p.getId());
-				jsonPolitician.put("name", p.getName());
-				jsonPolitician.put("party", p.getParty());
-				jsonPolitician.put("fb_url", p.getFacebook_URL());
-				jsonPolitician.put("twitter_url", p.getTwitter_URL());
-				jsonPolitician.put("fID", p.getFacebookId());
-				jsonPolitician.put("tID", p.getTwitterId());
-				jsonPolitician.put("profile_url", p.getProfile_url());
-				jsonPoliticians.put(jsonPolitician);
-			}
-			jsonObject.put("politicians", jsonPoliticians);
+			jsonObject.put("politicians", loopPoliticians(politicians));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -155,25 +153,11 @@ public class Controller {
 
 	public JSONObject getPoliticiansParty(String party) {
 		JSONObject jsonObject = new JSONObject();
-		JSONArray jsonPoliticians = new JSONArray();
 		try {
 			LinkedList<Politician> politicians = dbHandler.getPoliticiansParty(party);
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", politicians.size());
-			for (int i = 0; i < politicians.size(); i++) {
-				Politician p = politicians.get(i);
-				JSONObject jsonPolitician = new JSONObject();
-				jsonPolitician.put("id", p.getId());
-				jsonPolitician.put("name", p.getName());
-				jsonPolitician.put("party", p.getParty());
-				jsonPolitician.put("fb_url", p.getFacebook_URL());
-				jsonPolitician.put("twitter_url", p.getTwitter_URL());
-				jsonPolitician.put("fID", p.getFacebookId());
-				jsonPolitician.put("tID", p.getTwitterId());
-				jsonPolitician.put("profile_url", p.getProfile_url());
-				jsonPoliticians.put(jsonPolitician);
-			}
-			jsonObject.put("politicians", jsonPoliticians);
+			jsonObject.put("politicians", loopPoliticians(politicians));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -187,31 +171,43 @@ public class Controller {
 	 * @return
 	 */
 	public JSONObject getPolitician(String id) {
+		LinkedList<Politician> politicians = dbHandler.getPolitician(id);
 		JSONObject jsonObject = new JSONObject();
-		JSONArray jsonPoliticians = new JSONArray();
 		try {
-			Politician p = dbHandler.getPolitician(id);
 			jsonObject.put("message", MSG_OK);
-			if (p.getName() == null) {
-				jsonObject.put("size", 0);
-			} else {
-				jsonObject.put("size", 1);
-			}
-			JSONObject jsonPolitician = new JSONObject();
-			jsonPolitician.put("id", p.getId());
-			jsonPolitician.put("name", p.getName());
-			jsonPolitician.put("party", p.getParty());
-			jsonPolitician.put("fb_url", p.getFacebook_URL());
-			jsonPolitician.put("twitter_url", p.getTwitter_URL());
-			jsonPolitician.put("fID", p.getFacebookId());
-			jsonPolitician.put("tID", p.getTwitterId());
-			jsonPolitician.put("profile_url", p.getProfile_url());
-			jsonPoliticians.put(jsonPolitician);
-			jsonObject.put("politicians", jsonPoliticians);
+			jsonObject.put("size", politicians.size());
+			jsonObject.put("politicians", loopPoliticians(politicians));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return jsonObject;
+	}
+
+	private JSONArray loopPoliticians(LinkedList<Politician> politicians) {
+
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonPoliticians = new JSONArray();
+		try {
+			for (int i = 0; i < politicians.size(); i++) {
+				Politician p = politicians.get(i);
+				JSONObject jsonPolitician = new JSONObject();
+				System.out.println("Fuck lolk" + p.getParty());
+				jsonPolitician.put("id", p.getId());
+				jsonPolitician.put("name", p.getName());
+				jsonPolitician.put("party", p.getParty());
+				jsonPolitician.put("fb_url", p.getFacebook_URL());
+				jsonPolitician.put("twitter_url", p.getTwitter_URL());
+				jsonPolitician.put("fID", p.getFacebookId());
+				jsonPolitician.put("tID", p.getTwitterId());
+				jsonPolitician.put("profile_url", p.getProfile_url());
+				jsonPoliticians.put(jsonPolitician);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return jsonPoliticians;
+
 	}
 
 	/**

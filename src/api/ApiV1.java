@@ -118,6 +118,30 @@ public class ApiV1 {
 	}
 
 	/**
+	 * Returns a response with post from specific id. TODO NEW
+	 * 
+	 * @param id
+	 * @param dateStr
+	 * @return
+	 */
+	@GET
+	@Path("posts/specific/{postID}")
+	public Response getSpecificPost(@PathParam("postID") int postID) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject = controller.getSpecificPost(postID);
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put(MSG, "No posts found");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERR_RESPONSE;
+		}
+		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
+	}
+
+	/**
 	 * Returns all politician objects.
 	 *
 	 * @return - response with a JSONObject with politicians.
