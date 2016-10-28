@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -19,6 +22,7 @@ public class DBHandler {
 	private final String URL = "jdbc:mysql://195.178.232.16:3306/AB7455";
 	private final String USER = "AB7455";
 	private final String PASSWORD = "kajsaecool";
+	private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
 	/**
 	 * Opens connection to database
@@ -69,12 +73,12 @@ public class DBHandler {
 	 * @return
 	 */
 
-	public LinkedList<Post> getAllPosts() {
+	public LinkedList<Post> getAllPosts(String dateStr) {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
+			Date date = formatter.parse(dateStr);
 			String query = "SELECT id,text,politican,source,date,time, likes, dislikes FROM posts  WHERE date=? group by time;";
-			Date date = new Date();
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setDate(1, new java.sql.Date(date.getTime()));
 			ResultSet rs = statement.executeQuery();
@@ -90,7 +94,7 @@ public class DBHandler {
 				post.setDislikes(rs.getInt("dislikes"));
 				posts.add(post);
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		} finally {
 			closeConnection(connection);
@@ -104,13 +108,16 @@ public class DBHandler {
 	 * @param party
 	 * @return
 	 */
-	public LinkedList<Post> getAllPostsParty(String party) {
+	public LinkedList<Post> getAllPostsParty(String party, String dateStr) {
+
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
-			String query = "SELECT * FROM posts WHERE politican in(select politicians.id from politicians where politicians.party = ? group by time);";
+			Date date = formatter.parse(dateStr);
+			String query = "SELECT * FROM posts WHERE politican in(select politicians.id from politicians where politicians.party = ?) AND posts.date = ?  group by time;";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, party);
+			statement.setDate(2, new java.sql.Date(date.getTime()));
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				Post post = new Post();
@@ -124,7 +131,7 @@ public class DBHandler {
 				post.setDislikes(rs.getInt("dislikes"));
 				posts.add(post);
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		} finally {
 			closeConnection(connection);
@@ -139,13 +146,15 @@ public class DBHandler {
 	 * @return
 	 */
 
-	public LinkedList<Post> getPostsPolitician(int politican) {
+	public LinkedList<Post> getPostsPolitician(int politican, String dateStr) {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
-			String query = "select * from posts where politican = ? group by time;";
+			Date date = formatter.parse(dateStr);
+			String query = "SELECT * FROM posts WHERE politican = ? AND date = ? group by time;";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setInt(1, politican);
+			statement.setDate(2, new java.sql.Date(date.getTime()));
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				Post post = new Post();
@@ -159,7 +168,7 @@ public class DBHandler {
 				post.setDislikes(rs.getInt("dislikes"));
 				posts.add(post);
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		} finally {
 			closeConnection(connection);
@@ -662,7 +671,7 @@ public class DBHandler {
 	 */
 	public boolean addDislike(int postID, String email) {
 		System.out.println("ADD DISLIKE CALLED");
-		String queryAddRank = "insert into rank(postID, email, liked) VALUES (?, ?, ?)";
+		String queryAddRank = "INSERT INTO rank(postID, email, liked) VALUES (?, ?, ?)";
 		String queryAddLike = "UPDATE posts SET dislikes=dislikes + 1 WHERE id = ?";
 	
 		boolean exceuteNext = true;

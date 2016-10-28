@@ -31,8 +31,8 @@ public class Controller {
 	 * 
 	 * @return
 	 */
-	public JSONObject getAllPosts() {
-		LinkedList<Post> posts = dbHandler.getAllPosts();
+	public JSONObject getAllPosts(String dateStr) {
+		LinkedList<Post> posts = dbHandler.getAllPosts(dateStr);
 		JSONObject jsonObject = new JSONObject();
 		JSONArray postArray = new JSONArray();
 		try {
@@ -59,8 +59,8 @@ public class Controller {
 	 * 
 	 * @return
 	 */
-	public JSONObject getAllPostsParty(String party) {
-		LinkedList<Post> posts = dbHandler.getAllPostsParty(party);
+	public JSONObject getAllPostsParty(String party, String dateStr) {
+		LinkedList<Post> posts = dbHandler.getAllPostsParty(party, dateStr);
 		JSONObject jsonObject = new JSONObject();
 		JSONArray postArray = new JSONArray();
 		try {
@@ -90,11 +90,11 @@ public class Controller {
 	 * @return
 	 */
 
-	public JSONObject getPostsPolitician(String id) {
+	public JSONObject getPostsPolitician(String id, String dateStr) {
 		JSONObject jsonObject = new JSONObject();
 		JSONArray jsonPosts = new JSONArray();
 		try {
-			LinkedList<Post> posts = dbHandler.getPostsPolitician(Integer.parseInt(id));
+			LinkedList<Post> posts = dbHandler.getPostsPolitician(Integer.parseInt(id), dateStr);
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", posts.size());
 			for (int i = 0; i < posts.size(); i++) {

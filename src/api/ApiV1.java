@@ -1,5 +1,7 @@
 package api;
 
+import java.text.ParseException;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -48,11 +50,11 @@ public class ApiV1 {
 	 * @return - response with a JSONObject with posts.
 	 */
 	@GET
-	@Path("posts")
-	public Response getAllPosts() {
+	@Path("posts/{date}")
+	public Response getAllPosts(@PathParam("date") String dateStr) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject = controller.getAllPosts();
+			jsonObject = controller.getAllPosts(dateStr);
 			if (jsonObject.getInt("size") == 0) {
 				jsonObject = new JSONObject();
 				jsonObject.put(MSG, "No posts found");
@@ -66,17 +68,20 @@ public class ApiV1 {
 
 	/**
 	 * 
-	 * Return posts from all politicans in specific party.
+	 * Return posts from all politicans in specific party on a specific.
 	 * 
 	 * @param party - the short name of the party, like 's' or 'kd'
 	 * @return - response with a JSONObject with posts.
+	 * @throws ParseException
 	 */
 	@GET
-	@Path("posts/{party}")
-	public Response getPartyPosts(@PathParam("party") String party) {
+	@Path("posts/{party}/{date}")
+	public Response getPartyPosts(@PathParam("party") String party, @PathParam("date") String dateStr)
+			throws ParseException {
+
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject = controller.getAllPostsParty(party);
+			jsonObject = controller.getAllPostsParty(party, dateStr);
 			if (jsonObject.getInt("size") == 0) {
 				jsonObject = new JSONObject();
 				jsonObject.put(MSG, "No posts found");
@@ -96,11 +101,11 @@ public class ApiV1 {
 	 * @return - response with a JSONObject with posts.
 	 */
 	@GET
-	@Path("posts/id/{politicianID}")
-	public Response getPostsByPolitican(@PathParam("politicianID") String id) {
+	@Path("posts/politician/{politicianID}/{date}")
+	public Response getPostsByPolitican(@PathParam("politicianID") String id, @PathParam("date") String dateStr) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject = controller.getPostsPolitician(id);
+			jsonObject = controller.getPostsPolitician(id, dateStr);
 			if (jsonObject.getInt("size") == 0) {
 				jsonObject = new JSONObject();
 				jsonObject.put(MSG, "No posts found");
