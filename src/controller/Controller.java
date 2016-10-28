@@ -1,5 +1,6 @@
 package controller;
 
+import java.sql.Time;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -308,11 +309,13 @@ public class Controller {
 	 */
 	public void postComment(int postID, String text, String email) {
 		Date date = new Date();
+		Time time = new Time(date.getTime());
 		Comment comment = new Comment();
 		comment.setDate(date);
 		comment.setEmail(email);
 		comment.setText(text);
 		comment.setPost(postID);
+		comment.setTime(time);
 
 		dbHandler.addComment(comment);
 	}
