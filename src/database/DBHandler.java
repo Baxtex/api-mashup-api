@@ -125,6 +125,29 @@ public class DBHandler {
 	 * @return
 	 */
 
+	public LinkedList<Post> getPostsPolitician(int politican) {
+		LinkedList<Post> posts = new LinkedList<Post>();
+		Connection connection = getConnection();
+		try {
+			String query = "SELECT * FROM posts WHERE politican = ? group by time;";
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setInt(1, politican);
+			ResultSet rs = statement.executeQuery();
+			posts = loopRSPosts(rs);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return posts;
+	}
+	/**
+	 * Returns a list of all posts from the specified politican in the db.
+	 * 
+	 * @param politican
+	 * @return
+	 */
+
 	public LinkedList<Post> getPostsPolitician(int politican, String dateStr) {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();

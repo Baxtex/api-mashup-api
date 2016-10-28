@@ -92,6 +92,31 @@ public class ApiV1 {
 		}
 		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
 	}
+	
+	/**
+	 * Returns all posts from a specific politician, regardless of date.
+	 * 
+	 * @param id
+	 * @param dateStr
+	 * @return
+	 */
+	@GET
+	@Path("posts/politician/{politicianID}")
+	public Response getPostsByPolitican(@PathParam("politicianID") String id) {
+		JSONObject jsonObject = new JSONObject();
+		System.out.println(id);
+		try {
+			jsonObject = controller.getPostsPolitician(id);
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put(MSG, "No posts found");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERR_RESPONSE;
+		}
+		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
+	}
 
 	/**
 	 * Return posts from specific politician.
@@ -102,7 +127,7 @@ public class ApiV1 {
 	 */
 	@GET
 	@Path("posts/politician/{politicianID}/{date}")
-	public Response getPostsByPolitican(@PathParam("politicianID") String id, @PathParam("date") String dateStr) {
+	public Response getPostsByPoliticanDate(@PathParam("politicianID") String id, @PathParam("date") String dateStr) {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject = controller.getPostsPolitician(id, dateStr);
@@ -118,14 +143,14 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Returns a response with post from specific id. TODO NEW
+	 * Returns a response with post from specific id.
 	 * 
 	 * @param id
 	 * @param dateStr
 	 * @return
 	 */
 	@GET
-	@Path("posts/specific/{postID}")
+	@Path("posts/politician/specific/{postID}")
 	public Response getSpecificPost(@PathParam("postID") int postID) {
 		JSONObject jsonObject = new JSONObject();
 		try {

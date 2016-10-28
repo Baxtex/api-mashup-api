@@ -65,7 +65,27 @@ public class Controller {
 
 	/**
 	 * Returns data about all posts from a specified politician, formatted as a
-	 * JSON object
+	 * JSON object.
+	 * 
+	 * @param id the id of the politician stored in our database
+	 * @return
+	 */
+	public JSONObject getPostsPolitician(String id) {
+		LinkedList<Post> posts = dbHandler.getPostsPolitician(Integer.parseInt(id));
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", posts.size());
+			jsonObject.put("posts", loopPosts(posts));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
+
+	/**
+	 * Returns data about all posts from a specified politician, formatted as a
+	 * JSON object in a specific date
 	 * 
 	 * @param id the id of the politician stored in our database
 	 * @return
