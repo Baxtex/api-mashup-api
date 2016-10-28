@@ -214,7 +214,6 @@ public class DBHandler {
 		} finally {
 			closeConnection(connection);
 		}
-		System.out.println(politicians.toString());
 		return politicians;
 	}
 
@@ -393,7 +392,7 @@ public class DBHandler {
 				Comment comment = new Comment();
 				comment.setText(rs.getString("text"));
 				comment.setId(rs.getInt("id"));
-				comment.setEmail(rs.getString("email"));
+				comment.setIp(rs.getString("ip"));
 				comment.setPost(rs.getInt("post"));
 				comment.setDate(rs.getDate("date"));
 				comment.setTime(rs.getTime("time"));
@@ -405,6 +404,33 @@ public class DBHandler {
 			closeConnection(connection);
 		}
 		return comments;
+	}
+
+	public LinkedList<String> checkIPs(String ip, boolean likes) {
+		LinkedList<String> ips = new LinkedList<String>();
+		System.out.println("Checking id");
+		String query;
+		if(likes){
+			query = "SELECT postID FROM rank WHERE ip=? AND liked=1;";
+		}else{
+			query = "SELECT postID FROM rank WHERE ip=? AND liked=0;";
+		}
+		Connection connection = getConnection();
+		PreparedStatement statement;
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setString(1, ip);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				ips.add(rs.getString("postID"));
+			}
+			closeConnection(connection);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return ips;
 	}
 	// ------------------------------------------------------------------------------------
 	// Insert methods
@@ -550,7 +576,7 @@ public class DBHandler {
 	 */
 
 	public void addComment(Comment comment) {
-		String query = "insert into comments(id, text, time, email, post, date) VALUES (?, ?, ?, ?, ?, ?)";
+		String query = "insert into comments(id, text, time, ip, post, date) VALUES (?, ?, ?, ?, ?, ?)";
 		Connection connection = getConnection();
 		PreparedStatement statement;
 		try {
@@ -558,7 +584,7 @@ public class DBHandler {
 			statement.setInt(1, comment.getID());
 			statement.setString(2, comment.getText());
 			statement.setTime(3, comment.getTime());
-			statement.setString(4, comment.getEmail());
+			statement.setString(4, comment.getIp());
 			statement.setInt(5, comment.getPost());
 			statement.setDate(6, new java.sql.Date(comment.getDate().getTime()));
 
@@ -578,9 +604,9 @@ public class DBHandler {
 	 * @param postID
 	 * @param email
 	 */
-	public boolean addLike(int postID, String email) {
+	public boolean addLike(int postID, String ip) {
 		System.out.println("ADD LIKE CALLED");
-		String queryAddRank = "insert into rank(postID, email, liked) VALUES (?, ?, ?)";
+		String queryAddRank = "insert into rank(postID, ip, liked) VALUES (?, ?, ?)";
 		String queryAddLike = "UPDATE posts SET likes=likes + 1 WHERE id = ?";
 		boolean exceuteNext = true;
 		Connection connection = getConnection();
@@ -588,7 +614,7 @@ public class DBHandler {
 			PreparedStatement statement;
 			statement = connection.prepareStatement(queryAddRank);
 			statement.setInt(1, postID);
-			statement.setString(2, email);
+			statement.setString(2, ip);
 			statement.setBoolean(3, true);
 			statement.executeUpdate();
 			System.out.println("DBHandler: Added Rank to database with LIKE");
@@ -625,18 +651,18 @@ public class DBHandler {
 	 * @param postID
 	 * @param email
 	 */
-	public boolean revertLike(int postID, String email) {
+	public boolean revertLike(int postID, String ip) {
 		System.out.println("REVERT LIKE CALLED");
-		String queryAlreadyLiked = "DELETE FROM rank WHERE postID = ? AND email = ? AND liked = ?;";
+		String queryAlreadyLiked = "DELETE FROM rank WHERE postID = ? AND ip = ? AND liked = ?;";
 		String retractRank = "UPDATE posts SET likes=likes - 1 WHERE id = ?;";
 		boolean exceuteNext = true;
 		Connection connection = getConnection();
-		if (checkIfRowExists(postID, email, true)) {
+		if (checkIfRowExists(postID, ip, true)) {
 			try {
 				PreparedStatement statement;
 				statement = connection.prepareStatement(queryAlreadyLiked);
 				statement.setInt(1, postID);
-				statement.setString(2, email);
+				statement.setString(2, ip);
 				statement.setBoolean(3, true);
 				statement.executeUpdate();
 				System.out.println("DBHandler: Deleted like row");
@@ -678,9 +704,9 @@ public class DBHandler {
 	 * @param postID
 	 * @param email
 	 */
-	public boolean addDislike(int postID, String email) {
+	public boolean addDislike(int postID, String ip) {
 		System.out.println("ADD DISLIKE CALLED");
-		String queryAddRank = "INSERT INTO rank(postID, email, liked) VALUES (?, ?, ?)";
+		String queryAddRank = "INSERT INTO rank(postID, ip, liked) VALUES (?, ?, ?)";
 		String queryAddLike = "UPDATE posts SET dislikes=dislikes + 1 WHERE id = ?";
 	
 		boolean exceuteNext = true;
@@ -689,7 +715,7 @@ public class DBHandler {
 			PreparedStatement statement;
 			statement = connection.prepareStatement(queryAddRank);
 			statement.setInt(1, postID);
-			statement.setString(2, email);
+			statement.setString(2, ip);
 			statement.setBoolean(3, false);
 			statement.executeUpdate();
 			System.out.println("DBHandler: Added Rank to database With DISLIKE");
@@ -724,18 +750,18 @@ public class DBHandler {
 	 * @param postID
 	 * @param email
 	 */
-	public boolean revertDislike(int postID, String email) {
+	public boolean revertDislike(int postID, String ip) {
 		System.out.println("REVERTDISLIKE CALLED");
-		String queryAlreadyDisliked = "DELETE FROM rank WHERE postID = ? AND email = ? AND liked = ?;";
+		String queryAlreadyDisliked = "DELETE FROM rank WHERE postID = ? AND ip = ? AND liked = ?;";
 		String retractRank = "UPDATE posts SET dislikes=dislikes - 1 WHERE id = ?;";
 		boolean exceuteNext = true;
 		Connection connection = getConnection();
-		if (checkIfRowExists(postID, email, false)) {
+		if (checkIfRowExists(postID, ip, false)) {
 			try {
 				PreparedStatement statement;
 				statement = connection.prepareStatement(queryAlreadyDisliked);
 				statement.setInt(1, postID);
-				statement.setString(2, email);
+				statement.setString(2, ip);
 				statement.setBoolean(3, false);
 				statement.executeUpdate();
 				System.out.println("DBHandler: Deleted dislike row");
@@ -795,18 +821,17 @@ public class DBHandler {
 	}
 
 
-	private boolean checkIfRowExists(int postID, String email, Boolean rank) {
+	private boolean checkIfRowExists(int postID, String ip, Boolean rank) {
 		System.out.println("INSIDE ROWEXISTS");
-		String checkRow = "SELECT * FROM rank WHERE postID = ? AND email = ? AND liked = ?;";
+		String checkRow = "SELECT * FROM rank WHERE postID = ? AND ip = ? AND liked = ?;";
 		boolean res = false;
-
 		boolean exceuteNext = true;
 		Connection connection = getConnection();
 		try {
 			PreparedStatement statement;
 			statement = connection.prepareStatement(checkRow);
 			statement.setInt(1, postID);
-			statement.setString(2, email);
+			statement.setString(2, ip);
 			statement.setBoolean(3, rank);
 			ResultSet rs = statement.executeQuery();
 			if (rs.next()) {
@@ -821,4 +846,6 @@ public class DBHandler {
 		return res;
 
 	}
+
+
 }

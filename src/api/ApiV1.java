@@ -285,12 +285,12 @@ public class ApiV1 {
 	 * @return - response with a json success message.
 	 */
 	@PUT
-	@Path("comment/{postID}/{text}/{email}")
+	@Path("comment/{postID}/{text}/{ip}")
 	public Response postComment(@PathParam("postID") int postID, @PathParam("text") String text,
-			@PathParam("email") String email) {
+			@PathParam("ip") String ip) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			controller.postComment(postID, text, email);
+			controller.postComment(postID, text, ip);
 			jsonObject.put(MSG, "success");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -307,11 +307,11 @@ public class ApiV1 {
 	 * @return - response with a json success message.
 	 */
 	@PUT
-	@Path("like/{postID}/{email}")
-	public Response postLike(@PathParam("postID") int postID, @PathParam("email") String email) {
+	@Path("like/{postID}/{ip}")
+	public Response postLike(@PathParam("postID") int postID, @PathParam("ip") String ip) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			if (controller.postLike(postID, email)) {
+			if (controller.postLike(postID, ip)) {
 				jsonObject.put(MSG, "success");
 			} else {
 				jsonObject.put(MSG, "Already liked");
@@ -331,12 +331,12 @@ public class ApiV1 {
 	 * @return - response with a json success message.
 	 */
 	@PUT
-	@Path("dislike/{postID}/{email}")
-	public Response postDislike(@PathParam("postID") int postID, @PathParam("email") String email) {
+	@Path("dislike/{postID}/{ip}")
+	public Response postDislike(@PathParam("postID") int postID, @PathParam("ip") String ip) {
 
 		JSONObject jsonObject = new JSONObject();
 		try {
-			if (controller.postDislike(postID, email)) {
+			if (controller.postDislike(postID, ip)) {
 				jsonObject.put(MSG, "success");
 			} else {
 				jsonObject.put(MSG, "Already disliked.");
@@ -356,12 +356,12 @@ public class ApiV1 {
 	 * @return - response with a json success message.
 	 */
 	@DELETE
-	@Path("like/{postID}/{email}")
-	public Response postRevertLike(@PathParam("postID") int postID, @PathParam("email") String email) {
+	@Path("like/{postID}/{ip}")
+	public Response postRevertLike(@PathParam("postID") int postID, @PathParam("ip") String ip) {
 		JSONObject jsonObject = new JSONObject();
 		try {
 
-			if (controller.postRevertLike(postID, email)) {
+			if (controller.postRevertLike(postID, ip)) {
 				jsonObject.put(MSG, "success");
 			} else {
 				jsonObject.put(MSG, "Failed to revert like.");
@@ -381,16 +381,63 @@ public class ApiV1 {
 	 * @return - response with a json success message.
 	 */
 	@DELETE
-	@Path("dislike/{postID}/{email}")
-	public Response postRevertDislike(@PathParam("postID") int postID, @PathParam("email") String email) {
+	@Path("dislike/{postID}/{ip}")
+	public Response postRevertDislike(@PathParam("postID") int postID, @PathParam("ip") String ip) {
 
 		JSONObject jsonObject = new JSONObject();
 		try {
-			if (controller.postRevertDislike(postID, email)) {
+			if (controller.postRevertDislike(postID, ip)) {
 				jsonObject.put(MSG, "success");
 			} else {
 				jsonObject.put(MSG, "Failed to revert dislike.");
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERR_RESPONSE;
+		}
+		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
+	}
+
+	/**
+	 * Send and ip to check what posts they have liked. TODO Change URL
+	 */
+	@GET
+	@Path("like/ips/{ip}")
+	public Response checkLikes(@PathParam("ip") String ip) {
+
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject = controller.checkIPs(ip, true);
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put(MSG, "No comments found");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERR_RESPONSE;
+		}
+		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
+	}
+
+	/**
+	 * Send api to check what posts they disliked. TODO: Change URL
+	 * 
+	 * @param ip
+	 * @return
+	 */
+	@GET
+	@Path("dislike/ips/{ip}")
+	public Response checkdisLikes(@PathParam("ip") String ip) {
+
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject = controller.checkIPs(ip, false);
+			if (jsonObject.getInt("size") == 0) {
+				jsonObject = new JSONObject();
+				jsonObject.put(MSG, "No comments found");
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ERR_RESPONSE;

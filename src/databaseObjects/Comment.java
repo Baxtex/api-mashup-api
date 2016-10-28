@@ -9,7 +9,16 @@ public class Comment {
 	
 	private int id;
 	private String text;
-	private String email;
+	private String ip;
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
 	private Date date;
 	private Time time;
 	private int post;
@@ -18,13 +27,13 @@ public class Comment {
 	}
 	
 
-	public Comment(int id, String text, Time time, Date date, String email, int post) {
+	public Comment(int id, String text, Time time, Date date, String ip, int post) {
 		this.id = id;
 		this.text = text;
 		this.time = time;
 		this.date = date;
 
-		this.email = email;
+		this.ip = ip;
 		this.post = post;
 		this.date = date;
 	}
@@ -51,7 +60,7 @@ public class Comment {
 	
 
 	public void setEmail(String email) {
-		this.email = email;
+		this.ip = email;
 	}
 	
 	public void setPost(int post) {
@@ -73,7 +82,7 @@ public class Comment {
 
 	
 	public String getEmail() {
-		return email;
+		return ip;
 	}
 	
 	public int getPost() {
@@ -82,7 +91,7 @@ public class Comment {
 
 	public String toString() {
 		return "\nKommentars-id: " + id + "\nText: " + text + "\nTid: " + time + 
-				"\nEmail: " + email + "\nTillh�r post-id: " + post + "\n";
+				"\nEmail: " + ip + "\nTillh�r post-id: " + post + "\n";
 
 	}
 	

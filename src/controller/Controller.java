@@ -133,7 +133,6 @@ public class Controller {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			LinkedList<Politician> politicians = dbHandler.getPoliticians();
-			System.out.println(politicians.toString());
 			jsonObject.put("message", MSG_OK);
 			jsonObject.put("size", politicians.size());
 			jsonObject.put("politicians", loopPoliticians(politicians));
@@ -185,13 +184,11 @@ public class Controller {
 
 	private JSONArray loopPoliticians(LinkedList<Politician> politicians) {
 
-		JSONObject jsonObject = new JSONObject();
 		JSONArray jsonPoliticians = new JSONArray();
 		try {
 			for (int i = 0; i < politicians.size(); i++) {
 				Politician p = politicians.get(i);
 				JSONObject jsonPolitician = new JSONObject();
-				System.out.println("Fuck lolk" + p.getParty());
 				jsonPolitician.put("id", p.getId());
 				jsonPolitician.put("name", p.getName());
 				jsonPolitician.put("party", p.getParty());
@@ -303,12 +300,12 @@ public class Controller {
 	 * @param text
 	 * @param postID
 	 */
-	public void postComment(int postID, String text, String email) {
+	public void postComment(int postID, String text, String ip) {
 		Date date = new Date();
 		Time time = new Time(date.getTime());
 		Comment comment = new Comment();
 		comment.setDate(date);
-		comment.setEmail(email);
+		comment.setIp(ip);
 		comment.setText(text);
 		comment.setPost(postID);
 		comment.setTime(time);
@@ -316,25 +313,45 @@ public class Controller {
 		dbHandler.addComment(comment);
 	}
 
-	public boolean postLike(int postID, String email) {
-		return (dbHandler.addLike(postID, email));
+	public boolean postLike(int postID, String ip) {
+		return (dbHandler.addLike(postID, ip));
 
 	}
 
-	public boolean postDislike(int postID, String email) {
-		return (dbHandler.addDislike(postID, email));
+	public boolean postDislike(int postID, String ip) {
+		return (dbHandler.addDislike(postID, ip));
 
 	}
 
-	public boolean postRevertLike(int postID, String email) {
-		return (dbHandler.revertLike(postID, email));
+	public boolean postRevertLike(int postID, String ip) {
+		return (dbHandler.revertLike(postID, ip));
 
 	}
 
-	public boolean postRevertDislike(int postID, String email) {
-		return (dbHandler.revertDislike(postID, email));
+	public boolean postRevertDislike(int postID, String ip) {
+		return (dbHandler.revertDislike(postID, ip));
 
 	}
 
+
+	public JSONObject checkIPs(String ip, boolean likes) {
+		LinkedList<String> ips = dbHandler.checkIPs(ip, likes);
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonParties = new JSONArray();
+		try {
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", ips.size());
+			for (int i = 0; i < ips.size(); i++) {
+				JSONObject jsonParty = new JSONObject();
+				jsonParty.put("postID", ips.get(i));
+				jsonParties.put(jsonParty);
+			}
+			jsonObject.put("postids", jsonParties);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+
+	}
 
 }
