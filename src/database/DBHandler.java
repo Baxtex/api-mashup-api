@@ -450,7 +450,7 @@ public class DBHandler {
 		LinkedList<Comment> comments = new LinkedList<Comment>();
 		Connection connection = getConnection();
 		try {
-			String query = "SELECT * FROM comments WHERE post = ? GROUP BY date AND time;";
+			String query = "SELECT * FROM comments WHERE post = ? ORDER BY date AND time;";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setInt(1, postID);
 			ResultSet rs = statement.executeQuery();
@@ -469,6 +469,7 @@ public class DBHandler {
 		} finally {
 			closeConnection(connection);
 		}
+		System.out.println(comments);
 		return comments;
 	}
 
