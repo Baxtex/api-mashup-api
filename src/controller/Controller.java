@@ -103,7 +103,44 @@ public class Controller {
 		}
 		return jsonObject;
 	}
+	
+	/**
+	 * Returns a JSONObject containing the 20 most up voted posts
+	 * @return JSONObject containing the 20 most up voted posts
+	 */
+	
+	public JSONObject getPostsMostUpvoted() {
+		LinkedList<Post> posts = dbHandler.getPostsMostUpvoted();
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", posts.size());
+			jsonObject.put("posts", loopPosts(posts));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
+	
+	/**
+	 * Returns a JSONObject containing the 20 most down voted posts
+	 * @return JSONObject containing the 20 most down voted posts
+	 */
+	
+	public JSONObject getPostsMostDownvoted() {
+		LinkedList<Post> posts = dbHandler.getPostsMostDownvoted();
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("message", MSG_OK);
+			jsonObject.put("size", posts.size());
+			jsonObject.put("posts", loopPosts(posts));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
 
+	
 
 	/*
 	 * Returns a specific post with postID.

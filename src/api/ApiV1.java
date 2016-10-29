@@ -141,6 +141,43 @@ public class ApiV1 {
 		}
 		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
 	}
+	
+	/**
+	 * Returns the 20 most up voted posts
+	 * @return the 20 most up voted posts
+	 */
+	
+	@GET
+	@Path("posts/upvoted")
+	public Response getPostsMostUpvoted() {
+		JSONObject jsonObject = new JSONObject();
+		try{
+			jsonObject = controller.getPostsMostUpvoted();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERR_RESPONSE;
+		}
+		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
+	}
+	
+	/**
+	 * Returns the 20 most down voted posts
+	 * @return the 20 most down voted posts
+	 */
+	
+	@GET
+	@Path("posts/downvoted")
+	public Response getPostsMostDownvoted() {
+		JSONObject jsonObject = new JSONObject();
+		try{
+			jsonObject = controller.getPostsMostDownvoted();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERR_RESPONSE;
+		}
+		return Response.ok(jsonObject.toString()).header(ACAO, "*").build();
+	}
+
 
 	/**
 	 * Returns a response with post from specific id.
@@ -150,7 +187,7 @@ public class ApiV1 {
 	 * @return
 	 */
 	@GET
-	@Path("posts/politician/specific/{postID}")
+	@Path("posts/id={postID}")
 	public Response getSpecificPost(@PathParam("postID") int postID) {
 		JSONObject jsonObject = new JSONObject();
 		try {
@@ -313,7 +350,7 @@ public class ApiV1 {
 			jsonObject = controller.checkIPs(ip, true);
 			if (jsonObject.getInt("size") == 0) {
 				jsonObject = new JSONObject();
-				jsonObject.put(MSG, "No comments found");
+				jsonObject.put(MSG, "No likes found");
 			}
 
 		} catch (Exception e) {
@@ -338,7 +375,7 @@ public class ApiV1 {
 			jsonObject = controller.checkIPs(ip, false);
 			if (jsonObject.getInt("size") == 0) {
 				jsonObject = new JSONObject();
-				jsonObject.put(MSG, "No comments found");
+				jsonObject.put(MSG, "No dislikes found");
 			}
 
 		} catch (Exception e) {

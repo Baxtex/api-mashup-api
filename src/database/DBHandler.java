@@ -141,6 +141,7 @@ public class DBHandler {
 		}
 		return posts;
 	}
+
 	/**
 	 * Returns a list of all posts from the specified politican in the db.
 	 * 
@@ -166,7 +167,49 @@ public class DBHandler {
 		}
 		return posts;
 	}
+	
+	/**
+	 * Returns a list of the 20 most up voted posts
+	 * @return a list of the 20 most up voted posts
+	 */
+	
+	public LinkedList<Post> getPostsMostUpvoted() {
+		LinkedList<Post> posts = new LinkedList<Post>();
+		Connection connection = getConnection();
+		try {
+			String query = "SELECT * FROM posts ORDER BY likes DESC LIMIT 20;";
+			PreparedStatement statement = connection.prepareStatement(query);
+			ResultSet rs = statement.executeQuery();
+			posts = loopRSPosts(rs);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return posts;
+	}
+	
+	/**
+	 * Returns a list of the 20 most down voted posts
+	 * @return a list of the 20 most down voted posts
+	 */
+	public LinkedList<Post> getPostsMostDownvoted() {
+		LinkedList<Post> posts = new LinkedList<Post>();
+		Connection connection = getConnection();
+		try {
+			String query = "SELECT * FROM posts ORDER BY dislikes DESC LIMIT 20;";
+			PreparedStatement statement = connection.prepareStatement(query);
+			ResultSet rs = statement.executeQuery();
+			posts = loopRSPosts(rs);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+		}
+		return posts;
+	}
 
+	
 	/**
 	 * Returns specific post.
 	 * 
