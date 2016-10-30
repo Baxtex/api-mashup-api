@@ -1,5 +1,11 @@
 package databaseObjects;
 
+/**
+ * Party class representing a single politican. Only getters and setters.
+ * 
+ * @author Anton Gustafsson
+ *
+ */
 public class Politician {
 	private String name;
 	private String party;

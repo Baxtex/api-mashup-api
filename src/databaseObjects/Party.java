@@ -1,5 +1,11 @@
 package databaseObjects;
 
+/**
+ * Party class reåresenting a single party. Only getters and setters.
+ * 
+ * @author Anton Gustafsson
+ *
+ */
 public class Party {
 	
 	private String name;

@@ -18,7 +18,7 @@ import controller.Controller;
 
 /**
  * Endpoint for the API. The URI for accessing these resources is:
- * http://localhost:8080/api-mashup-api/api/v1/<resource>
+ * http://localhost:8080/api-mashup-api/v1/<resource>
  */
 
 @Path("/v1/")
@@ -144,7 +144,8 @@ public class ApiV1 {
 	
 	/**
 	 * Returns the 20 most up voted posts
-	 * @return the 20 most up voted posts
+	 * 
+	 * @return the 20 most up voted posts in JSON
 	 */
 	
 	@GET
@@ -162,7 +163,8 @@ public class ApiV1 {
 	
 	/**
 	 * Returns the 20 most down voted posts
-	 * @return the 20 most down voted posts
+	 * 
+	 * @return the 20 most down voted posts in JSON
 	 */
 	
 	@GET
@@ -187,7 +189,7 @@ public class ApiV1 {
 	 * @return
 	 */
 	@GET
-	@Path("posts/id={postID}")
+	@Path("posts/id/{postID}")
 	public Response getSpecificPost(@PathParam("postID") int postID) {
 		JSONObject jsonObject = new JSONObject();
 		try {
@@ -361,7 +363,7 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Send api to check what posts they disliked. TODO: Change URL
+	 * Send ip to check what posts they disliked.
 	 * 
 	 * @param ip
 	 * @return

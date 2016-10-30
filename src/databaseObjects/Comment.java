@@ -5,6 +5,13 @@ import java.sql.Time;
 import java.util.Date;
 
 
+/**
+ * Comment class that represents a single comment. Only contains getters and
+ * setters.
+ * 
+ * @author Anton Gustafsson
+ *
+ */
 public class Comment {
 	
 	private int id;

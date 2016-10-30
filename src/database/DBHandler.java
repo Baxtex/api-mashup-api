@@ -16,8 +16,13 @@ import databaseObjects.Party;
 import databaseObjects.Politician;
 import databaseObjects.Post;
 
+/**
+ * DBHandler that handles the database(db).
+ * 
+ * @author Anton Gustafsson
+ *
+ */
 public class DBHandler {
-	// private final String DRIVER = "com.mysql.jdbc.Driver";
 	private final String DRIVER = "com.mysql.cj.jdbc.Driver";
 	private final String URL = "jdbc:mysql://195.178.232.16:3306/AB7455";
 	private final String USER = "AB7455";
@@ -27,7 +32,7 @@ public class DBHandler {
 	/**
 	 * Opens connection to database
 	 * 
-	 * @return
+	 * @return - a conntection to the db.
 	 */
 
 	public Connection getConnection() {
@@ -35,14 +40,11 @@ public class DBHandler {
 		try {
 			Class.forName(DRIVER);
 		} catch (ClassNotFoundException e) {
-			System.out.println("DBHandler: Exception when assigning driver");
 			e.printStackTrace();
 		}
 		try {
 			connection = DriverManager.getConnection(URL, USER, PASSWORD);
-			System.out.println("DBHandler: Connected to database: " + connection.toString());
 		} catch (SQLException e) {
-			System.out.println("DBHandler: Exception when connecting to database");
 			e.printStackTrace();
 		}
 		return connection;
@@ -51,7 +53,7 @@ public class DBHandler {
 	/**
 	 * Closes the connection to database
 	 * 
-	 * @param connection
+	 * @param connection - the connection to close.
 	 */
 
 	public void closeConnection(Connection connection) {
@@ -59,12 +61,10 @@ public class DBHandler {
 			try {
 				connection.close();
 			} catch (SQLException e) {
-				System.out.println("DBHandler: Exception trying to close the connection");
+				e.printStackTrace();
 			}
 		}
 	}
-
-	// Get methods
 
 	/**
 	 * Returns a list of at least 1 post from every politican in the database.
@@ -79,7 +79,7 @@ public class DBHandler {
 		Connection connection = getConnection();
 		try {
 			Date date = formatter.parse(dateStr);
-			String query = "SELECT id,text,politican,source,date,time, likes, dislikes FROM posts  WHERE date=? group by time;";
+			String query = "SELECT id,text,politican,source,date,time, likes, dislikes FROM posts  WHERE date=? GROUP BY TIME;";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setDate(1, new java.sql.Date(date.getTime()));
 			ResultSet rs = statement.executeQuery();
@@ -104,7 +104,7 @@ public class DBHandler {
 		Connection connection = getConnection();
 		try {
 			Date date = formatter.parse(dateStr);
-			String query = "SELECT * FROM posts WHERE politican in(select politicians.id from politicians where politicians.party = ?) AND posts.date = ?  group by time;";
+			String query = "SELECT * FROM posts WHERE politican in(select politicians.id from politicians where politicians.party = ?) AND posts.date = ?  GROUP BY TIME;";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, party);
 			statement.setDate(2, new java.sql.Date(date.getTime()));
@@ -129,7 +129,7 @@ public class DBHandler {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
-			String query = "SELECT * FROM posts WHERE politican = ? group by time;";
+			String query = "SELECT * FROM posts WHERE politican = ? GROUP BY TIME;";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setInt(1, politican);
 			ResultSet rs = statement.executeQuery();
@@ -154,7 +154,7 @@ public class DBHandler {
 		Connection connection = getConnection();
 		try {
 			Date date = formatter.parse(dateStr);
-			String query = "SELECT * FROM posts WHERE politican = ? AND date = ? group by time;";
+			String query = "SELECT * FROM posts WHERE politican = ? AND date = ? GROUP BY TIME;";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setInt(1, politican);
 			statement.setDate(2, new java.sql.Date(date.getTime()));
@@ -167,12 +167,13 @@ public class DBHandler {
 		}
 		return posts;
 	}
-	
+
 	/**
 	 * Returns a list of the 20 most up voted posts
+	 * 
 	 * @return a list of the 20 most up voted posts
 	 */
-	
+
 	public LinkedList<Post> getPostsMostUpvoted() {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
@@ -188,9 +189,10 @@ public class DBHandler {
 		}
 		return posts;
 	}
-	
+
 	/**
 	 * Returns a list of the 20 most down voted posts
+	 * 
 	 * @return a list of the 20 most down voted posts
 	 */
 	public LinkedList<Post> getPostsMostDownvoted() {
@@ -209,7 +211,6 @@ public class DBHandler {
 		return posts;
 	}
 
-	
 	/**
 	 * Returns specific post.
 	 * 
@@ -232,6 +233,7 @@ public class DBHandler {
 		}
 		return posts;
 	}
+
 	/**
 	 * Loops through ResultSet with posts.
 	 * 
@@ -254,12 +256,10 @@ public class DBHandler {
 				posts.add(post);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return posts;
 	}
-
 
 	/**
 	 * Returns a list of all politicians in the database
@@ -326,7 +326,6 @@ public class DBHandler {
 		} finally {
 			closeConnection(connection);
 		}
-
 		return politicians;
 	}
 
@@ -469,17 +468,15 @@ public class DBHandler {
 		} finally {
 			closeConnection(connection);
 		}
-		System.out.println(comments);
 		return comments;
 	}
 
 	public LinkedList<String> checkIPs(String ip, boolean likes) {
 		LinkedList<String> ips = new LinkedList<String>();
-		System.out.println("Checking id");
 		String query;
-		if(likes){
+		if (likes) {
 			query = "SELECT postID FROM rank WHERE ip=? AND liked=1;";
-		}else{
+		} else {
 			query = "SELECT postID FROM rank WHERE ip=? AND liked=0;";
 		}
 		Connection connection = getConnection();
@@ -499,8 +496,6 @@ public class DBHandler {
 		}
 		return ips;
 	}
-	// ------------------------------------------------------------------------------------
-	// Insert methods
 
 	/**
 	 * Inserts a post into the database.
@@ -537,7 +532,7 @@ public class DBHandler {
 	 */
 
 	public void addParty(Party party) {
-		String query = "insert into parties(name, nameShort) VALUES (?, ?)";
+		String query = "INSERT INTO parties(name, nameShort) VALUES (?, ?)";
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
 		try {
@@ -565,7 +560,7 @@ public class DBHandler {
 		String query = null;
 		try {
 			for (int i = 0; i < parties.size(); i++) {
-				query = "insert into parties(name, nameShort) VALUES (?, ?)";
+				query = "INSERT INTO parties(name, nameShort) VALUES (?, ?)";
 				statement = connection.prepareStatement(query);
 				statement.setString(1, parties.get(i).getName());
 				statement.setString(2, parties.get(i).getNameShort());
@@ -587,7 +582,7 @@ public class DBHandler {
 	 */
 
 	public void addPolitican(Politician politician) {
-		String query = "insert into politicians(name, party, fb_url, twitter_url) VALUES (?, ?, ?, ?)";
+		String query = "INSERT INTO politicians(name, party, fb_url, twitter_url) VALUES (?, ?, ?, ?)";
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
 		try {
@@ -615,7 +610,7 @@ public class DBHandler {
 	public void addPoliticians(LinkedList<Politician> politicians) {
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
-		String query = "insert into politicians(name, party, fb_url, twitter_url) VALUES (?, ?, ?, ?)";
+		String query = "INSERT INTO politicians(name, party, fb_url, twitter_url) VALUES (?, ?, ?, ?)";
 		try {
 			for (int i = 0; i < politicians.size(); i++) {
 				statement = connection.prepareStatement(query);
@@ -625,7 +620,6 @@ public class DBHandler {
 				statement.setString(4, politicians.get(i).getTwitter_URL());
 
 				statement.executeUpdate();
-				// closeConnection(connection);
 				System.out.println("DBHandler: Added a list of politicians to database");
 			}
 		} catch (SQLException e) {
@@ -633,7 +627,6 @@ public class DBHandler {
 		} finally {
 			closeConnection(connection);
 		}
-		// closeConnection(connection);
 	}
 
 	/**
@@ -643,7 +636,7 @@ public class DBHandler {
 	 */
 
 	public void addComment(Comment comment) {
-		String query = "insert into comments(id, text, time, ip, post, date) VALUES (?, ?, ?, ?, ?, ?)";
+		String query = "INSERT INTO comments(id, text, time, ip, post, date) VALUES (?, ?, ?, ?, ?, ?)";
 		Connection connection = getConnection();
 		PreparedStatement statement;
 		try {
@@ -654,7 +647,6 @@ public class DBHandler {
 			statement.setString(4, comment.getIp());
 			statement.setInt(5, comment.getPost());
 			statement.setDate(6, new java.sql.Date(comment.getDate().getTime()));
-
 			statement.executeUpdate();
 			System.out.println("DBHandler: Added comment to database");
 		} catch (SQLException e) {
@@ -672,8 +664,7 @@ public class DBHandler {
 	 * @param email
 	 */
 	public boolean addLike(int postID, String ip) {
-		System.out.println("ADD LIKE CALLED");
-		String queryAddRank = "insert into rank(postID, ip, liked) VALUES (?, ?, ?)";
+		String queryAddRank = "INSERT INTO rank(postID, ip, liked) VALUES (?, ?, ?)";
 		String queryAddLike = "UPDATE posts SET likes=likes + 1 WHERE id = ?";
 		boolean exceuteNext = true;
 		Connection connection = getConnection();
@@ -684,11 +675,9 @@ public class DBHandler {
 			statement.setString(2, ip);
 			statement.setBoolean(3, true);
 			statement.executeUpdate();
-			System.out.println("DBHandler: Added Rank to database with LIKE");
 
 		} catch (SQLException e) {
 			exceuteNext = false;
-			System.out.println("Already liked!");
 			return false;
 		}
 		if (exceuteNext) {
@@ -698,7 +687,6 @@ public class DBHandler {
 				statement2 = connection.prepareStatement(queryAddLike);
 				statement2.setInt(1, postID);
 				statement2.executeUpdate();
-				System.out.println("DBHandler: Added Like to post");
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -707,7 +695,6 @@ public class DBHandler {
 			}
 		}
 		return true;
-
 
 	}
 
@@ -719,7 +706,6 @@ public class DBHandler {
 	 * @param email
 	 */
 	public boolean revertLike(int postID, String ip) {
-		System.out.println("REVERT LIKE CALLED");
 		String queryAlreadyLiked = "DELETE FROM rank WHERE postID = ? AND ip = ? AND liked = ?;";
 		String retractRank = "UPDATE posts SET likes=likes - 1 WHERE id = ?;";
 		boolean exceuteNext = true;
@@ -732,14 +718,12 @@ public class DBHandler {
 				statement.setString(2, ip);
 				statement.setBoolean(3, true);
 				statement.executeUpdate();
-				System.out.println("DBHandler: Deleted like row");
-				
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		} else {
 			exceuteNext = false;
-			System.out.println("DBHandler: Cannot delete non existing like");
 			return false;
 
 		}
@@ -752,7 +736,6 @@ public class DBHandler {
 				statement2 = connection.prepareStatement(retractRank);
 				statement2.setInt(1, postID);
 				statement2.executeUpdate();
-				System.out.println("DBHandler: removed like from post");
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -772,10 +755,9 @@ public class DBHandler {
 	 * @param email
 	 */
 	public boolean addDislike(int postID, String ip) {
-		System.out.println("ADD DISLIKE CALLED");
 		String queryAddRank = "INSERT INTO rank(postID, ip, liked) VALUES (?, ?, ?)";
 		String queryAddLike = "UPDATE posts SET dislikes=dislikes + 1 WHERE id = ?";
-	
+
 		boolean exceuteNext = true;
 		Connection connection = getConnection();
 		try {
@@ -785,11 +767,9 @@ public class DBHandler {
 			statement.setString(2, ip);
 			statement.setBoolean(3, false);
 			statement.executeUpdate();
-			System.out.println("DBHandler: Added Rank to database With DISLIKE");
 
 		} catch (SQLException e) {
 			exceuteNext = false;
-			System.out.println("Already disliked!");
 			return false;
 		}
 		if (exceuteNext) {
@@ -799,7 +779,6 @@ public class DBHandler {
 				statement2 = connection.prepareStatement(queryAddLike);
 				statement2.setInt(1, postID);
 				statement2.executeUpdate();
-				System.out.println("DBHandler: Added dislike to post");
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -809,7 +788,7 @@ public class DBHandler {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * If Dislike already existed and same resource is called again, remove the
 	 * like.
@@ -818,7 +797,6 @@ public class DBHandler {
 	 * @param email
 	 */
 	public boolean revertDislike(int postID, String ip) {
-		System.out.println("REVERTDISLIKE CALLED");
 		String queryAlreadyDisliked = "DELETE FROM rank WHERE postID = ? AND ip = ? AND liked = ?;";
 		String retractRank = "UPDATE posts SET dislikes=dislikes - 1 WHERE id = ?;";
 		boolean exceuteNext = true;
@@ -831,7 +809,6 @@ public class DBHandler {
 				statement.setString(2, ip);
 				statement.setBoolean(3, false);
 				statement.executeUpdate();
-				System.out.println("DBHandler: Deleted dislike row");
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -839,7 +816,6 @@ public class DBHandler {
 
 		} else {
 			exceuteNext = false;
-			System.out.println("DBHandler: Cannot delete non existing dislike");
 			return false;
 		}
 		if (exceuteNext) {
@@ -849,7 +825,6 @@ public class DBHandler {
 				statement2 = connection.prepareStatement(retractRank);
 				statement2.setInt(1, postID);
 				statement2.executeUpdate();
-				System.out.println("DBHandler: removed dislike from post");
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -859,9 +834,9 @@ public class DBHandler {
 
 		}
 		return true;
-		
 
 	}
+
 	/**
 	 * Generic method for adding data to database. Used by other methods in this
 	 * class.
@@ -879,7 +854,6 @@ public class DBHandler {
 			statement.setString(2, url);
 			statement.executeUpdate();
 			closeConnection(connection);
-			System.out.println("DBHandler: Added data to db.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -887,9 +861,7 @@ public class DBHandler {
 		}
 	}
 
-
 	private boolean checkIfRowExists(int postID, String ip, Boolean rank) {
-		System.out.println("INSIDE ROWEXISTS");
 		String checkRow = "SELECT * FROM rank WHERE postID = ? AND ip = ? AND liked = ?;";
 		boolean res = false;
 		boolean exceuteNext = true;
@@ -913,6 +885,5 @@ public class DBHandler {
 		return res;
 
 	}
-
 
 }

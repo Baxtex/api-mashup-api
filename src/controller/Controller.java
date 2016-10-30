@@ -14,21 +14,26 @@ import databaseObjects.Party;
 import databaseObjects.Politician;
 import databaseObjects.Post;
 
+/**
+ * Controller as part of MVC.
+ * 
+ * @author Anton Gustafsson
+ *
+ */
+
 public class Controller {
 	private DBHandler dbHandler;
-
 	private final String MSG_OK = "success";
 
 	public Controller() {
 		dbHandler = new DBHandler();
 	}
 
-
 	/**
-	 * Should return posts from all the politicians with the specified amount
-	 * from the database.
+	 * Builds JSONObject from a list of posts.
 	 * 
-	 * @return
+	 * @param dateStr - date as a string from the user.
+	 * @return - Complete JSONObject with posts.
 	 */
 	public JSONObject getAllPosts(String dateStr) {
 		LinkedList<Post> posts = dbHandler.getAllPosts(dateStr);
@@ -45,9 +50,11 @@ public class Controller {
 	}
 
 	/**
-	 * Returns 1 post from every politican in specific party.
+	 * Builds JSONObject from a list of posts.
 	 * 
-	 * @return
+	 * @param party - party abbreviation.
+	 * @param dateStr - date as a string from the user.
+	 * @return - Complete JSONObject with posts.
 	 */
 	public JSONObject getAllPostsParty(String party, String dateStr) {
 		LinkedList<Post> posts = dbHandler.getAllPostsParty(party, dateStr);
@@ -64,11 +71,10 @@ public class Controller {
 	}
 
 	/**
-	 * Returns data about all posts from a specified politician, formatted as a
-	 * JSON object.
+	 * Builds JSONObject from a list of posts.
 	 * 
-	 * @param id the id of the politician stored in our database
-	 * @return
+	 * @param id - politician id.
+	 * @return - Complete JSONObject with posts.
 	 */
 	public JSONObject getPostsPolitician(String id) {
 		LinkedList<Post> posts = dbHandler.getPostsPolitician(Integer.parseInt(id));
@@ -84,11 +90,11 @@ public class Controller {
 	}
 
 	/**
-	 * Returns data about all posts from a specified politician, formatted as a
-	 * JSON object in a specific date
+	 * Builds JSONObject from a list of posts.
 	 * 
-	 * @param id the id of the politician stored in our database
-	 * @return
+	 * @param id - politician id.
+	 * @param dateStr - date as a string from the user.
+	 * @return - Complete JSONObject with posts.
 	 */
 
 	public JSONObject getPostsPolitician(String id, String dateStr) {
@@ -105,8 +111,9 @@ public class Controller {
 	}
 	
 	/**
-	 * Returns a JSONObject containing the 20 most up voted posts
-	 * @return JSONObject containing the 20 most up voted posts
+	 * Builds a JSONObject containing the 20 most up voted posts
+	 * 
+	 * @return - Complete JSONObject with posts.
 	 */
 	
 	public JSONObject getPostsMostUpvoted() {
@@ -123,8 +130,9 @@ public class Controller {
 	}
 	
 	/**
-	 * Returns a JSONObject containing the 20 most down voted posts
-	 * @return JSONObject containing the 20 most down voted posts
+	 * Builds a JSONObject containing the 20 most down voted posts
+	 * 
+	 * @return - Complete JSONObject with posts.
 	 */
 	
 	public JSONObject getPostsMostDownvoted() {
@@ -142,9 +150,11 @@ public class Controller {
 
 	
 
-	/*
-	 * Returns a specific post with postID.
+	/**
+	 * Builds JSONObject from a list of posts.
 	 * 
+	 * @param id - post id.
+	 * @return - Complete JSONObject with posts.
 	 */
 	public JSONObject getSpecificPost(int postID) {
 		LinkedList<Post> posts = dbHandler.getSpecificPost(postID);
@@ -163,7 +173,7 @@ public class Controller {
 	 * Loops through a list of posts and puts them in a jsonArray.
 	 * 
 	 * @param posts
-	 * @return
+	 * @return - jsonarray of posts
 	 */
 	private JSONArray loopPosts(LinkedList<Post> posts) {
 		JSONArray jsonPosts = new JSONArray();
@@ -181,10 +191,11 @@ public class Controller {
 		return jsonPosts;
 
 	}
+	
 	/**
-	 * Returns all politicians from db as JSONObjects.
+	 * Builds JSONObject from a list of politicians
 	 * 
-	 * @return
+	 * @return - Complete JSONObject with politicians.
 	 */
 	public JSONObject getAllPoliticians() {
 		JSONObject jsonObject = new JSONObject();
@@ -200,11 +211,10 @@ public class Controller {
 	}
 
 	/**
-	 * Returns data about all politicians from a specified party, formatted as a
-	 * JSON object
+	 * Builds JSONObject from a list of politicians
 	 * 
-	 * @param party the short name of the party, f.e. "s"
-	 * @return
+	 * @param party - the party from which to return politicians from
+	 * @return - Complete JSONObject with politicians.
 	 */
 
 	public JSONObject getPoliticiansParty(String party) {
@@ -221,10 +231,10 @@ public class Controller {
 	}
 
 	/**
-	 * Return specific politician as JSONObject
+	 * Builds JSONObject from a list of politicians
 	 * 
-	 * @param id
-	 * @return
+	 * @param id - id of the politcian to return.
+	 * @return - Complete JSONObject with a politician.
 	 */
 	public JSONObject getPolitician(String id) {
 		LinkedList<Politician> politicians = dbHandler.getPolitician(id);
@@ -239,6 +249,12 @@ public class Controller {
 		return jsonObject;
 	}
 
+	/**
+	 * Loops through a list of politicians and puts them in a JSONArray.
+	 * 
+	 * @param politicians - a list of politicians.
+	 * @return - JSONArray with politicians.
+	 */
 	private JSONArray loopPoliticians(LinkedList<Politician> politicians) {
 
 		JSONArray jsonPoliticians = new JSONArray();
@@ -259,15 +275,13 @@ public class Controller {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-
 		return jsonPoliticians;
-
 	}
 
 	/**
-	 * Returns all parties as JSONObject.
+	 * Builds JSONObject from a list of parties
 	 * 
-	 * @return
+	 * @return - Complete JSONObject with all parties.
 	 */
 	public JSONObject getParties() {
 		JSONObject jsonObject = new JSONObject();
@@ -292,10 +306,10 @@ public class Controller {
 	}
 
 	/**
-	 * Returns specific party as JSONObject.
+	 * Builds JSONObject from a list of parties
 	 * 
-	 * @param party
-	 * @return
+	 * @param party - party abbreviation.
+	 * @return - Complete JSONObject with specfic parties.
 	 */
 	public JSONObject getParty(String party) {
 
@@ -306,7 +320,6 @@ public class Controller {
 			if (p.getName() == null) {
 				jsonObject.put("size", 0);
 			} else {
-
 				jsonObject.put("size", 1);
 			}
 			jsonObject.put("name", p.getName());
@@ -315,14 +328,14 @@ public class Controller {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-
 		return jsonObject;
 	}
 
 	/**
-	 * Retrieves comments for a specific post.
+	 * Builds JSONObject from a list of comments
 	 * 
-	 * @return
+	 * @param postID - the post to get comments for.
+	 * @return - Complete JSONObject with all comments for specific post.
 	 */
 	public JSONObject getComments(int postID) {
 
@@ -352,10 +365,11 @@ public class Controller {
 
 
 	/**
-	 * Used when posting a comment.
+	 * Creates a new Comment
 	 * 
-	 * @param text
-	 * @param postID
+	 * @param postID - to which post the comment belongs to.
+	 * @param text - the text in the comment.
+	 * @param ip - the ip address of the commentor.
 	 */
 	public void postComment(int postID, String text, String ip) {
 		Date date = new Date();
@@ -366,31 +380,65 @@ public class Controller {
 		comment.setText(text);
 		comment.setPost(postID);
 		comment.setTime(time);
-
 		dbHandler.addComment(comment);
 	}
 
+	/**
+	 * Calls on the dbHandler to post like.
+	 * 
+	 * @param postID - the post to like.
+	 * @param ip - the ip behind the like.
+	 * @return - true if insertion went well.
+	 */
 	public boolean postLike(int postID, String ip) {
 		return (dbHandler.addLike(postID, ip));
 
 	}
 
+	/**
+	 * Calls on the dbHandler to post dislike.
+	 * 
+	 * @param postID - the post to dislike.
+	 * @param ip - the ip behind the dislike.
+	 * @return - true if insertion went well.
+	 */
 	public boolean postDislike(int postID, String ip) {
 		return (dbHandler.addDislike(postID, ip));
 
 	}
 
+	/**
+	 * Calls on the dbHandler to revert like.
+	 * 
+	 * @param postID - the post to revert like.
+	 * @param ip - the ip behind the revert like.
+	 * @return - true if revert went well.
+	 */
 	public boolean postRevertLike(int postID, String ip) {
 		return (dbHandler.revertLike(postID, ip));
 
 	}
 
+	/**
+	 * Calls on the dbHandler to revert dislike.
+	 * 
+	 * @param postID - the post to revert dislike.
+	 * @param ip - the ip behind the revert dislike.
+	 * @return - true if revert went well.
+	 */
 	public boolean postRevertDislike(int postID, String ip) {
 		return (dbHandler.revertDislike(postID, ip));
 
 	}
 
-
+	/**
+	 * Builds JSONObject from a list of posts from a certain ip liked or
+	 * disliked.
+	 * 
+	 * @param ip - the ip we want to check
+	 * @param likes - true if we want to check liked post, otherwise false.
+	 * @return - Complete JSONObject with posts that a ip liked or disliked.
+	 */
 	public JSONObject checkIPs(String ip, boolean likes) {
 		LinkedList<String> ips = dbHandler.checkIPs(ip, likes);
 		JSONObject jsonObject = new JSONObject();
