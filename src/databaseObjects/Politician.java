@@ -1,7 +1,7 @@
 package databaseObjects;
 
 /**
- * Party class representing a single politican. Only getters and setters.
+ * Politican class representing a single politican. Only getters and setters.
  * 
  * @author Anton Gustafsson
  *
@@ -12,17 +12,32 @@ public class Politician {
 	private String facebook_URL;
 	private String twitter_URL;
 	private String profile_url;
+	private String twitterId;
+	private long facebookId;
+	private int id;
 
-	public String getProfile_url() {
+	public Politician() {
+	}
+
+	public Politician(String name, String party) {
+		this.name = name;
+		this.party = party;
+	}
+
+	public Politician(String name, String party, String facebook_URL, String twitter_URL) {
+		this.name = name;
+		this.party = party;
+		this.facebook_URL = facebook_URL;
+		this.twitter_URL = twitter_URL;
+	}
+
+	public String getProfileURL() {
 		return profile_url;
 	}
 
 	public void setProfile_url(String profile_url) {
 		this.profile_url = profile_url;
 	}
-
-	private long facebookId;
-	private int id;
 	
 	public long getFacebookId() {
 		return facebookId;
@@ -48,24 +63,8 @@ public class Politician {
 		return id;
 	}
 
-	private String twitterId;
 	
 
-	public Politician() {
-		
-	}
-	
-	public Politician(String name, String party) {
-		this.name = name;
-		this.party = party;
-	}
-
-	public Politician(String name, String party, String facebook_URL, String twitter_URL) {
-		this.name = name;
-		this.party = party;
-		this.facebook_URL = facebook_URL;
-		this.twitter_URL = twitter_URL;
-	}
 
 	public String getName() {
 		return name;

@@ -269,7 +269,7 @@ public class Controller {
 				jsonPolitician.put("twitter_url", p.getTwitter_URL());
 				jsonPolitician.put("fID", p.getFacebookId());
 				jsonPolitician.put("tID", p.getTwitterId());
-				jsonPolitician.put("profile_url", p.getProfile_url());
+				jsonPolitician.put("profile_url", p.getProfileURL());
 				jsonPoliticians.put(jsonPolitician);
 			}
 		} catch (JSONException e) {

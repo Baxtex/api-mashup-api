@@ -15,20 +15,12 @@ import java.util.Date;
 public class Comment {
 	
 	private int id;
+	private int post;
 	private String text;
 	private String ip;
-
-	public String getIp() {
-		return ip;
-	}
-
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-
 	private Date date;
 	private Time time;
-	private int post;
+
 	
 	public Comment() {
 	}
@@ -39,12 +31,18 @@ public class Comment {
 		this.text = text;
 		this.time = time;
 		this.date = date;
-
 		this.ip = ip;
 		this.post = post;
-		this.date = date;
 	}
 	
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
 	public Date getDate() {
 		return date;
 	}
@@ -59,12 +57,10 @@ public class Comment {
 	public void setText(String text) {
 		this.text = text;
 	}
-	
 
 	public void setTime(Time time) {
 		this.time = time;
 	}
-	
 
 	public void setEmail(String email) {
 		this.ip = email;
@@ -99,7 +95,5 @@ public class Comment {
 	public String toString() {
 		return "\nKommentars-id: " + id + "\nText: " + text + "\nTid: " + time + 
 				"\nEmail: " + ip + "\nTillh�r post-id: " + post + "\n";
-
 	}
-	
 }

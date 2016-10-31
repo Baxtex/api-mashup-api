@@ -527,14 +527,12 @@ public class DBHandler {
 			statement.setString(2, ip);
 			statement.setBoolean(3, true);
 			statement.executeUpdate();
-
 		} catch (SQLException e) {
 			exceuteNext = false;
 			return false;
 		}
 		if (exceuteNext) {
 			try {
-
 				PreparedStatement statement2;
 				statement2 = connection.prepareStatement(queryAddLike);
 				statement2.setInt(1, postID);
@@ -570,25 +568,20 @@ public class DBHandler {
 				statement.setString(2, ip);
 				statement.setBoolean(3, true);
 				statement.executeUpdate();
-
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		} else {
 			exceuteNext = false;
 			return false;
-
 		}
-
 		if (exceuteNext) {
 
 			try {
-
 				PreparedStatement statement2;
 				statement2 = connection.prepareStatement(retractRank);
 				statement2.setInt(1, postID);
 				statement2.executeUpdate();
-
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} finally {
@@ -626,7 +619,6 @@ public class DBHandler {
 		}
 		if (exceuteNext) {
 			try {
-
 				PreparedStatement statement2;
 				statement2 = connection.prepareStatement(queryAddLike);
 				statement2.setInt(1, postID);
@@ -665,7 +657,6 @@ public class DBHandler {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-
 		} else {
 			exceuteNext = false;
 			return false;
@@ -683,10 +674,8 @@ public class DBHandler {
 			} finally {
 				closeConnection(connection);
 			}
-
 		}
 		return true;
-
 	}
 
 	/**
