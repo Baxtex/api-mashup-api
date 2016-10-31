@@ -67,11 +67,11 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a list of at least 1 post from every politican in the database.
-	 * database.
+	 * Selects a list of posts from all politicians from a specific date.
 	 * 
-	 * @param politican
-	 * @return
+	 * @param dateStr - the date passed in from the url. Method builds a Date
+	 * object out of it.
+	 * @return - a list of posts.
 	 */
 
 	public LinkedList<Post> getAllPosts(String dateStr) {
@@ -93,13 +93,15 @@ public class DBHandler {
 	}
 
 	/**
-	 * Return 1 post from all politicans in specific party
+	 * Selects a list of posts from all politicians from a specific date and
+	 * party
 	 * 
-	 * @param party
-	 * @return
+	 * @param dateStr - the date passed in from the url. Method builds a Date
+	 * object out of it.
+	 * @param party - the party abbreviation.
+	 * @return - a list of posts.
 	 */
 	public LinkedList<Post> getAllPostsParty(String party, String dateStr) {
-
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
@@ -119,19 +121,18 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a list of all posts from the specified politican in the db.
+	 * Select a list of post from a specific politician.
 	 * 
-	 * @param politican
-	 * @return
+	 * @param politicianID - the id of the politician.
 	 */
 
-	public LinkedList<Post> getPostsPolitician(int politican) {
+	public LinkedList<Post> getPostsPolitician(int politicianID) {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
 			String query = "SELECT * FROM posts WHERE politican = ? GROUP BY TIME;";
 			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setInt(1, politican);
+			statement.setInt(1, politicianID);
 			ResultSet rs = statement.executeQuery();
 			posts = loopRSPosts(rs);
 		} catch (SQLException e) {
@@ -143,20 +144,21 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a list of all posts from the specified politican in the db.
+	 * Select a list of post from a specific politician.
 	 * 
-	 * @param politican
-	 * @return
+	 * @param politicianID - the id of the politician.
+	 * @param dateStr - the date passed in from the url. Method builds a Date
+	 * object out of it.
 	 */
 
-	public LinkedList<Post> getPostsPolitician(int politican, String dateStr) {
+	public LinkedList<Post> getPostsPolitician(int politicanID, String dateStr) {
 		LinkedList<Post> posts = new LinkedList<Post>();
 		Connection connection = getConnection();
 		try {
 			Date date = formatter.parse(dateStr);
 			String query = "SELECT * FROM posts WHERE politican = ? AND date = ? GROUP BY TIME;";
 			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setInt(1, politican);
+			statement.setInt(1, politicanID);
 			statement.setDate(2, new java.sql.Date(date.getTime()));
 			ResultSet rs = statement.executeQuery();
 			posts = loopRSPosts(rs);
@@ -169,7 +171,7 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a list of the 20 most up voted posts
+	 * Select a list of the 20 most up voted posts.
 	 * 
 	 * @return a list of the 20 most up voted posts
 	 */
@@ -191,7 +193,7 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a list of the 20 most down voted posts
+	 * Select a list of the 20 most down voted posts.
 	 * 
 	 * @return a list of the 20 most down voted posts
 	 */
@@ -212,10 +214,11 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns specific post.
+	 * Select a list of posts, but should only return a single post if it's id
+	 * exists.
 	 * 
-	 * @param postID
-	 * @return
+	 * @param postID - the id of the post.
+	 * @return - a list of posts.
 	 */
 	public LinkedList<Post> getSpecificPost(int postID) {
 		LinkedList<Post> posts = new LinkedList<Post>();
@@ -238,7 +241,7 @@ public class DBHandler {
 	 * Loops through ResultSet with posts.
 	 * 
 	 * @param rs
-	 * @return
+	 * @return - a list containing posts.
 	 */
 	private LinkedList<Post> loopRSPosts(ResultSet rs) {
 		LinkedList<Post> posts = new LinkedList<Post>();
@@ -262,9 +265,9 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a list of all politicians in the database
+	 * Selects all politicians.
 	 * 
-	 * @return
+	 * @return - a list with politicians.
 	 */
 
 	public LinkedList<Politician> getPoliticians() {
@@ -284,9 +287,10 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a list of all politicians in the database from a specific party
+	 * Selects a list of all politicians from a specific party
 	 * 
-	 * @return
+	 * @param party - party abbreviation
+	 * @return - a list with politicians.
 	 */
 
 	public LinkedList<Politician> getPoliticiansParty(String party) {
@@ -307,18 +311,18 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a specific politician from the database.
+	 * Selects a specific politician.
 	 * 
-	 * @param id
-	 * @return
+	 * @param PoliticianID - the id of the politician.
+	 * @return - a list with a single politician.
 	 */
-	public LinkedList<Politician> getPolitician(String id) {
+	public LinkedList<Politician> getPolitician(String PoliticianID) {
 		LinkedList<Politician> politicians = new LinkedList<Politician>();
 		Connection connection = getConnection();
 		try {
 			String query = "SELECT * FROM politicians WHERE id = ?";
 			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setString(1, id);
+			statement.setString(1, PoliticianID);
 			ResultSet rs = statement.executeQuery();
 			politicians = loopRSPolitcians(rs);
 		} catch (SQLException e) {
@@ -329,6 +333,12 @@ public class DBHandler {
 		return politicians;
 	}
 
+	/**
+	 * Loops through ResultSet with politicians.
+	 * 
+	 * @param rs - the resultset to loop through
+	 * @return - a list containing politicians.
+	 */
 	private LinkedList<Politician> loopRSPolitcians(ResultSet rs) {
 		LinkedList<Politician> politicians = new LinkedList<Politician>();
 		try {
@@ -351,42 +361,9 @@ public class DBHandler {
 	}
 
 	/**
-	 * Retrieves all parties from the database.
+	 * Selects a list of all parties in database
 	 * 
-	 * @param party
-	 * @return
-	 */
-	public Politician getParties(String party) {
-		Politician politician = new Politician();
-		Connection connection = getConnection();
-		try {
-			String query = "SELECT * FROM politicians WHERE id = ?";
-			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setString(1, party);
-			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				politician.setName(rs.getString("name"));
-				politician.setParty(rs.getString("party"));
-				politician.setFacebook_URL((rs.getString("fb_url")));
-				politician.setTwitter_URL((rs.getString("twitter_url")));
-				politician.setFacebookId((rs.getLong("fID")));
-				politician.setTwitterId((rs.getString("tID")));
-				politician.setId(rs.getInt("id"));
-				politician.setProfile_url(rs.getString("profile_url"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection(connection);
-		}
-
-		return politician;
-	}
-
-	/**
-	 * Returns a list of all parties in database
-	 * 
-	 * @return
+	 * @return - a list of parties.
 	 */
 
 	public LinkedList<Party> getParties() {
@@ -412,10 +389,10 @@ public class DBHandler {
 	}
 
 	/**
-	 * Retrives specific party from database.
+	 * Selects specific party.
 	 * 
-	 * @param party
-	 * @return
+	 * @param party - partty abbreviation.
+	 * @return - a list of parties.
 	 */
 	public Party getParty(String party) {
 		Connection connection = getConnection();
@@ -439,10 +416,10 @@ public class DBHandler {
 	}
 
 	/**
-	 * Returns a list of all comments on the specified post
+	 * Selects a list of all comments on the specified post.
 	 * 
-	 * @param post
-	 * @return
+	 * @param postID - the post from which we want comments for
+	 * @return - a list of comments.
 	 */
 
 	public LinkedList<Comment> getComments(int postID) {
@@ -471,6 +448,13 @@ public class DBHandler {
 		return comments;
 	}
 
+	/**
+	 * Select the post ids from which a user liked or disliked.
+	 * 
+	 * @param ip - the identify of the user.
+	 * @param likes - true if likes, false if dislikes.
+	 * @return - a list of postIDs.
+	 */
 	public LinkedList<String> checkIPs(String ip, boolean likes) {
 		LinkedList<String> ips = new LinkedList<String>();
 		String query;
@@ -498,141 +482,9 @@ public class DBHandler {
 	}
 
 	/**
-	 * Inserts a post into the database.
+	 * Inserts a comment into the db.
 	 * 
-	 * @param post
-	 */
-
-	public void addPost(Post post) {
-		String query = "INSERT INTO posts (text, politican, source, date, time, likes, dislikes) VALUES (?, ?, ?, ?, ?, ?, ?)";
-		Connection connection = getConnection();
-		PreparedStatement statement = null;
-		try {
-			statement = connection.prepareStatement(query);
-			statement.setString(1, post.getText());
-			statement.setInt(2, post.getPolitican());
-			statement.setString(3, post.getSource());
-			statement.setDate(4, new java.sql.Date(post.getDate().getTime()));
-			statement.setTime(5, post.getTime());
-			statement.setInt(6, post.getLikes());
-			statement.setInt(7, post.getDislikes());
-			statement.executeUpdate();
-			System.out.println("DBHandler: Added post to database");
-		} catch (SQLException e) {
-			System.out.print("DBHandler: Exception when adding post to database");
-		} finally {
-			closeConnection(connection);
-		}
-	}
-
-	/**
-	 * Adds a new party to the database
-	 * 
-	 * @param party
-	 */
-
-	public void addParty(Party party) {
-		String query = "INSERT INTO parties(name, nameShort) VALUES (?, ?)";
-		Connection connection = getConnection();
-		PreparedStatement statement = null;
-		try {
-			statement = connection.prepareStatement(query);
-			statement.setString(1, party.getName());
-			statement.setString(2, party.getNameShort());
-			statement.executeUpdate();
-			System.out.println("DBHandler: Added party to database");
-		} catch (SQLException e) {
-			System.out.print("DBHandler: Exception when adding party to database");
-		} finally {
-			closeConnection(connection);
-		}
-	}
-
-	/**
-	 * Adds a list of parties to the database
-	 * 
-	 * @param parties
-	 */
-
-	public void addParties(LinkedList<Party> parties) {
-		Connection connection = getConnection();
-		PreparedStatement statement = null;
-		String query = null;
-		try {
-			for (int i = 0; i < parties.size(); i++) {
-				query = "INSERT INTO parties(name, nameShort) VALUES (?, ?)";
-				statement = connection.prepareStatement(query);
-				statement.setString(1, parties.get(i).getName());
-				statement.setString(2, parties.get(i).getNameShort());
-				statement.executeUpdate();
-
-				System.out.println("DBHandler: Added a list of parties to database");
-			}
-		} catch (SQLException e) {
-			System.out.println("DBHandler: Exception when trying to add a list of parties");
-		} finally {
-			closeConnection(connection);
-		}
-	}
-
-	/**
-	 * Adds a new politican to database
-	 * 
-	 * @param politican
-	 */
-
-	public void addPolitican(Politician politician) {
-		String query = "INSERT INTO politicians(name, party, fb_url, twitter_url) VALUES (?, ?, ?, ?)";
-		Connection connection = getConnection();
-		PreparedStatement statement = null;
-		try {
-			statement = getConnection().prepareStatement(query);
-			statement.setString(1, politician.getName());
-			statement.setString(2, politician.getParty());
-			statement.setString(3, politician.getFacebook_URL());
-			statement.setString(4, politician.getTwitter_URL());
-			statement.executeUpdate();
-			// closeConnection(connection);
-			System.out.println("DBHandler: Added politican to database");
-		} catch (SQLException e) {
-			System.out.print("DBHandler: Exception when adding politican to database");
-		} finally {
-			closeConnection(connection);
-		}
-	}
-
-	/**
-	 * Adds a list of politicians to the database
-	 * 
-	 * @param parties
-	 */
-
-	public void addPoliticians(LinkedList<Politician> politicians) {
-		Connection connection = getConnection();
-		PreparedStatement statement = null;
-		String query = "INSERT INTO politicians(name, party, fb_url, twitter_url) VALUES (?, ?, ?, ?)";
-		try {
-			for (int i = 0; i < politicians.size(); i++) {
-				statement = connection.prepareStatement(query);
-				statement.setString(1, politicians.get(i).getName());
-				statement.setString(2, politicians.get(i).getParty());
-				statement.setString(3, politicians.get(i).getFacebook_URL());
-				statement.setString(4, politicians.get(i).getTwitter_URL());
-
-				statement.executeUpdate();
-				System.out.println("DBHandler: Added a list of politicians to database");
-			}
-		} catch (SQLException e) {
-			System.out.println("DBHandler: Exception when trying to add a list of politicians");
-		} finally {
-			closeConnection(connection);
-		}
-	}
-
-	/**
-	 * Adds a new comment to the database
-	 * 
-	 * @param comment
+	 * @param comment - the comment to insert.
 	 */
 
 	public void addComment(Comment comment) {
@@ -660,8 +512,8 @@ public class DBHandler {
 	 * Method that handles Likes. If it's a new Like, add it as a Row to the
 	 * rank table and increase rank column by one.
 	 * 
-	 * @param postID
-	 * @param email
+	 * @param postID - the post to like.
+	 * @param ip - the user id.
 	 */
 	public boolean addLike(int postID, String ip) {
 		String queryAddRank = "INSERT INTO rank(postID, ip, liked) VALUES (?, ?, ?)";
@@ -702,8 +554,8 @@ public class DBHandler {
 	 * If Like already existsed and same resource is called again, remove the
 	 * like.
 	 * 
-	 * @param postID
-	 * @param email
+	 * @param postID - the post to like.
+	 * @param ip - the user id.
 	 */
 	public boolean revertLike(int postID, String ip) {
 		String queryAlreadyLiked = "DELETE FROM rank WHERE postID = ? AND ip = ? AND liked = ?;";
@@ -751,8 +603,8 @@ public class DBHandler {
 	 * Method that handles Dislikes. If it's a new disLike, add it as a Row to
 	 * the rank table and decrease rank column by one.
 	 * 
-	 * @param postID
-	 * @param email
+	 * @param postID - the post to like.
+	 * @param ip - the user id.
 	 */
 	public boolean addDislike(int postID, String ip) {
 		String queryAddRank = "INSERT INTO rank(postID, ip, liked) VALUES (?, ?, ?)";
@@ -793,8 +645,8 @@ public class DBHandler {
 	 * If Dislike already existed and same resource is called again, remove the
 	 * like.
 	 * 
-	 * @param postID
-	 * @param email
+	 * @param postID - the post to like.
+	 * @param ip - the user id.
 	 */
 	public boolean revertDislike(int postID, String ip) {
 		String queryAlreadyDisliked = "DELETE FROM rank WHERE postID = ? AND ip = ? AND liked = ?;";
@@ -861,7 +713,15 @@ public class DBHandler {
 		}
 	}
 
-	private boolean checkIfRowExists(int postID, String ip, Boolean rank) {
+	/**
+	 * Checks if a post already has been liked or disliked.
+	 * 
+	 * @param postID - the id of the post to check.
+	 * @param ip - the user.
+	 * @param liked - true if like, false if dislike.
+	 * @return - true if the row exists.
+	 */
+	private boolean checkIfRowExists(int postID, String ip, Boolean liked) {
 		String checkRow = "SELECT * FROM rank WHERE postID = ? AND ip = ? AND liked = ?;";
 		boolean res = false;
 		boolean exceuteNext = true;
@@ -871,7 +731,7 @@ public class DBHandler {
 			statement = connection.prepareStatement(checkRow);
 			statement.setInt(1, postID);
 			statement.setString(2, ip);
-			statement.setBoolean(3, rank);
+			statement.setBoolean(3, liked);
 			ResultSet rs = statement.executeQuery();
 			if (rs.next()) {
 				res = true;
@@ -881,9 +741,6 @@ public class DBHandler {
 		} finally {
 			closeConnection(connection);
 		}
-
 		return res;
-
 	}
-
 }
