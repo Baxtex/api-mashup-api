@@ -371,12 +371,12 @@ public class Controller {
 	 * @param text - the text in the comment.
 	 * @param ip - the ip address of the commentor.
 	 */
-	public void postComment(int postID, String text, String ip) {
+	public void postComment(int postID, String text, String alias) {
 		Date date = new Date();
 		Time time = new Time(date.getTime());
 		Comment comment = new Comment();
 		comment.setDate(date);
-		comment.setIp(ip);
+		comment.setAlias(alias);
 		comment.setText(text);
 		comment.setPost(postID);
 		comment.setTime(time);

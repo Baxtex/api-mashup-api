@@ -434,7 +434,7 @@ public class DBHandler {
 				Comment comment = new Comment();
 				comment.setText(rs.getString("text"));
 				comment.setId(rs.getInt("id"));
-				comment.setIp(rs.getString("ip"));
+				comment.setAlias(rs.getString("ip"));
 				comment.setPost(rs.getInt("post"));
 				comment.setDate(rs.getDate("date"));
 				comment.setTime(rs.getTime("time"));
@@ -496,7 +496,7 @@ public class DBHandler {
 			statement.setInt(1, comment.getID());
 			statement.setString(2, comment.getText());
 			statement.setTime(3, comment.getTime());
-			statement.setString(4, comment.getIp());
+			statement.setString(4, comment.getAlias());
 			statement.setInt(5, comment.getPost());
 			statement.setDate(6, new java.sql.Date(comment.getDate().getTime()));
 			statement.executeUpdate();

@@ -17,7 +17,7 @@ import org.codehaus.jettison.json.JSONObject;
 import controller.Controller;
 
 /**
- * Endpoint for the API. The URI for accessing these resources is:
+ * End point of the API. The URI for accessing these resources is:
  * http://localhost:8080/api-mashup-api/v1/<resource>
  */
 
@@ -30,13 +30,11 @@ public class ApiV1 {
 	private final String MSG = "message";
 	private final String ERR_MSG = "Server was not able to process your request";
 	private final String ACAO = "Access-Control-Allow-Origin";
-	private final Response ERR_RESPONSE = Response.status(500).header(ACAO, "*")
-			.entity(ERR_MSG).build();
+	private final Response ERR_RESPONSE = Response.status(500).header(ACAO, "*").entity(ERR_MSG).build();
 
 	/**
 	 * Default resource that tells the user to specify their request.
-	 * 
-	 * @return - response with a json success message.
+	 * @return - response with a JSON success message.
 	 */
 	@GET
 	@Produces(MediaType.TEXT_HTML)
@@ -45,9 +43,9 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return posts from all politicans from the current date.
-	 * 
-	 * @return - response with a JSONObject with posts.
+	 * Returns posts from all politicians and the specified date.
+	 * @param dateStr - a date formatted as yyyy-mm-dd
+	 * @return - response with a JSONObject with posts from the specified date.
 	 */
 	@GET
 	@Path("posts/{date}")
@@ -67,11 +65,10 @@ public class ApiV1 {
 	}
 
 	/**
-	 * 
-	 * Return posts from all politicans in specific party on a specific.
-	 * 
-	 * @param party - the short name of the party, like 's' or 'kd'
-	 * @return - response with a JSONObject with posts.
+	 * Returns posts from all politicians in the specified party and from the specified date.
+	 * @param party - the short name of the party, like 's' or 'kd'.
+	 * @param dateStr - a date formatted as yyyy-mm-dd
+	 * @return - response with a JSONObject with posts from the specified party and date.
 	 * @throws ParseException
 	 */
 	@GET
@@ -94,11 +91,9 @@ public class ApiV1 {
 	}
 	
 	/**
-	 * Returns all posts from a specific politician, regardless of date.
-	 * 
-	 * @param id
-	 * @param dateStr
-	 * @return
+	 * Returns all posts from the specified politician, regardless of date.
+	 * @param politicianID - id of a certain politician.
+	 * @return - response with a JSONObject with posts from the specified politician.
 	 */
 	@GET
 	@Path("posts/politician/{politicianID}")
@@ -119,11 +114,10 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return posts from specific politician.
-	 * 
-	 * @param party - the short name of the party, like 's' or 'kd'
-	 * @param id - the id of the politician stored in our database.
-	 * @return - response with a JSONObject with posts.
+	 * Returns posts from the specified politician from the specified date.
+	 * @param politicianID - id of a certain politician.
+	 * @param date - a date formatted as yyyy-mm-dd
+	 * @return - response with a JSONObject with posts from the specified politician and date.
 	 */
 	@GET
 	@Path("posts/politician/{politicianID}/{date}")
@@ -143,9 +137,8 @@ public class ApiV1 {
 	}
 	
 	/**
-	 * Returns the 20 most up voted posts
-	 * 
-	 * @return the 20 most up voted posts in JSON
+	 * Returns the 20 most up voted posts.
+	 * @return - response with a JSONObject with the 20 most up voted posts.
 	 */
 	
 	@GET
@@ -162,9 +155,8 @@ public class ApiV1 {
 	}
 	
 	/**
-	 * Returns the 20 most down voted posts
-	 * 
-	 * @return the 20 most down voted posts in JSON
+	 * Returns the 20 most down voted posts.
+	 * @return - response with a JSONObject with the 20 most down voted posts.
 	 */
 	
 	@GET
@@ -182,12 +174,11 @@ public class ApiV1 {
 
 
 	/**
-	 * Returns a response with post from specific id.
-	 * 
-	 * @param id
-	 * @param dateStr
-	 * @return
+	 * Returns a response with the post related to the specified post id.
+	 * @param postID - id of a certain post.
+	 * @return - response with a JSONObject with a post.
 	 */
+	
 	@GET
 	@Path("posts/id/{postID}")
 	public Response getSpecificPost(@PathParam("postID") int postID) {
@@ -206,8 +197,7 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Returns all politician objects.
-	 *
+	 * Returns a response with data about all politicians.
 	 * @return - response with a JSONObject with politicians.
 	 */
 	@GET
@@ -228,9 +218,8 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return all politican objects from specific party.
-	 * 
-	 * @param party - the short name of the party, like 's' or 'kd'
+	 * Returns a response with data about all politicians of the specified party.
+	 * @param party - the short name of the party, like 's' or 'kd'.
 	 * @return - response with a JSONObject with politicians.
 	 */
 	@GET
@@ -251,9 +240,8 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return specific politican object.
-	 * 
-	 * @param politician - the politician id.
+	 * Returns a response with data about the specified politician.
+	 * @param politician - politician id of a certain politician.
 	 * @return - response with a JSONObject with politician.
 	 */
 	@GET
@@ -274,8 +262,7 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return all parties as objects.
-	 * 
+	 * Returns a response with data about all parties.
 	 * @return - response with a JSONObject with parties.
 	 */
 	@GET
@@ -296,8 +283,8 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Return a specific party object.
-	 * 
+	 * Returns a response with data about the specified party.
+	 * @param party - the short name of the party, like 's' or 'kd'.
 	 * @return - response with a JSONObject with parties.
 	 */
 	@GET
@@ -318,13 +305,12 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Methods that retrives comments for a specific post.
-	 * 
-	 * @param postID - the id for the post
+	 * Returns a response with comments related to the specified post id.
+	 * @param postID - id of a certain post.
 	 * @return - response with a JSONObject with comments.
 	 */
 	@GET
-	@Path("comment/{postID}")
+	@Path("comments/{postID}")
 	public Response getComment(@PathParam("postID") int postID) {
 		JSONObject jsonObject = new JSONObject();
 		try {
@@ -341,10 +327,13 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Send and ip to check what posts they have liked. TODO Change URL
+	 * Returns a response containing a list of all likes related to the specified IP address.
+	 * @param ip - IP address of the user liking a post.
+	 * @return - a list of all likes related to the specified IP address.
 	 */
+	
 	@GET
-	@Path("like/ips/{ip}")
+	@Path("likes/ips/{ip}")
 	public Response checkLikes(@PathParam("ip") String ip) {
 
 		JSONObject jsonObject = new JSONObject();
@@ -363,13 +352,13 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Send ip to check what posts they disliked.
-	 * 
-	 * @param ip
-	 * @return
+	 * Returns a response containing a list of all dislikes related to the specified IP address.
+	 * @param ip - IP address of the user disliking a post.
+	 * @return - a list of all dislikes related to the specified IP address.
 	 */
+	
 	@GET
-	@Path("dislike/ips/{ip}")
+	@Path("dislikes/ips/{ip}")
 	public Response checkdisLikes(@PathParam("ip") String ip) {
 
 		JSONObject jsonObject = new JSONObject();
@@ -388,20 +377,19 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Puts a new comment into the database.
-	 * 
+	 * Posts a new comment into the database.
 	 * @param postID - id for the post.
 	 * @param text - the actual comment.
-	 * @param email - email of the comment author.
-	 * @return - response with a json success message.
+	 * @param ip - IP address of the comment author.
+	 * @return - response with a JSON success message.
 	 */
 	@POST
-	@Path("comment/{postID}/{text}/{ip}")
+	@Path("comment/{postID}/{text}/{alias}")
 	public Response postComment(@PathParam("postID") int postID, @PathParam("text") String text,
-			@PathParam("ip") String ip) {
+			@PathParam("alias") String alias) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			controller.postComment(postID, text, ip);
+			controller.postComment(postID, text, alias);
 			jsonObject.put(MSG, "success");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -411,11 +399,10 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Puts a new like for a post in the database.
-	 * 
+	 * Posts a new like for a post in the database.
 	 * @param postID - id for the post.
-	 * @param email - email of the user liking a post.
-	 * @return - response with a json success message.
+	 * @param ip - IP address of the user liking a post.
+	 * @return - response with a JSON success message.
 	 */
 	@POST
 	@Path("like/{postID}/{ip}")
@@ -435,11 +422,10 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Puts a new dislike for a post in the database.
-	 * 
+	 * Posts a new dislike for a post in the database.
 	 * @param postID - id for the post.
-	 * @param email - email of the user liking a post.
-	 * @return - response with a json success message.
+	 * @param ip - IP address of the user liking a post.
+	 * @return - response with a JSON success message.
 	 */
 	@POST
 	@Path("dislike/{postID}/{ip}")
@@ -460,11 +446,10 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Delets a previously added like in the datbase.
-	 * 
+	 * Deletes a previously added like from the database.
 	 * @param postID - id for the post.
-	 * @param email - email of the user liking a post.
-	 * @return - response with a json success message.
+	 * @param ip - IP address of the user liking a post.
+	 * @return - response with a JSON success message.
 	 */
 	@DELETE
 	@Path("like/{postID}/{ip}")
@@ -485,11 +470,10 @@ public class ApiV1 {
 	}
 
 	/**
-	 * Deletes a previously added dislike in the datbase.
-	 * 
+	 * Deletes a previously added dislike from the database.
 	 * @param postID - id for the post.
-	 * @param email - email of the user liking a post.
-	 * @return - response with a json success message.
+	 * @param ip - IP address of the user liking a post.
+	 * @return - response with a JSON success message.
 	 */
 	@DELETE
 	@Path("dislike/{postID}/{ip}")

@@ -17,7 +17,7 @@ public class Comment {
 	private int id;
 	private int post;
 	private String text;
-	private String ip;
+	private String alias;
 	private Date date;
 	private Time time;
 
@@ -26,21 +26,21 @@ public class Comment {
 	}
 	
 
-	public Comment(int id, String text, Time time, Date date, String ip, int post) {
+	public Comment(int id, String text, Time time, Date date, String alias, int post) {
 		this.id = id;
 		this.text = text;
 		this.time = time;
 		this.date = date;
-		this.ip = ip;
+		this.alias = alias;
 		this.post = post;
 	}
 	
-	public String getIp() {
-		return ip;
+	public String getAlias() {
+		return alias;
 	}
 
-	public void setIp(String ip) {
-		this.ip = ip;
+	public void setAlias(String ip) {
+		this.alias = ip;
 	}
 
 	public Date getDate() {
@@ -63,7 +63,7 @@ public class Comment {
 	}
 
 	public void setEmail(String email) {
-		this.ip = email;
+		this.alias = email;
 	}
 	
 	public void setPost(int post) {
@@ -85,7 +85,7 @@ public class Comment {
 
 	
 	public String getEmail() {
-		return ip;
+		return alias;
 	}
 	
 	public int getPost() {
@@ -94,6 +94,6 @@ public class Comment {
 
 	public String toString() {
 		return "\nKommentars-id: " + id + "\nText: " + text + "\nTid: " + time + 
-				"\nEmail: " + ip + "\nTillh�r post-id: " + post + "\n";
+				"\nAlias: " + alias + "\nTillh�r post-id: " + post + "\n";
 	}
 }
